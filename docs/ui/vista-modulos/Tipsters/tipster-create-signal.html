@@ -1,0 +1,1923 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear Señal | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Tipster Colors */
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      
+      /* Base colors */
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-header {
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== FORM CONTAINER ========== */
+    .form-container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .form-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .section-icon {
+      font-size: 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-label.required::after {
+      content: '*';
+      color: var(--secondary-red);
+      margin-left: 4px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.4;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 120px;
+      line-height: 1.6;
+    }
+
+    .form-input[type="number"] {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Radio Group */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .radio-item:hover {
+      border-color: var(--tipster-primary);
+      background: var(--bg-elevated);
+    }
+
+    .radio-item.selected {
+      border-color: var(--tipster-primary);
+      background: rgba(168, 85, 247, 0.1);
+    }
+
+    .radio-item input[type="radio"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .radio-content {
+      flex: 1;
+    }
+
+    .radio-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .radio-description {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Confidence Stars */
+    .confidence-selector {
+      display: flex;
+      gap: 8px;
+    }
+
+    .star-btn {
+      padding: 12px 20px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .star-btn:hover {
+      border-color: var(--tipster-primary);
+      transform: translateY(-2px);
+    }
+
+    .star-btn.selected {
+      border-color: var(--tipster-primary);
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .star-label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* Alert Boxes */
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-info .alert-icon,
+    .alert-info .alert-title {
+      color: var(--primary-cyan);
+    }
+
+    .alert-info .alert-text {
+      color: var(--text-secondary);
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-warning .alert-icon,
+    .alert-warning .alert-title {
+      color: var(--secondary-orange);
+    }
+
+    .alert-warning .alert-text {
+      color: var(--text-secondary);
+    }
+
+    /* Tags Input */
+    .tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      min-height: 60px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(168, 85, 247, 0.15);
+      border: 1px solid var(--tipster-primary);
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--tipster-primary);
+    }
+
+    .tag-remove {
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 16px;
+      line-height: 1;
+    }
+
+    .tag-remove:hover {
+      color: var(--secondary-red);
+    }
+
+    .tag-input {
+      flex: 1;
+      min-width: 150px;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* Available Tags */
+    .available-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tag-suggestion {
+      padding: 6px 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tag-suggestion:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 24px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-primary);
+    }
+
+    /* Character Counter */
+    .char-counter {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-align: right;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .char-counter.warning {
+      color: var(--secondary-orange);
+    }
+
+    .char-counter.error {
+      color: var(--secondary-red);
+    }
+
+    /* Grid Layout for Form */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .form-grid,
+      .form-grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .confidence-selector {
+        flex-wrap: wrap;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item active">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="page-header">
+          <h1 class="page-title">➕ Crear Nueva Señal</h1>
+          <p class="page-subtitle">Publica un pick estructurado que afectará tus estadísticas públicas</p>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <div class="form-container">
+          <!-- Alert: Commitment -->
+          <div class="alert alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <div class="alert-content">
+              <div class="alert-title">Compromiso de Transparencia</div>
+              <div class="alert-text">
+                <p>Una señal publicada es un compromiso público. Las odds y el análisis quedan registrados para calcular tu ROI, CLV y estadísticas.</p>
+                <ul style="margin-top:8px;">
+                  <li>Edición permitida hasta 10 minutos antes del inicio del evento. En COMBO/SYSTEM, el corte se calcula con el pick más temprano.</li>
+                  <li>Tras el corte, la señal es inmutable. Al iniciar el evento, el estado pasa a <strong>LOCKED</strong>.</li>
+                  <li>Las <strong>odds publicadas (published_odds)</strong> y el <strong>precio en créditos</strong> quedan congelados al momento de publicación.</li>
+                  <li>No puedes borrar una señal publicada; cualquier cancelación antes del inicio requiere causa válida y quedará registrada en auditoría.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 1: Access Type -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">🔓</span>
+              <div>
+                <div class="section-title">Tipo de Acceso</div>
+                <div class="section-subtitle">Define quién podrá ver esta señal</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Tipo de Acceso</label>
+              <div class="radio-group">
+                <div class="radio-item selected" onclick="selectAccessType(this, 'free')">
+                  <input type="radio" name="access_type" value="free" checked>
+                  <div class="radio-content">
+                    <div class="radio-title">🆓 FREE - Público</div>
+                    <div class="radio-description">Visible para todos. Ideal para construir audiencia y demostrar habilidades.</div>
+                  </div>
+                </div>
+
+                <div class="radio-item" onclick="selectAccessType(this, 'credits')">
+                  <input type="radio" name="access_type" value="credits">
+                  <div class="radio-content">
+                    <div class="radio-title">💳 PAGO por CRÉDITOS</div>
+                    <div class="radio-description">Los usuarios pagan créditos para ver el análisis completo. Tú defines el precio.</div>
+                  </div>
+                </div>
+
+                <div class="radio-item" onclick="selectAccessType(this, 'subscription')">
+                  <input type="radio" name="access_type" value="subscription">
+                  <div class="radio-content">
+                    <div class="radio-title">⭐ SUSCRIPCIÓN - Solo suscriptores</div>
+                    <div class="radio-description">Exclusivo para usuarios suscritos a tu plan. Contenido premium recurrente.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Credits Cost (conditional) -->
+            <div class="form-group" id="credits-cost-group" style="display: none;">
+              <label class="form-label required">Costo en Créditos</label>
+              <input type="number" class="form-input" id="credit-cost" min="3" max="20" value="5" placeholder="5">
+              <p class="form-hint">Rango: 3-20 créditos. Sugerido: 3-5 (media), 10 (alta), 15-20 (especial)</p>
+            </div>
+            <div class="alert alert-info" id="pricing-lock-note" style="display:none;">
+              <span class="alert-icon">🔒</span>
+              <div class="alert-content">
+                <div class="alert-title">Regla de Precio (Pricing Lock)</div>
+                <div class="alert-text">
+                  Al publicar, el precio en créditos queda congelado (<strong>credit_cost_locked</strong>) y se registra <strong>price_locked_at</strong>. No podrás cambiarlo después de publicar.
+                </div>
+              </div>
+            </div>
+            <div class="form-group" id="subscription-scope-group" style="display: none;">
+              <label class="form-label required">Scope de Suscripción</label>
+              <div class="radio-group">
+                <div class="radio-item selected" onclick="selectSubscriptionScope(this, 'general')">
+                  <input type="radio" name="subscription_scope" value="general" checked>
+                  <div class="radio-content">
+                    <div class="radio-title">🌐 SUSCRIPCIÓN GENERAL</div>
+                    <div class="radio-description">Feed premium global de la plataforma</div>
+                  </div>
+                </div>
+                <div class="radio-item" onclick="selectSubscriptionScope(this, 'personal')">
+                  <input type="radio" name="subscription_scope" value="personal">
+                  <div class="radio-content">
+                    <div class="radio-title">👤 SUSCRIPCIÓN PERSONAL</div>
+                    <div class="radio-description">Tus suscriptores directos (tu plan personal)</div>
+                  </div>
+                </div>
+              </div>
+              <p class="form-hint">General = feed premium global; Personal = tus suscriptores directos.</p>
+            </div>
+          </div>
+
+          <!-- Section 2: Event Details -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">⚽</span>
+              <div>
+                <div class="section-title">Detalles del Evento</div>
+                <div class="section-subtitle">Información del partido o competencia</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Deporte</label>
+              <select class="form-select" id="sport">
+                <option value="">Seleccionar deporte</option>
+                <option value="football">⚽ Fútbol</option>
+                <option value="basketball">🏀 Baloncesto</option>
+                <option value="tennis">🎾 Tenis</option>
+                <option value="baseball">⚾ Béisbol</option>
+                <option value="hockey">🏒 Hockey</option>
+                <option value="esports">🎮 eSports</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Liga/Competencia</label>
+              <input type="text" class="form-input" id="league" placeholder="ej: Champions League, NBA, ATP 1000">
+              <p class="form-hint">Nombre completo de la liga o torneo</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label required">Equipo/Jugador A</label>
+                <input type="text" class="form-input" id="team-a" placeholder="ej: Real Madrid">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label required">Equipo/Jugador B</label>
+                <input type="text" class="form-input" id="team-b" placeholder="ej: Barcelona">
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label required">Fecha y Hora del Evento</label>
+                <input type="datetime-local" class="form-input" id="event-datetime">
+                <p class="form-hint">Hora local del evento</p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Tipo de Apuesta</label>
+                <select class="form-select" id="bet-type">
+                  <option value="prematch">Prematch</option>
+                  <option value="live">Live</option>
+                </select>
+              </div>
+            </div>
+            <!-- Campo oculto obligatorio para settlement cruzado -->
+            <input type="hidden" id="event-external-id" />
+            <div class="form-group">
+              <label class="form-label required">Zona horaria del evento</label>
+              <select class="form-select" id="event-timezone">
+                <option value="">Seleccionar zona horaria</option>
+                <option value="UTC">UTC</option>
+                <option value="America/Bogota">America/Bogota</option>
+                <option value="Europe/Madrid">Europe/Madrid</option>
+                <option value="America/Mexico_City">America/Mexico_City</option>
+                <option value="America/Argentina/Buenos_Aires">America/Argentina/Buenos_Aires</option>
+              </select>
+              <p class="form-hint">Usada para calcular el auto-lock correctamente.</p>
+            </div>
+            <div class="alert alert-info" id="cutoff-visual" style="display: none;">
+              <span class="alert-icon">⏳</span>
+              <div class="alert-content">
+                <div class="alert-title">Cutoff de edición</div>
+                <div class="alert-text">Editable por: <span id="cutoff-countdown">--:--:--</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 3: Selection & Odds -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">🎯</span>
+              <div>
+                <div class="section-title">Selección y Odds</div>
+                <div class="section-subtitle">Tu pick y las cuotas</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Tipo de señal</label>
+              <div class="radio-group">
+                <div class="radio-item selected" onclick="selectSignalType(this, 'single')">
+                  <input type="radio" name="signal_type" value="single" checked>
+                  <div class="radio-content">
+                    <div class="radio-title">🎯 Single</div>
+                    <div class="radio-description">Un único pick con odds y línea opcional.</div>
+                  </div>
+                </div>
+                <div class="radio-item" onclick="selectSignalType(this, 'combo')">
+                  <input type="radio" name="signal_type" value="combo">
+                  <div class="radio-content">
+                    <div class="radio-title">🧩 Combinada (multi-leg)</div>
+                    <div class="radio-description">Varios picks agregados; odds totales calculadas.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="single-block">
+              <div class="form-group">
+                <label class="form-label required">Mercado</label>
+                <select class="form-select" id="single-market" onchange="onSingleMarketChange()">
+                  <option value="">Seleccionar mercado</option>
+                  <option value="moneyline">Moneyline (1X2)</option>
+                  <option value="totals">Totals (Over/Under)</option>
+                  <option value="handicap">Handicap (AH)</option>
+                  <option value="btts">BTTS (Both Teams To Score)</option>
+                  <option value="props">Props (Player/Team Props)</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label class="form-label required">Selección</label>
+                <select class="form-select" id="single-selection">
+                  <option value="">Seleccionar</option>
+                </select>
+                <p class="form-hint">Valores normalizados según mercado (ej: home/draw/away; over/under; yes/no). Para props, usa descripción libre en el análisis.</p>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label required">Regla de Liquidación</label>
+                <select class="form-select" id="settlement-rule" required>
+                  <option value="">Seleccionar cómo se liquida</option>
+                  <option value="moneyline_home">Moneyline Home (gana el local)</option>
+                  <option value="moneyline_away">Moneyline Away (gana el visitante)</option>
+                  <option value="moneyline_draw">Moneyline Draw (empate)</option>
+                  <option value="over">Over (más de X)</option>
+                  <option value="under">Under (menos de X)</option>
+                  <option value="handicap_home">Handicap Home (local con handicap)</option>
+                  <option value="handicap_away">Handicap Away (visitante con handicap)</option>
+                  <option value="btts_yes">BTTS Yes (ambos anotan)</option>
+                  <option value="btts_no">BTTS No (no ambos anotan)</option>
+                  <option value="player_to_score">Player to Score (jugador anota)</option>
+                  <option value="player_assists">Player Assists (asistencias jugador)</option>
+                  <option value="correct_score">Correct Score (resultado exacto)</option>
+                </select>
+                <p class="form-hint">OBLIGATORIO: Define cómo el sistema determina si esta señal gana o pierde. No es visible para usuarios.</p>
+              </div>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label class="form-label required">Odds (Decimal)</label>
+                  <input type="number" class="form-input" id="single-odds" step="0.01" min="1.20" max="50.00" placeholder="2.50">
+                  <p class="form-hint">Rango: 1.20 - 50.00</p>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Línea/Handicap</label>
+                  <input type="number" class="form-input" step="0.5" placeholder="2.5">
+                  <p class="form-hint">Opcional (ej: 2.5, -1.5)</p>
+                </div>
+                <div class="form-group">
+                  <label class="form-label required">Bookmaker</label>
+                  <select class="form-select" id="bookmaker-id">
+                    <option value="">Seleccionar bookmaker</option>
+                    <option value="bet365">Bet365</option>
+                    <option value="pinnacle">Pinnacle</option>
+                    <option value="william_hill">William Hill</option>
+                    <option value="bovada">Bovada</option>
+                    <option value="888sport">888sport</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Closing Odds (CLV - se llena después)</label>
+                <input type="number" class="form-input" id="closing-odds" step="0.01" min="1.00" max="50.00" placeholder="Se calculará automáticamente" disabled>
+                <p class="form-hint">Se guardará automáticamente cuando el evento empiece. CLV = closing_odds - published_odds. CRÍTICO para medir skill del tipster.</p>
+              </div>
+              <div class="alert alert-warning">
+                <span class="alert-icon">⚠️</span>
+                <div class="alert-content">
+                  <div class="alert-title">Las odds son críticas</div>
+                  <div class="alert-text">
+                    Las odds que registres aquí se usarán para calcular tu CLV (Closing Line Value) y ROI. 
+                    Asegúrate de ingresar las odds correctas al momento de publicación.
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-warning">
+                <span class="alert-icon">⏱️</span>
+                <div class="alert-content">
+                  <div class="alert-title">Ventana de Edición</div>
+                  <div class="alert-text">
+                    Puedes editar la señal hasta 10 minutos antes del inicio del evento. En COMBO/SYSTEM, el corte se basa en el pick con inicio más temprano.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div id="combo-block" style="display: none;">
+              <div class="form-group">
+                <label class="form-label required">Legs de la combinada</label>
+                <table class="legs-table">
+                  <thead>
+                    <tr>
+                      <th>Mercado</th>
+                      <th>Selección</th>
+                      <th>Odds</th>
+                      <th>Línea</th>
+                      <th>Bookmaker</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody id="legs-body"></tbody>
+                </table>
+                <div style="margin-top: 12px;">
+                  <button type="button" class="btn btn-secondary" onclick="addLeg()">➕ Añadir selección</button>
+                </div>
+              </div>
+              <div class="form-grid">
+                <div class="form-group">
+                  <label class="form-label required">Total Odds</label>
+                  <input type="number" class="form-input" id="total-odds" step="0.01" min="1.00" placeholder="1.00" readonly>
+                  <p class="form-hint">Para combinadas, el total se usa para ROI/CLV (si aplica) y settlement.</p>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Editar total manualmente (boceto)</label>
+                  <input type="checkbox" id="edit-total-toggle" onclick="toggleManualTotal()">
+                  <p class="form-hint">Si activas, puedes ajustar el total como boceto; en producción será calculado automáticamente.</p>
+                </div>
+              </div>
+              <div class="alert alert-info">
+                <span class="alert-icon">📐</span>
+                <div class="alert-content">
+                  <div class="alert-title">Reglas de Liquidación de Combinadas</div>
+                  <div class="alert-text">
+                    En COMBO/SYSTEM: si un leg es <strong>VOID</strong>, se excluye del cálculo; si es <strong>PUSH</strong>, su odd se considera 1.00. Se liquida el ticket completo en una sola operación según el producto de las odds restantes.
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">🔒 ticket_link (privado)</label>
+              <input type="url" class="form-input" id="ticket-link" placeholder="https://...">
+              <p class="form-hint">No visible en teasers/listados; solo en detalle para usuarios autorizados; no indexable; no público.</p>
+            </div>
+          </div>
+
+          <!-- Section 4: Stake & Confidence -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">📊</span>
+              <div>
+                <div class="section-title">Stake y Confianza</div>
+                <div class="section-subtitle">Recomendación de exposición (no es tu dinero)</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Nivel de Confianza</label>
+              <div class="confidence-selector">
+                <button type="button" class="star-btn" onclick="selectConfidence(this, 1)">
+                  <span>⭐</span>
+                  <span class="star-label">1</span>
+                </button>
+                <button type="button" class="star-btn" onclick="selectConfidence(this, 2)">
+                  <span>⭐⭐</span>
+                  <span class="star-label">2</span>
+                </button>
+                <button type="button" class="star-btn selected" onclick="selectConfidence(this, 3)">
+                  <span>⭐⭐⭐</span>
+                  <span class="star-label">3</span>
+                </button>
+                <button type="button" class="star-btn" onclick="selectConfidence(this, 4)">
+                  <span>⭐⭐⭐⭐</span>
+                  <span class="star-label">4</span>
+                </button>
+                <button type="button" class="star-btn" onclick="selectConfidence(this, 5)">
+                  <span>⭐⭐⭐⭐⭐</span>
+                  <span class="star-label">5</span>
+                </button>
+              </div>
+              <p class="form-hint" id="confidence-hint">⭐⭐⭐ Confianza media - Stake sugerido: 1.5-2u</p>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label required">Unidades Sugeridas</label>
+                <input type="number" class="form-input" step="0.5" min="0.5" max="10" value="2" placeholder="2">
+                <p class="form-hint">1u = 1% del bankroll típicamente</p>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">% Máximo Sugerido</label>
+                <input type="number" class="form-input" step="0.5" min="0.5" max="10" placeholder="2">
+                <p class="form-hint">Opcional: % del bankroll</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Stake Normalizado (CRÍTICO)</label>
+              <input type="number" class="form-input" step="0.1" min="0.1" max="10" value="1" placeholder="1" id="normalized-stake">
+              <p class="form-hint">1 unidad = base estadística. Usado para calcular ROI, yield, hit rate. CRÍTICO para ranking y comparabilidad entre tipsters.</p>
+            </div>
+
+            <div class="alert alert-info">
+              <span class="alert-icon">💡</span>
+              <div class="alert-content">
+                <div class="alert-title">Recuerda</div>
+                <div class="alert-text">
+                  Tú recomiendas exposición basada en tu análisis. Los usuarios deciden cuánto apostar según su propio bankroll y tolerancia al riesgo.
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-warning">
+              <span class="alert-icon">⚖️</span>
+              <div class="alert-content">
+                <div class="alert-title">Aviso de Responsabilidad de Confianza</div>
+                <div class="alert-text">
+                  Las estrellas de confianza (1-5) son una valoración subjetiva, no una probabilidad matemática. Úsalas como guía cualitativa, no como garantía de resultado.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section 5: Analysis -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">📝</span>
+              <div>
+                <div class="section-title">Análisis</div>
+                <div class="section-subtitle">Tu fundamento profesional</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Resumen Corto (Hook)</label>
+              <input type="text" class="form-input" id="short-reason" maxlength="240" placeholder="ej: Liverpool 8-0-2 en casa vs top 6. City sin KDB. Value @2.50">
+              <div class="char-counter" id="short-counter">0 / 240</div>
+              <p class="form-hint">Min: 50, Max: 240 caracteres. Aparece en listas y feeds. Debe incluir fundamento.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Análisis Completo</label>
+              <textarea class="form-textarea" id="full-analysis" maxlength="5000" placeholder="Estructura sugerida:
+
+1. Situación del Partido
+   [Contexto: liga, posiciones, objetivos]
+
+2. Factores Clave
+   - Factor A: [explicación]
+   - Factor B: [explicación]
+   - Factor C: [explicación]
+
+3. Estadísticas Relevantes
+   [Stats concretas]
+
+4. Por Qué Veo Valor
+   [Explicación del edge]
+
+5. Riesgos a Considerar
+   [Qué podría salir mal]
+
+6. Conclusión
+   [Resumen + recomendación]"></textarea>
+              <div class="char-counter" id="full-counter">0 / 5000</div>
+              <p class="form-hint">Min: 200, Max: 5000 caracteres. Análisis profesional con fundamento objetivo.</p>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Tags</label>
+              <div class="tags-container" id="tags-container">
+                <input type="text" class="tag-input" id="tag-input" placeholder="Agregar tag...">
+              </div>
+              <p class="form-hint">Presiona Enter para agregar. Máximo 10 tags.</p>
+              
+              <div class="available-tags">
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('estadística')">estadística</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('tendencia')">tendencia</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('value')">value</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('lesiones')">lesiones</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('forma_reciente')">forma_reciente</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('head_to_head')">head_to_head</span>
+                <span class="tag-suggestion" onclick="addTagFromSuggestion('insider')">insider</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-section">
+  <div class="section-header">
+    <span class="section-icon">👁️</span>
+    <div>
+      <div class="section-title">Vista previa en feed (Teaser)</div>
+      <div class="section-subtitle">Muestra mínima sin revelar ticket_link</div>
+    </div>
+  </div>
+  <div class="preview-teaser" id="preview-teaser">
+    <div class="preview-title">Evento</div>
+    <div class="preview-item">Tipo: -</div>
+    <div class="preview-item">Costo: -</div>
+    <div class="preview-item">Hook: -</div>
+    <div class="form-hint">(El ticket_link no se muestra aquí)</div>
+  </div>
+</div>
+<!-- Section 6: Publishing Options -->
+          <div class="form-section">
+            <div class="section-header">
+              <span class="section-icon">📤</span>
+              <div>
+                <div class="section-title">Opciones de Publicación</div>
+                <div class="section-subtitle">Cuándo publicar esta señal</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Publicar</label>
+              <div class="radio-group">
+                <div class="radio-item selected" onclick="selectPublishOption(this, 'now')">
+                  <input type="radio" name="publish_option" value="now" checked>
+                  <div class="radio-content">
+                    <div class="radio-title">Publicar Ahora</div>
+                    <div class="radio-description">La señal será visible inmediatamente según el tipo de acceso</div>
+                  </div>
+                </div>
+
+                <div class="radio-item" onclick="selectPublishOption(this, 'schedule')">
+                  <input type="radio" name="publish_option" value="schedule">
+                  <div class="radio-content">
+                    <div class="radio-title">Programar Publicación</div>
+                    <div class="radio-description">La señal se publicará automáticamente en la fecha/hora seleccionada</div>
+                  </div>
+                </div>
+
+                <div class="radio-item" onclick="selectPublishOption(this, 'draft')">
+                  <input type="radio" name="publish_option" value="draft">
+                  <div class="radio-content">
+                    <div class="radio-title">Guardar como Borrador</div>
+                    <div class="radio-description">No se publicará hasta que lo hagas manualmente desde Mis Señales</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group" id="schedule-datetime-group" style="display: none;">
+              <label class="form-label required">Fecha y Hora de Publicación</label>
+              <input type="datetime-local" class="form-input">
+              <p class="form-hint">La señal se publicará automáticamente en este momento</p>
+            </div>
+            
+            <div class="form-group">
+              <label class="form-label">Estadísticas</label>
+              <div class="checkbox-group">
+                <label class="checkbox-item">
+                  <input type="checkbox" id="tracked-signal" checked>
+                  <span class="checkmark"></span>
+                  <div class="checkbox-content">
+                    <div class="checkbox-title">Señal Trackeada</div>
+                    <div class="checkbox-description">Incluir en estadísticas públicas (ROI, hit rate, ranking)</div>
+                  </div>
+                </label>
+              </div>
+              <p class="form-hint">Las señales no trackeadas no afectan tu ranking ni estadísticas públicas</p>
+            </div>
+          </div>
+
+          <div class="alert alert-info">
+            <span class="alert-icon">🔄</span>
+            <div class="alert-content">
+              <div class="alert-title">Ciclo de Vida de la Señal</div>
+              <div class="alert-text">
+                Draft → Scheduled → Published → <strong>Locked</strong> → Settling → Settled → Archived. El bloqueo (<strong>LOCKED</strong>) ocurre al iniciar el evento. En COMBO/SYSTEM se toma el <strong>primer inicio</strong> entre los picks.
+              </div>
+            </div>
+          </div>
+
+          <!-- Form Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" id="btn-save-draft" onclick="saveDraft()">
+              <span>💾</span>
+              <span>Guardar Borrador</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-publish-now" onclick="publishNow()">
+              <span>📤</span>
+              <span>Publicar Ahora</span>
+            </button>
+            <button type="button" class="btn btn-primary" id="btn-schedule" onclick="schedulePublication()">
+              <span>🗓️</span>
+              <span>Programar</span>
+            </button>
+            <!-- Campos ocultos para estado y published_odds -->
+            <input type="hidden" id="signal-status" value="draft" />
+            <input type="hidden" id="published-odds" value="" />
+            <input type="hidden" id="settlement-rule-value" value="" />
+            <input type="hidden" id="normalized-stake-value" value="1" />
+            <input type="hidden" id="closing-odds-value" value="" />
+            <input type="hidden" id="tracked-signal-value" value="true" />
+            <!-- Campos para pricing lock (se llenan al publicar) -->
+            <input type="hidden" id="credit-cost-locked" value="" />
+            <input type="hidden" id="price-locked-at" value="" />
+            <!-- Campo para ticket_link (se bloquea al publicar) -->
+            <input type="hidden" id="ticket-link-locked" value="" />
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Access Type Selection
+    function selectAccessType(element, type) {
+      document.querySelectorAll('.radio-item').forEach(item => {
+        if (item.closest('.form-section').querySelector('.section-title').textContent.includes('Tipo de Acceso')) {
+          item.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+      element.querySelector('input').checked = true;
+      
+      // Show/hide credits cost
+      const creditsGroup = document.getElementById('credits-cost-group');
+      creditsGroup.style.display = type === 'credits' ? 'block' : 'none';
+      
+      // Show/hide subscription scope
+      const subscriptionGroup = document.getElementById('subscription-scope-group');
+      if (subscriptionGroup) {
+        subscriptionGroup.style.display = type === 'subscription' ? 'block' : 'none';
+      }
+
+      // Show/hide pricing lock note
+      const pricingNote = document.getElementById('pricing-lock-note');
+      if (pricingNote) {
+        pricingNote.style.display = type === 'credits' ? 'block' : 'none';
+      }
+
+      updateTeaserPreview();
+    }
+
+    // Confidence Selection
+    const confidenceHints = {
+      1: '⭐ Baja confianza - Stake sugerido: 0.5-1u',
+      2: '⭐⭐ Confianza media-baja - Stake sugerido: 1-1.5u',
+      3: '⭐⭐⭐ Confianza media - Stake sugerido: 1.5-2u',
+      4: '⭐⭐⭐⭐ Alta confianza - Stake sugerido: 2-3u',
+      5: '⭐⭐⭐⭐⭐ Máxima confianza - Stake sugerido: 3-5u'
+    };
+
+    function selectConfidence(element, level) {
+      document.querySelectorAll('.star-btn').forEach(btn => btn.classList.remove('selected'));
+      element.classList.add('selected');
+      document.getElementById('confidence-hint').textContent = confidenceHints[level];
+    }
+
+    // Publish Option Selection
+    function selectPublishOption(element, option) {
+      document.querySelectorAll('.radio-item').forEach(item => {
+        if (item.closest('.form-section').querySelector('.section-title').textContent.includes('Opciones de Publicación')) {
+          item.classList.remove('selected');
+        }
+      });
+      element.classList.add('selected');
+      element.querySelector('input').checked = true;
+      
+      // Show/hide schedule datetime
+      const scheduleGroup = document.getElementById('schedule-datetime-group');
+      scheduleGroup.style.display = option === 'schedule' ? 'block' : 'none';
+    }
+
+    // Character Counters
+    const shortReasonInput = document.getElementById('short-reason');
+    const fullAnalysisInput = document.getElementById('full-analysis');
+    const shortCounter = document.getElementById('short-counter');
+    const fullCounter = document.getElementById('full-counter');
+
+    shortReasonInput.addEventListener('input', (e) => {
+      const length = e.target.value.length;
+      shortCounter.textContent = `${length} / 240`;
+      shortCounter.className = 'char-counter';
+      if (length > 220) shortCounter.classList.add('warning');
+      if (length === 240) shortCounter.classList.add('error');
+    });
+
+    fullAnalysisInput.addEventListener('input', (e) => {
+      const length = e.target.value.length;
+      fullCounter.textContent = `${length} / 5000`;
+      fullCounter.className = 'char-counter';
+      if (length > 4500) fullCounter.classList.add('warning');
+      if (length === 5000) fullCounter.classList.add('error');
+    });
+
+    // Tags System
+    const tagInput = document.getElementById('tag-input');
+    const tagsContainer = document.getElementById('tags-container');
+    const tags = [];
+
+    tagInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        addTag(tagInput.value.trim());
+        tagInput.value = '';
+      }
+    });
+
+    function addTag(tagText) {
+      if (!tagText || tags.length >= 10) return;
+      if (tags.includes(tagText)) return;
+      
+      tags.push(tagText);
+      
+      const tag = document.createElement('div');
+      tag.className = 'tag';
+      tag.innerHTML = `
+        <span>${tagText}</span>
+        <span class="tag-remove" onclick="removeTag('${tagText}')">&times;</span>
+      `;
+      
+      tagsContainer.insertBefore(tag, tagInput);
+    }
+
+    function addTagFromSuggestion(tagText) {
+      addTag(tagText);
+    }
+
+    function removeTag(tagText) {
+      const index = tags.indexOf(tagText);
+      if (index > -1) {
+        tags.splice(index, 1);
+      }
+      
+      const tagElements = tagsContainer.querySelectorAll('.tag');
+      tagElements.forEach(tag => {
+        if (tag.textContent.includes(tagText)) {
+          tag.remove();
+        }
+      });
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    // Mobile menu button
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768) {
+        const btn = document.createElement('button');
+        btn.className = 'mobile-menu-btn';
+        btn.setAttribute('aria-label', 'Abrir menú');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; margin-right: 12px;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.insertBefore(btn, topbar.firstChild);
+      }
+    });
+
+    console.log('Create Signal loaded');
+
+    // ====== Señal Single vs Combinada ======
+    let legs = [];
+
+    function selectSignalType(element, type) {
+      const group = element.closest('.radio-group');
+      group.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+      element.classList.add('selected');
+      element.querySelector('input').checked = true;
+
+      const singleBlock = document.getElementById('single-block');
+      const comboBlock = document.getElementById('combo-block');
+      if (!singleBlock || !comboBlock) return;
+
+      singleBlock.style.display = type === 'single' ? 'block' : 'none';
+      comboBlock.style.display = type === 'combo' ? 'block' : 'none';
+
+      if (type === 'combo' && legs.length === 0) {
+        addLeg();
+      }
+    }
+
+    function addLeg() {
+      legs.push({ market: '', selection: '', odds: 1.0, line: '', bookmaker: '' });
+      renderLegs();
+    }
+
+    function removeLeg(index) {
+      legs.splice(index, 1);
+      renderLegs();
+    }
+
+    function updateLeg(index, field, value) {
+      if (!legs[index]) return;
+      if (field === 'odds') {
+        const v = parseFloat(value);
+        legs[index][field] = isNaN(v) ? 1.0 : Math.max(1.0, v);
+      } else {
+        legs[index][field] = value;
+      }
+      recalcTotalOdds();
+    }
+
+    function renderLegs() {
+      const body = document.getElementById('legs-body');
+      if (!body) return;
+      body.innerHTML = legs.map((leg, idx) => `
+        <tr>
+          <td>
+            <select onchange="updateLeg(${idx}, 'market', this.value)">
+              <option value="">Seleccionar</option>
+              <option value="moneyline" ${leg.market==='moneyline'?'selected':''}>Moneyline (1X2)</option>
+              <option value="totals" ${leg.market==='totals'?'selected':''}>Totals (Over/Under)</option>
+              <option value="handicap" ${leg.market==='handicap'?'selected':''}>Handicap (AH)</option>
+              <option value="btts" ${leg.market==='btts'?'selected':''}>BTTS</option>
+              <option value="props" ${leg.market==='props'?'selected':''}>Props</option>
+            </select>
+          </td>
+          <td>
+            ${leg.market==='props' ? 
+              `<input type="text" value="${leg.selection}" oninput="updateLeg(${idx}, 'selection', this.value)" placeholder="ej: Player Points Over">` :
+              `<select onchange="updateLeg(${idx}, 'selection', this.value)">${getSelectionOptionsHTML(leg.market, leg.selection)}</select>`
+            }
+          </td>
+          <td>
+            <input type="number" step="0.01" min="1.00" value="${leg.odds}" oninput="updateLeg(${idx}, 'odds', this.value)" placeholder="2.50">
+          </td>
+          <td>
+            <input type="number" step="0.5" value="${leg.line}" oninput="updateLeg(${idx}, 'line', this.value)" placeholder="2.5">
+          </td>
+          <td>
+            <select onchange="updateLeg(${idx}, 'bookmaker', this.value)">
+              <option value="">Seleccionar</option>
+              <option value="bet365" ${leg.bookmaker==='bet365'?'selected':''}>Bet365</option>
+              <option value="pinnacle" ${leg.bookmaker==='pinnacle'?'selected':''}>Pinnacle</option>
+              <option value="william_hill" ${leg.bookmaker==='william_hill'?'selected':''}>William Hill</option>
+              <option value="bovada" ${leg.bookmaker==='bovada'?'selected':''}>Bovada</option>
+              <option value="888sport" ${leg.bookmaker==='888sport'?'selected':''}>888sport</option>
+            </select>
+          </td>
+          <td>
+            <button type="button" class="btn btn-outline" onclick="removeLeg(${idx})">🗑️ Eliminar</button>
+          </td>
+        </tr>
+      `).join('');
+      recalcTotalOdds();
+    }
+
+    function recalcTotalOdds() {
+      const totalInput = document.getElementById('total-odds');
+      if (!totalInput) return;
+      if (totalInput.hasAttribute('readonly')) {
+        const total = legs.reduce((acc, l) => acc * (parseFloat(l.odds) || 1.0), 1.0);
+        totalInput.value = total.toFixed(2);
+      }
+    }
+
+    function toggleManualTotal() {
+      const totalInput = document.getElementById('total-odds');
+      if (!totalInput) return;
+      const manual = document.getElementById('edit-total-toggle').checked;
+      if (manual) {
+        totalInput.removeAttribute('readonly');
+      } else {
+        totalInput.setAttribute('readonly', 'readonly');
+        recalcTotalOdds();
+      }
+    }
+
+    // ====== Publicación y estado ======
+    function updatePublishButtons(option) {
+      const btnPublish = document.getElementById('btn-publish-now');
+      const btnSchedule = document.getElementById('btn-schedule');
+      const btnDraft = document.getElementById('btn-save-draft');
+      if (!btnPublish || !btnSchedule || !btnDraft) return;
+      if (option === 'now') {
+        btnPublish.style.display = 'inline-block';
+        btnPublish.disabled = false;
+        btnSchedule.style.display = 'none';
+        btnSchedule.disabled = true;
+        btnDraft.style.display = 'inline-block';
+        btnDraft.disabled = false;
+      } else if (option === 'schedule') {
+        btnPublish.style.display = 'none';
+        btnPublish.disabled = true;
+        btnSchedule.style.display = 'inline-block';
+        btnSchedule.disabled = false;
+        btnDraft.style.display = 'inline-block';
+        btnDraft.disabled = false;
+      } else if (option === 'draft') {
+        btnPublish.style.display = 'none';
+        btnPublish.disabled = true;
+        btnSchedule.style.display = 'none';
+        btnSchedule.disabled = true;
+        btnDraft.style.display = 'inline-block';
+        btnDraft.disabled = false;
+      }
+    }
+
+    function selectPublishOption(element, option) {
+      const group = element.closest('.radio-group');
+      group.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+      element.classList.add('selected');
+      element.querySelector('input').checked = true;
+      const scheduleGroup = document.getElementById('schedule-datetime-group');
+      if (!scheduleGroup) return;
+      scheduleGroup.style.display = option === 'schedule' ? 'block' : 'none';
+      updatePublishButtons(option);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const selected = document.querySelector('input[name="publish_option"]:checked')?.value || 'now';
+      updatePublishButtons(selected);
+    });
+
+    function computePublishedOdds() {
+      const singleBlock = document.getElementById('single-block');
+      const comboBlock = document.getElementById('combo-block');
+      if (singleBlock && singleBlock.style.display !== 'none') {
+        const o = parseFloat(document.getElementById('single-odds')?.value || '0');
+        return isNaN(o) ? '' : o.toFixed(2);
+      }
+      if (comboBlock && comboBlock.style.display !== 'none') {
+        const t = parseFloat(document.getElementById('total-odds')?.value || '0');
+        return isNaN(t) ? '' : t.toFixed(2);
+      }
+      return '';
+    }
+
+    function freezeEditing() {
+      // Deshabilitar inputs clave
+      document.querySelectorAll('input, select, textarea').forEach(el => {
+        el.setAttribute('disabled', 'disabled');
+      });
+      // Mostrar badge LOCKED
+      const header = document.querySelector('.section-title');
+      if (header) {
+        const badge = document.createElement('span');
+        badge.textContent = ' LOCKED';
+        badge.style.cssText = 'background:#222; color:#fff; padding:2px 6px; border-radius:6px; margin-left:8px; font-size:12px;';
+        header.appendChild(badge);
+      }
+      // Mostrar nota de pricing lock
+      const pricingNote = document.getElementById('pricing-lock-note');
+      if (pricingNote) {
+        pricingNote.style.display = 'block';
+        pricingNote.className = 'alert alert-warning';
+        pricingNote.innerHTML = `
+          <span class="alert-icon">🔒</span>
+          <div class="alert-content">
+            <div class="alert-title">Precio y Ticket Link BLOQUEADOS</div>
+            <div class="alert-text">
+              Al estar publicada/locked, el precio en créditos y el ticket link están congelados para mantener la inmutabilidad y prevenir abuso.
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function publishNow() {
+      const eventId = document.getElementById('event-external-id')?.value || '';
+      if (!eventId) {
+        alert('Falta event_external_id (obligatorio para settlement).');
+        return;
+      }
+      const po = computePublishedOdds();
+      if (!po) {
+        alert('Debes ingresar odds válidas antes de publicar.');
+        return;
+      }
+      // Capturar pricing lock y ticket link antes de congelar
+      const creditCost = document.getElementById('credit-cost')?.value || '';
+      const ticketLink = document.getElementById('ticket-link')?.value || '';
+      
+      document.getElementById('published-odds').value = po;
+      document.getElementById('signal-status').value = 'published';
+      
+      // Llenar campos de pricing lock
+      document.getElementById('credit-cost-locked').value = creditCost;
+      document.getElementById('price-locked-at').value = new Date().toISOString();
+      document.getElementById('ticket-link-locked').value = ticketLink;
+      
+      // Congelar edición inmediatamente tras publicar
+      freezeEditing();
+      
+      // Mostrar mensaje de confirmación con pricing lock
+      let lockMsg = 'Señal publicada. published_odds=' + po;
+      if (creditCost) {
+        lockMsg += '\nPrecio bloqueado: ' + creditCost + ' créditos';
+      }
+      if (ticketLink) {
+        lockMsg += '\nTicket link bloqueado (no editable)';
+      }
+      alert(lockMsg);
+    }
+
+    function saveDraft() {
+      document.getElementById('signal-status').value = 'draft';
+      alert('Borrador guardado.');
+    }
+
+    function schedulePublication() {
+      const dt = document.querySelector('#schedule-datetime-group input[type="datetime-local"]')?.value || '';
+      const eventId = document.getElementById('event-external-id')?.value || '';
+      if (!dt) {
+        alert('Debes seleccionar fecha/hora de publicación.');
+        return;
+      }
+      if (!eventId) {
+        alert('Falta event_external_id (obligatorio para settlement).');
+        return;
+      }
+      document.getElementById('signal-status').value = 'scheduled';
+      // No se fija published_odds hasta el momento de publicación efectiva
+      alert('Publicación programada para: ' + dt);
+    }
+
+    // ====== Countdown de cutoff ======
+    let cutoffTimer = null;
+    function updateCutoffCountdown() {
+      const eventInput = document.getElementById('event-datetime');
+      const tz = document.getElementById('event-timezone').value;
+      if (!eventInput || !eventInput.value || !tz) {
+        document.getElementById('cutoff-visual').style.display = 'none';
+        return;
+      }
+      const eventLocal = new Date(eventInput.value);
+      // Cutoff 10 minutos antes
+      const cutoffMs = eventLocal.getTime() - 10 * 60 * 1000;
+      const now = Date.now();
+      let diff = cutoffMs - now;
+      if (diff <= 0) {
+        document.getElementById('cutoff-countdown').textContent = '00:00:00';
+        freezeEditing();
+        return;
+      }
+      document.getElementById('cutoff-visual').style.display = 'block';
+      const h = Math.floor(diff / 3600000);
+      diff %= 3600000;
+      const m = Math.floor(diff / 60000);
+      diff %= 60000;
+      const s = Math.floor(diff / 1000);
+      const pad = n => String(n).padStart(2, '0');
+      document.getElementById('cutoff-countdown').textContent = `${pad(h)}:${pad(m)}:${pad(s)}`;
+    }
+
+    function startCutoffTimer() {
+      if (cutoffTimer) clearInterval(cutoffTimer);
+      cutoffTimer = setInterval(updateCutoffCountdown, 1000);
+      updateCutoffCountdown();
+    }
+
+    document.getElementById('event-datetime')?.addEventListener('change', startCutoffTimer);
+    document.getElementById('event-timezone')?.addEventListener('change', startCutoffTimer);
+
+    // ====== Selección normalizada ======
+    function onSingleMarketChange() {
+      const market = document.getElementById('single-market').value;
+      const sel = document.getElementById('single-selection');
+      sel.innerHTML = getSelectionOptionsHTML(market, '');
+    }
+
+    function getSelectionOptionsHTML(market, current) {
+      const opts = [];
+      if (market === 'moneyline') {
+        opts.push(['home', 'Local/Home']);
+        opts.push(['draw', 'Empate/Draw']);
+        opts.push(['away', 'Visitante/Away']);
+      } else if (market === 'totals') {
+        opts.push(['over', 'Over']);
+        opts.push(['under', 'Under']);
+      } else if (market === 'handicap') {
+        opts.push(['home', 'Home AH']);
+        opts.push(['away', 'Away AH']);
+      } else if (market === 'btts') {
+        opts.push(['yes', 'Sí/Yes']);
+        opts.push(['no', 'No']);
+      } else {
+        // props y otros no normalizados
+        return `<option value="">Seleccionar</option>`;
+      }
+      return ['<option value="">Seleccionar</option>'].concat(
+        opts.map(([val, label]) => `<option value="${val}" ${current===val?'selected':''}>${label}</option>`)
+      ).join('');
+    }
+
+    function updateLegSelectionOptions(idx, market) {
+      // Re-render solo la celda de selección para el leg indicado
+      renderLegs();
+    }
+
+    function selectSubscriptionScope(element, scope) {
+      const group = element.closest('.radio-group');
+      group.querySelectorAll('.radio-item').forEach(i => i.classList.remove('selected'));
+      element.classList.add('selected');
+      element.querySelector('input').checked = true;
+      updateTeaserPreview();
+    }
+
+    // ====== Vista previa del Teaser ======
+    function getAccessType() {
+      const r = document.querySelector('input[name="access_type"]:checked');
+      return r ? r.value : 'free';
+    }
+
+    function getSubscriptionScope() {
+      const r = document.querySelector('input[name="subscription_scope"]:checked');
+      return r ? r.value : 'general';
+    }
+
+    function updateTeaserPreview() {
+      const sport = document.getElementById('sport')?.value || '';
+      const league = document.getElementById('league')?.value || '';
+      const teamA = document.getElementById('team-a')?.value || '';
+      const teamB = document.getElementById('team-b')?.value || '';
+      const betType = document.getElementById('bet-type')?.value || '';
+      const hook = document.getElementById('short-reason')?.value || '';
+      const access = getAccessType();
+      const cost = document.getElementById('credit-cost')?.value || '';
+
+      const titleParts = [];
+      if (teamA || teamB) titleParts.push(`${teamA || ''}${teamA && teamB ? ' vs ' : ''}${teamB || ''}`);
+      if (league) titleParts.push(league);
+      if (sport) titleParts.push(sport === 'football' ? 'Fútbol' : sport);
+      const title = titleParts.join(' · ');
+
+      const typeLabel = betType === 'live' ? 'Live' : 'Prematch';
+      let costLabel = 'FREE';
+      if (access === 'credits') costLabel = `${cost || '-'} créditos`;
+      if (access === 'subscription') costLabel = `Suscripción (${getSubscriptionScope() === 'personal' ? 'Personal' : 'General'})`;
+
+      const container = document.getElementById('preview-teaser');
+      if (!container) return;
+      container.querySelector('.preview-title').textContent = title || 'Evento';
+      container.querySelectorAll('.preview-item')[0].textContent = `Tipo: ${typeLabel}`;
+      container.querySelectorAll('.preview-item')[1].textContent = `Costo: ${costLabel}`;
+      container.querySelectorAll('.preview-item')[2].textContent = `Hook: ${hook || '-'}`;
+    }
+
+    // Listeners para actualizar la vista previa
+    ['sport','league','team-a','team-b','bet-type','short-reason','credit-cost'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', updateTeaserPreview);
+    });
+
+    // Handlers para nuevos campos de formulario
+    document.getElementById('settlement-rule')?.addEventListener('change', function() {
+      document.getElementById('settlement-rule-value').value = this.value;
+    });
+
+    document.getElementById('normalized-stake')?.addEventListener('input', function() {
+      document.getElementById('normalized-stake-value').value = this.value;
+    });
+
+    document.getElementById('tracked-signal')?.addEventListener('change', function() {
+      document.getElementById('tracked-signal-value').value = this.checked ? 'true' : 'false';
+    });
+
+    // Actualizar valores ocultos al publicar
+    const originalPublishNow = publishNow;
+    publishNow = function() {
+      // Actualizar valores de los campos nuevos
+      const settlementRule = document.getElementById('settlement-rule')?.value;
+      if (!settlementRule) {
+        alert('Debes seleccionar una regla de liquidación.');
+        return;
+      }
+      document.getElementById('settlement-rule-value').value = settlementRule;
+      document.getElementById('normalized-stake-value').value = document.getElementById('normalized-stake')?.value || '1';
+      document.getElementById('tracked-signal-value').value = document.getElementById('tracked-signal')?.checked ? 'true' : 'false';
+      
+      // Llamar a la función original
+      originalPublishNow();
+    };
+
+    // Inicializar preview en carga
+    document.addEventListener('DOMContentLoaded', () => {
+      updateTeaserPreview();
+    });
+  </script>
+</body>
+</html>

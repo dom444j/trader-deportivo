@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Guard — Protección Conductual | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-warning: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+      --glow-red: 0 0 20px rgba(255, 68, 68, 0.4);
+      --bg-success: rgba(0,255,148,0.12);
+      --success-green: rgba(0,255,148,0.35);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== STATUS BADGE ========== */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      border: 2px solid;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .status-badge::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0.1;
+      background: currentColor;
+    }
+
+    .status-badge.healthy {
+      background: rgba(0, 255, 148, 0.15);
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+    }
+
+    .status-badge.caution {
+      background: rgba(255, 215, 0, 0.15);
+      border-color: var(--secondary-gold);
+      color: var(--secondary-gold);
+    }
+
+    .status-badge.high-risk {
+      background: rgba(255, 140, 0, 0.15);
+      border-color: var(--secondary-orange);
+      color: var(--secondary-orange);
+    }
+
+    .status-badge.locked {
+      background: rgba(255, 68, 68, 0.15);
+      border-color: var(--secondary-red);
+      color: var(--secondary-red);
+    }
+
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+      50% { box-shadow: 0 0 0 6px transparent; }
+    }
+
+    /* ========== PANEL ========== */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ========== CHECK CARDS ========== */
+    .checks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .check-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .check-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-secondary);
+    }
+
+    .check-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .check-card.healthy::before { background: var(--primary-green); }
+    .check-card.warning::before { background: var(--secondary-gold); }
+    .check-card.restrict::before { background: var(--secondary-orange); }
+    .check-card.lock::before { background: var(--secondary-red); }
+
+    .check-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .check-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .check-icon {
+      font-size: 24px;
+    }
+
+    .check-level {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 8px;
+    }
+
+    .check-level.healthy {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .check-level.warning {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .check-level.restrict {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .check-level.lock {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .check-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 12px 0 8px 0;
+    }
+
+    .check-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .check-limit {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    /* ========== ALERTS ========== */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border: 1px solid;
+    }
+
+    .alert-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    .alert.success {
+      background: rgba(0, 255, 148, 0.1);
+      border-color: rgba(0, 255, 148, 0.3);
+      color: var(--primary-green);
+    }
+
+    .alert.warning {
+      background: rgba(255, 215, 0, 0.1);
+      border-color: rgba(255, 215, 0, 0.3);
+      color: var(--secondary-gold);
+    }
+
+    .alert.danger {
+      background: rgba(255, 68, 68, 0.1);
+      border-color: rgba(255, 68, 68, 0.3);
+      color: var(--secondary-red);
+    }
+
+    /* ========== PROGRESS BAR ========== */
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0 8px 0;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+      position: relative;
+    }
+
+    .progress-fill.healthy {
+      background: var(--gradient-success);
+    }
+
+    .progress-fill.warning {
+      background: var(--gradient-warning);
+    }
+
+    .progress-fill.danger {
+      background: var(--gradient-danger);
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    /* ========== COOLDOWN SCREEN ========== */
+    .cooldown-screen {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--secondary-red);
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cooldown-screen::before {
+      content: '';
+      position: absolute;
+      inset: -100px;
+      background: radial-gradient(circle, rgba(255, 68, 68, 0.1), transparent);
+      animation: glowPulse 3s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 0.6; }
+    }
+
+    .cooldown-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .cooldown-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--secondary-red);
+      margin-bottom: 12px;
+    }
+
+    .cooldown-timer {
+      font-size: 48px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+      margin: 20px 0;
+    }
+
+    .cooldown-message {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 500px;
+      margin: 0 auto 24px;
+    }
+
+    .cooldown-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ========== TILT INDICATOR ========== */
+    .tilt-indicator {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .tilt-score {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .tilt-gauge {
+      flex: 1;
+      height: 12px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tilt-gauge-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary-green), var(--secondary-gold), var(--secondary-red));
+      border-radius: 6px;
+      transition: width 0.3s ease;
+    }
+
+    .tilt-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      min-width: 60px;
+      text-align: right;
+    }
+
+    .tilt-signals {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tilt-signal {
+      padding: 4px 10px;
+      background: rgba(255, 140, 0, 0.15);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--secondary-orange);
+    }
+
+    /* ========== MONO ========== */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .hamburger-menu {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+      z-index: 110;
+    }
+
+    .hamburger-menu span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      margin: 5px 0;
+      transition: all 0.3s ease;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+      }
+
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+
+      .hamburger-menu {
+        display: block;
+      }
+      
+      .checks-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/smart-portfolio" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span>Smart Portfolio</span>
+          </a>
+          <a href="/trader-master" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>Trader Master</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item active">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a href="/premium/plans" class="nav-item">
+            <span class="nav-icon">💎</span>
+            <span>Planes</span>
+          </a>
+          <a href="/premium/credits" class="nav-item">
+            <span class="nav-icon">🪙</span>
+            <span>Créditos</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <button class="hamburger-menu" id="hamburger-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+          <h1 class="page-title">🚨 Risk Guard — Protección de Capital</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Capital & Control</span>
+            <span>›</span>
+            <span>Risk Guard</span>
+          </div>
+        </div>
+        <div>
+          <div class="status-badge caution">
+            <span class="status-dot"></span>
+            <span>CAUTION</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Concept Alert -->
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div>
+            <strong>Risk Guard no es un sistema de control — es un sistema de entrenamiento conductual.</strong><br>
+            Este módulo evalúa tu comportamiento operativo y te protege de auto-destrucción, ayudándote a desarrollar disciplina profesional.
+          </div>
+        </div>
+
+        <!-- Active Warning Alert -->
+        <div class="alert warning">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            <strong>Advertencia Activa:</strong> Has registrado 9 picks hoy. Los traders rentables promedian 3-5 picks diarios de alta convicción. ¿Continúas?
+            <div style="margin-top: 12px;">
+              <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px; margin-right: 8px;">
+                Entendido
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Capital Sync -->
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">
+                        <span>🔗</span>
+                        <span>Sincronización de Capital</span>
+                    </div>
+                    <div class="panel-subtitle">Conectando tu plan con la realidad del broker</div>
+                </div>
+            </div>
+            <div class="alert info" style="margin-bottom: 20px;">
+                <span class="alert-icon">💡</span>
+                <div>
+                    <strong>Clave de Supervivencia:</strong> Risk Guard ajusta tu riesgo basándose en tu capital real. Si tu balance en el broker se desvía significativamente de tu plan, reduciremos el stake permitido para protegerte.
+                </div>
+            </div>
+            <div class="checks-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <div class="check-card healthy">
+                    <div class="check-header">
+                        <div class="check-name">Bankroll Plan</div>
+                    </div>
+                    <div class="check-value" style="color: var(--text-primary);">$1,000.00</div>
+                    <div class="check-description">Tu capital objetivo declarado.</div>
+                </div>
+                <div class="check-card warning">
+                    <div class="check-header">
+                        <div class="check-name">Broker Balance (Real)</div>
+                    </div>
+                    <div class="check-value" style="color: var(--secondary-gold);">$420.00</div>
+                    <div class="check-description">Balance actual en Cloudbet.</div>
+                </div>
+                <div class="check-card lock">
+                    <div class="check-header">
+                        <div class="check-name">Desviación</div>
+                    </div>
+                    <div class="check-value" style="color: var(--secondary-red);">-58%</div>
+                    <div class="check-description">Diferencia crítica detectada.</div>
+                </div>
+                <div class="check-card lock">
+                    <div class="check-header">
+                        <div class="check-name">Estado</div>
+                    </div>
+                    <div class="check-value" style="color: var(--secondary-red);">DESALINEADO</div>
+                    <div class="check-description">Stake máximo reducido.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Risk Checks Grid -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <span>✅</span>
+                <span>Evaluación de Riesgos</span>
+              </div>
+              <div class="panel-subtitle">Múltiples dimensiones conductuales y de capital</div>
+            </div>
+          </div>
+
+          <div class="checks-grid">
+            <!-- Check 1: Overtrading -->
+            <div class="check-card warning">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Overtrading</div>
+                  <div class="check-level warning">
+                    <span>⚠️</span>
+                    <span>WARNING</span>
+                  </div>
+                </div>
+                <div class="check-icon">📊</div>
+              </div>
+              <div class="check-value" style="color: var(--secondary-gold);">9 picks</div>
+              <div class="progress-bar">
+                <div class="progress-fill warning" style="width: 75%;"></div>
+              </div>
+              <div class="check-description">
+                Has creado 9 picks hoy de un límite de 12
+              </div>
+              <div class="check-limit">
+                Límite diario: 12 picks • Próximo nivel: RESTRICT a los 13
+              </div>
+            </div>
+
+            <!-- Check 2: Exposure -->
+            <div class="check-card healthy">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Exposure</div>
+                  <div class="check-level healthy">
+                    <span>✅</span>
+                    <span>HEALTHY</span>
+                  </div>
+                </div>
+                <div class="check-icon">💼</div>
+              </div>
+              <div class="check-value" style="color: var(--primary-green);">12%</div>
+              <div class="progress-bar">
+                <div class="progress-fill healthy" style="width: 30%;"></div>
+              </div>
+              <div class="check-description">
+                $120 en juego de $1,000 bankroll
+              </div>
+              <div class="check-limit">
+                Límite saludable: <25% • Límite crítico: 60%
+              </div>
+            </div>
+
+            <!-- Check 3: Drawdown -->
+            <div class="check-card healthy">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Drawdown</div>
+                  <div class="check-level healthy">
+                    <span>✅</span>
+                    <span>HEALTHY</span>
+                  </div>
+                </div>
+                <div class="check-icon">📉</div>
+              </div>
+              <div class="check-value" style="color: var(--primary-green);">8.0%</div>
+              <div class="progress-bar">
+                <div class="progress-fill healthy" style="width: 40%;"></div>
+              </div>
+              <div class="check-description">
+                Desde peak de $1,250 a $1,150
+              </div>
+              <div class="check-limit">
+                Límite configurado: 20% • Bloqueo automático: 30%
+              </div>
+            </div>
+
+            <!-- Check 4: Stake Validation -->
+            <div class="check-card healthy">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Stake Validation</div>
+                  <div class="check-level healthy">
+                    <span>✅</span>
+                    <span>HEALTHY</span>
+                  </div>
+                </div>
+                <div class="check-icon">💵</div>
+              </div>
+              <div class="check-value" style="color: var(--primary-green);">Dentro de límites</div>
+              <div class="check-description">
+                Último stake: $25 (recomendado: $23)
+              </div>
+              <div class="check-limit">
+                Máximo permitido: $34.50 (+50% del recomendado)
+              </div>
+            </div>
+
+            <!-- Check 5: Tilt Detection -->
+            <div class="check-card healthy">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Tilt Detection</div>
+                  <div class="check-level healthy">
+                    <span>✅</span>
+                    <span>HEALTHY</span>
+                  </div>
+                </div>
+                <div class="check-icon">🧠</div>
+              </div>
+              <div class="check-value" style="color: var(--primary-green);">Score: 15</div>
+              <div class="progress-bar">
+                <div class="progress-fill healthy" style="width: 15%;"></div>
+              </div>
+              <div class="check-description">
+                Sin patrones emocionales detectados
+              </div>
+              <div class="check-limit">
+                Restricción: score ≥40 • Bloqueo: score ≥70
+              </div>
+            </div>
+
+            <!-- Check 6: Selective Execution -->
+            <div class="check-card healthy">
+              <div class="check-header">
+                <div>
+                  <div class="check-name">Execution Ratio</div>
+                  <div class="check-level healthy">
+                    <span>✅</span>
+                    <span>HEALTHY</span>
+                  </div>
+                </div>
+                <div class="check-icon">🎯</div>
+              </div>
+              <div class="check-value" style="color: var(--primary-green);">82%</div>
+              <div class="progress-bar">
+                <div class="progress-fill healthy" style="width: 82%;"></div>
+              </div>
+              <div class="check-description">
+                Ejecutas 35 de 42 picks registrados
+              </div>
+              <div class="check-limit">
+                Objetivo: >75% • Alerta educativa si <35%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Streak Behavior Monitor -->
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">
+                        <span>🔥</span>
+                        <span>Monitor de Rachas (Psicología)</span>
+                    </div>
+                    <div class="panel-subtitle">Detectando euforia y agresión post-resultado</div>
+                </div>
+            </div>
+            <div class="checks-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <!-- After-Loss Aggression -->
+                <div class="check-card warning">
+                    <div class="check-header">
+                        <div class="check-name">Agresión Post-Pérdida</div>
+                        <div class="check-level warning"><span>⚠️</span><span>ACTIVO</span></div>
+                    </div>
+                    <div class="check-value" style="color: var(--secondary-gold);">3 Derrotas</div>
+                    <div class="check-description">Racha de 3 pérdidas consecutivas detectada.</div>
+                    <div class="check-limit">Acción: Stake máximo reducido en 20%.</div>
+                </div>
+                <!-- After-Win Euphoria -->
+                <div class="check-card healthy">
+                    <div class="check-header">
+                        <div class="check-name">Euforia Post-Victoria</div>
+                         <div class="check-level healthy"><span>✅</span><span>NORMAL</span></div>
+                    </div>
+                    <div class="check-value">1 Victoria</div>
+                    <div class="check-description">Comportamiento normal tras ganar.</div>
+                    <div class="check-limit">Alerta a las 3 victorias seguidas.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Time & Quality Risk -->
+        <div class="panel">
+            <div class="panel-header">
+                <div>
+                    <div class="panel-title">
+                        <span>🕰️</span>
+                        <span>Riesgo por Horario y Calidad</span>
+                    </div>
+                    <div class="panel-subtitle">Ajustes basados en tu contexto operativo</div>
+                </div>
+            </div>
+            <div class="checks-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <!-- Time-of-Day Risk -->
+                <div class="check-card restrict">
+                    <div class="check-header">
+                        <div class="check-name">Riesgo Horario (IA)</div>
+                        <div class="check-level restrict"><span>🚫</span><span>RESTRINGIDO</span></div>
+                    </div>
+                    <div class="check-value" style="color: var(--secondary-orange);">2:15 AM</div>
+                    <div class="check-description">Operando en tu zona de bajo rendimiento histórico.</div>
+                    <div class="check-limit">Acción: Stake máximo reducido en 30%.</div>
+                </div>
+                <!-- Quality-Weighted Risk -->
+                <div class="check-card healthy">
+                    <div class="check-header">
+                        <div class="check-name">Calidad de Análisis</div>
+                         <div class="check-level healthy"><span>✅</span><span>ALTA</span></div>
+                    </div>
+                    <div class="check-value">Score: 8.5/10</div>
+                    <div class="check-description">Picks bien fundamentados desde Watchlist.</div>
+                    <div class="check-limit">Beneficio: +10% de flexibilidad en límites.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tilt Indicator (cuando hay score) -->
+        <div class="panel" style="display: none;" id="tilt-panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <span>🧠</span>
+                <span>Análisis de Comportamiento</span>
+              </div>
+              <div class="panel-subtitle">Detección de patrones emocionales</div>
+            </div>
+          </div>
+
+          <div class="tilt-indicator">
+            <div class="tilt-score">
+              <div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Tilt Score</div>
+              </div>
+              <div class="tilt-gauge">
+                <div class="tilt-gauge-fill" style="width: 35%;"></div>
+              </div>
+              <div class="tilt-value" style="color: var(--secondary-gold);">35</div>
+            </div>
+
+            <div class="tilt-signals">
+              <div class="tilt-signal">
+                <span>⚠️</span>
+                <span>Stake escalado (+40%)</span>
+              </div>
+              <div class="tilt-signal">
+                <span>⏰</span>
+                <span>Horario anómalo (2:15 AM)</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-primary);">
+              <div style="font-size: 13px; color: var(--text-secondary);">
+                <strong>Recomendación:</strong> Detectamos señales tempranas de decisiones impulsivas. Considera una pausa de 30 minutos para resetear enfoque.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Events -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <span>📋</span>
+                <span>Eventos Recientes</span>
+              </div>
+              <div class="panel-subtitle">Historial de intervenciones</div>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <!-- Event 1 -->
+            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 3px solid var(--secondary-gold);">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 700; color: var(--secondary-gold);">
+                    ⚠️ WARNING
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                    Hace 15 minutos
+                  </div>
+                </div>
+                <div style="padding: 4px 10px; background: rgba(255, 215, 0, 0.15); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--secondary-gold);">
+                    OVERTRADING
+                </div>
+              </div>
+              <div style="font-size: 14px; color: var(--text-primary);">
+                Has registrado 9 picks hoy. Los traders rentables priorizan calidad sobre cantidad.
+              </div>
+              <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+                Acción: Advertencia mostrada • Usuario: Confirmó continuar
+              </div>
+            </div>
+
+            <!-- Event 2 -->
+            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 3px solid var(--primary-cyan);">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 700; color: var(--primary-cyan);">
+                    ℹ️ INFO
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                    Hace 2 horas
+                  </div>
+                </div>
+                <div style="padding: 4px 10px; background: rgba(0, 245, 255, 0.15); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--primary-cyan);">
+                    EXPOSURE
+                </div>
+              </div>
+              <div style="font-size: 14px; color: var(--text-primary);">
+                15% de tu bankroll en juego. Nivel saludable.
+              </div>
+            </div>
+
+            <!-- Event 3 -->
+            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 3px solid var(--primary-green);">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                <div>
+                  <div style="font-size: 14px; font-weight: 700; color: var(--primary-green);">
+                    ✅ SUCCESS
+                  </div>
+                  <div style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">
+                    Ayer
+                  </div>
+                </div>
+                <div style="padding: 4px 10px; background: rgba(0, 255, 148, 0.15); border-radius: 6px; font-size: 11px; font-weight: 600; color: var(--primary-green);">
+                    DRAWDOWN
+                </div>
+              </div>
+              <div style="font-size: 14px; color: var(--text-primary);">
+                Drawdown recuperado de 12% a 8%. Buen trabajo manteniendo disciplina.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cooldown Example (Hidden by default) -->
+        <div class="cooldown-screen" style="display: none;" id="cooldown-screen">
+          <div class="cooldown-icon">🔒</div>
+          <div class="cooldown-title">Pausa de Protección Activa</div>
+          <div class="cooldown-timer" id="cooldown-timer">23:15:42</div>
+          <div class="cooldown-message">
+            <strong>Motivo:</strong> Drawdown severo (22%)<br><br>
+            Esta pausa protege tu capital y te ayuda a resetear tu enfoque. Podrás operar mañana a las 14:30.
+          </div>
+          <div style="margin: 24px 0; padding: 20px; background: rgba(0, 245, 255, 0.05); border-radius: 10px; border: 1px solid rgba(0, 245, 255, 0.2);">
+            <div style="font-size: 15px; font-weight: 600; margin-bottom: 12px;">Mientras tanto puedes:</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; text-align: left;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>📊</span>
+                <span>Analizar el mercado</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>📈</span>
+                <span>Revisar historial</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>🎯</span>
+                <span>Estudiar picks</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>📚</span>
+                <span>Ver estadísticas</span>
+              </div>
+            </div>
+          </div>
+          <div class="cooldown-actions">
+            <button class="btn btn-outline">
+              <span>📊</span>
+              <span>Ver Mis Estadísticas</span>
+            </button>
+            <button class="btn btn-outline">
+              <span>📖</span>
+              <span>Ver Journal</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Cold Start Badge (for new users) -->
+        <div class="alert info" style="display: none;" id="cold-start-alert">
+          <span class="alert-icon">🎓</span>
+          <div>
+            <strong>Modo Aprendizaje Activo</strong><br>
+            Estás en los primeros 15 picks. El sistema está aprendiendo tu perfil. Límites reducidos para protección: Máx 5 picks/día • Máx 25% exposure.
+            <div style="margin-top: 8px;">
+              <strong>Progreso:</strong> 7/15 picks completados
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <span>⚙️</span>
+                <span>Configuración de Límites</span>
+              </div>
+              <div class="panel-subtitle">Ajusta tus límites de protección</div>
+            </div>
+            <div>
+              <button class="btn btn-primary">
+                <span>💾</span>
+                <span>Guardar Cambios</span>
+              </button>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+                MAX DRAWDOWN (%)
+              </div>
+              <input type="number" value="20" style="width: 100%; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                Límite de drawdown antes de bloqueo
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+                MAX EXPOSURE (%)
+              </div>
+              <input type="number" value="40" style="width: 100%; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                Máximo capital comprometido
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">
+                PICKS DIARIOS
+              </div>
+              <input type="number" value="12" style="width: 100%; padding: 10px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-family: 'JetBrains Mono', monospace;">
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">
+                Límite de picks por día
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top: 20px; padding: 16px; background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); border-radius: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <span style="font-size: 20px;">⚠️</span>
+              <div style="font-size: 13px; color: var(--text-secondary);">
+                <strong style="color: var(--secondary-gold);">Nota:</strong> Estos límites están sincronizados con tu configuración de Bankroll. Risk Guard hace cumplir los límites definidos por Bankroll.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Demo interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Risk Guard Module loaded');
+
+      // Cooldown timer simulation
+      function updateCooldownTimer() {
+        const timer = document.getElementById('cooldown-timer');
+        if (!timer) return;
+        
+        // Simulate countdown
+        let hours = 23;
+        let minutes = 15;
+        let seconds = 42;
+        
+        setInterval(() => {
+          seconds--;
+          if (seconds < 0) {
+            seconds = 59;
+            minutes--;
+          }
+          if (minutes < 0) {
+            minutes = 59;
+            hours--;
+          }
+          if (hours < 0) {
+            hours = 0;
+            minutes = 0;
+            seconds = 0;
+          }
+          
+          timer.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }, 1000);
+      }
+
+      // Uncomment to test cooldown screen
+      // document.getElementById('cooldown-screen').style.display = 'block';
+      // updateCooldownTimer();
+    });
+
+    function openProfessionalModal(show) {
+      const modal = document.getElementById('professional-modal');
+      if (modal) {
+        if (show) {
+          modal.classList.add('active');
+        } else {
+          modal.classList.remove('active');
+        }
+      }
+    }
+
+    function switchTab(tabId) {
+      // Deactivate all tabs and content
+      document.querySelectorAll('.tab-item').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.style.display = 'none');
+
+      // Activate the selected tab and content
+      document.querySelector(`.tab-item[onclick="switchTab('${tabId}')"]`).classList.add('active');
+      document.getElementById(tabId).style.display = 'block';
+    }
+
+    // Hamburger menu for mobile
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.getElementById('hamburger-menu');
+      const sidebar = document.querySelector('.sidebar');
+
+      if (hamburger && sidebar) {
+        hamburger.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+        });
+      }
+    });
+  </script>
+</body>
+</html>

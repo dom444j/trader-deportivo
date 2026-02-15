@@ -1,0 +1,1943 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Community Hub | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+    .nav-dropdown .nav-dropdown-toggle{display:flex;align-items:center;justify-content:space-between}
+    .nav-dropdown-menu{display:none;padding-left:12px}
+    .nav-dropdown.open .nav-dropdown-menu{display:block}
+    .dropdown-arrow{margin-left:auto;font-size:12px;color:var(--text-muted)}
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-cyan);
+      border-bottom-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.08);
+    }
+
+    /* ========== ALERT ========== */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border: 1px solid;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== PANEL ========== */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ========== LEADERBOARD ========== */
+    .leaderboard-filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .leaderboard-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .leaderboard-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .leaderboard-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .rank {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .rank.top3 {
+      color: var(--secondary-gold);
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .user-badges {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .badge.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--secondary-gold);
+    }
+
+    .badge.silver {
+      background: rgba(192, 192, 192, 0.2);
+      color: #C0C0C0;
+    }
+
+    .badge.platinum {
+      background: rgba(176, 38, 255, 0.2);
+      color: var(--secondary-purple);
+    }
+
+    .badge.bronze {
+      background: rgba(205, 127, 50, 0.2);
+      color: #CD7F32;
+    }
+
+    .score {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+    }
+
+    .stat {
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .stat.positive {
+      color: var(--primary-green);
+    }
+
+    .follow-btn {
+      padding: 8px 16px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 8px;
+      color: var(--bg-primary);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .follow-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 245, 255, 0.4);
+    }
+
+    .follow-btn.following {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+    }
+
+    /* ========== PROFILE CARDS ========== */
+    .profile-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+    }
+
+    .profile-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .profile-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-secondary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .profile-card-header {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .profile-card-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .profile-card-info {
+      flex: 1;
+    }
+
+    .profile-card-name {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .profile-card-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .profile-stat {
+      text-align: center;
+    }
+
+    .profile-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+    }
+
+    .profile-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* ========== POSTS ========== */
+    .post-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .post-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .post-author {
+      display: flex;
+      gap: 12px;
+    }
+
+    .post-author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .post-author-info {
+      flex: 1;
+    }
+
+    .post-author-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .post-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .post-type-badge {
+      padding: 4px 10px;
+      background: rgba(0, 245, 255, 0.15);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-cyan);
+    }
+
+    .post-content {
+      margin: 16px 0;
+      line-height: 1.6;
+      color: var(--text-secondary);
+    }
+
+    .post-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .post-context {
+      background: rgba(0, 245, 255, 0.05);
+      border-left: 3px solid var(--primary-cyan);
+      padding: 12px;
+      margin: 16px 0;
+      border-radius: 6px;
+    }
+
+    .post-context-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .post-context-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-cyan);
+    }
+
+    .post-actions {
+      display: flex;
+      gap: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-primary);
+    }
+
+    .post-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: transparent;
+      border: none;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .post-action:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .post-action.liked {
+      color: var(--secondary-red);
+    }
+
+    /* ========== BADGES SHOWCASE ========== */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+
+    .badge-card {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .badge-card.earned {
+      border-color: var(--secondary-gold);
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.05), rgba(255, 165, 0, 0.05));
+    }
+
+    .badge-card.locked {
+      opacity: 0.4;
+    }
+
+    .badge-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    .badge-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .badge-description {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .badge-tier {
+      display: inline-block;
+      padding: 4px 10px;
+      margin-top: 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .badge-tier.gold {
+      background: rgba(255, 215, 0, 0.2);
+      color: var(--secondary-gold);
+    }
+
+    .badge-tier.silver {
+      background: rgba(192, 192, 192, 0.2);
+      color: #C0C0C0;
+    }
+
+    .badge-tier.platinum {
+      background: rgba(176, 38, 255, 0.2);
+      color: var(--secondary-purple);
+    }
+
+    .badge-tier.bronze {
+      background: rgba(205, 127, 50, 0.2);
+      color: #CD7F32;
+    }
+
+    /* ========== BTN ========== */
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== MONO ========== */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* NEW: pills and filter-select */
+    .pill {
+      display: inline-block;
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+      border: 1px solid var(--border-primary);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 12px;
+      line-height: 1;
+      margin-left: 6px;
+    }
+
+    .filter-select {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      padding: 8px 10px;
+      outline: none;
+      appearance: none;
+    }
+
+    /* ========== INTERNAL SCREENS (Profile & Post Detail) ========== */
+    .profile-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: var(--gradient-premium);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--bg-primary);
+    }
+
+    .profile-alias {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .profile-stats {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .profile-specialization {
+        font-size: 13px;
+        color: var(--text-muted);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .comment-row, .pick-row {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .comment-row:last-child, .pick-row:last-child {
+        border-bottom: none;
+    }
+
+    .post-full .post-title {
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .post-full .post-content {
+        font-size: 16px;
+        line-height: 1.7;
+        color: var(--text-secondary);
+    }
+
+    .nav-badge{margin-left:auto;background:var(--primary-cyan);color:var(--bg-primary);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+    .nav-badge.gold{background:#FFD700;color:#0A0A1A}
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .profile-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .badges-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .leaderboard-table {
+        font-size: 13px;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 10px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/smart-portfolio" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span>Smart Portfolio</span>
+          </a>
+          <a href="/trader-master" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>Trader Master</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">IA & Mejora</div>
+          <a href="/coach" class="nav-item">
+            <span class="nav-icon">🤖</span>
+            <span>Tu Entrenador de Trading</span>
+            <span class="nav-badge gold">NEW</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <div class="nav-dropdown" id="communityDropdown">
+            <a href="#" class="nav-item nav-dropdown-toggle" onclick="toggleDropdown('communityDropdown'); return false;">
+              <span class="nav-icon">👥</span>
+              <span class="nav-label">Comunidad</span>
+              <span class="dropdown-arrow">▼</span>
+            </a>
+            <div class="nav-dropdown-menu" style="display:none; padding-left:12px;">
+              <a href="/community/leaderboard" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Leaderboard</span>
+              </a>
+              <a href="/community/discussions" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Discusiones</span>
+              </a>
+              <a href="/community/following" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Siguiendo</span>
+                <span class="nav-badge">11</span>
+              </a>
+              <a href="/community" class="nav-item active">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Community Hub</span>
+              </a>
+            </div>
+          </div>
+          <a href="/support" class="nav-item">
+            <span class="nav-icon">🎧</span>
+            <span class="nav-label">Soporte</span>
+          </a>
+          <a href="/store" class="nav-item">
+            <span class="nav-icon">💎</span>
+            <span class="nav-label">Tienda</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">🏆 Community Hub</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Comunidad</span>
+            <span>›</span>
+            <span>Community Hub</span>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <button class="btn btn-primary" id="btn-open-publish">
+            <span>📢</span>
+            <span>Publicar Análisis</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Concept Alert -->
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div>
+            <strong>Community Hub es una comunidad contextual al trading deportivo.</strong><br>
+            No es un chat libre — aquí discutimos picks, análisis y estrategias basadas en métricas, no en suerte.
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" data-tab="leaderboard">
+            <span>🏆</span>
+            <span>Leaderboard</span>
+          </button>
+          <button class="tab" data-tab="following">
+            <span>👥</span>
+            <span>Following <span class="pill">11</span></span>
+          </button>
+          <button class="tab" data-tab="discussions">
+            <span>💬</span>
+            <span>Discusiones</span>
+          </button>
+        </div>
+
+        <!-- Tab Content: Leaderboard -->
+        <div id="tab-leaderboard" class="tab-content">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>🏆</span>
+                  <span>Ranking Global — Community Score</span>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                  Basado en consistencia, disciplina y gestión de riesgo — NO en dinero ganado
+                </div>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="leaderboard-filters">
+              <button class="filter-btn active">Global</button>
+              <button class="filter-btn">30 días</button>
+              <button class="filter-btn">7 días</button>
+              <button class="filter-btn">Premier League</button>
+              <button class="filter-btn">Over/Under</button>
+            </div>
+
+            <!-- Leaderboard Table -->
+            <table class="leaderboard-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Trader</th>
+                  <th>Community Score</th>
+                  <th>Win Rate</th>
+                  <th>Picks</th>
+                  <th>ROI</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td><span class="rank top3">🥇 1</span></td>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">JM</div>
+                      <div class="user-details">
+                        <div class="user-name">JoséMartínez</div>
+                        <div class="user-badges">
+                          <span class="badge platinum">⭐ Top 10</span>
+                          <span class="badge gold">🎯 CLV Master</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="score">89.4</span></td>
+                  <td><span class="stat positive">61.2%</span></td>
+                  <td><span class="stat mono">127</span></td>
+                  <td><span class="stat positive">+18.4%</span></td>
+                  <td><button class="follow-btn">Seguir</button></td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                  <td><span class="rank top3">🥈 2</span></td>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">LP</div>
+                      <div class="user-details">
+                        <div class="user-name">LuisPerez</div>
+                        <div class="user-badges">
+                          <span class="badge gold">📊 Consistent</span>
+                          <span class="badge silver">⚡ Streak</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="score">87.1</span></td>
+                  <td><span class="stat positive">58.9%</span></td>
+                  <td><span class="stat mono">95</span></td>
+                  <td><span class="stat positive">+15.2%</span></td>
+                  <td><button class="follow-btn">Seguir</button></td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                  <td><span class="rank top3">🥉 3</span></td>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">MG</div>
+                      <div class="user-details">
+                        <div class="user-name">MaríaGómez</div>
+                        <div class="user-badges">
+                          <span class="badge gold">🏈 O/U Expert</span>
+                          <span class="badge gold">💪 Discipline</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="score">85.7</span></td>
+                  <td><span class="stat positive">59.3%</span></td>
+                  <td><span class="stat mono">104</span></td>
+                  <td><span class="stat positive">+16.8%</span></td>
+                  <td><button class="follow-btn following">Siguiendo</button></td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                  <td><span class="rank">4</span></td>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">AR</div>
+                      <div class="user-details">
+                        <div class="user-name">AlexRodríguez</div>
+                        <div class="user-badges">
+                          <span class="badge silver">⚽ Liga Expert</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="score">83.2</span></td>
+                  <td><span class="stat positive">57.4%</span></td>
+                  <td><span class="stat mono">81</span></td>
+                  <td><span class="stat positive">+13.1%</span></td>
+                  <td><button class="follow-btn">Seguir</button></td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                  <td><span class="rank">5</span></td>
+                  <td>
+                    <div class="user-info">
+                      <div class="user-avatar">CS</div>
+                      <div class="user-details">
+                        <div class="user-name">CarlosSánchez</div>
+                        <div class="user-badges">
+                          <span class="badge bronze">💬 Helper</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><span class="score">81.9</span></td>
+                  <td><span class="stat positive">56.8%</span></td>
+                  <td><span class="stat mono">72</span></td>
+                  <td><span class="stat positive">+12.3%</span></td>
+                  <td><button class="follow-btn">Seguir</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Score Breakdown -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📊</span>
+                <span>Community Score — Componentes</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Consistency (30%)</div>
+                <div style="font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">85.0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Estabilidad de resultados</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">CLV Score (20%)</div>
+                <div style="font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-green);">92.0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Closing line value</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Discipline (20%)</div>
+                <div style="font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold);">88.0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Adherencia al plan</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Sample Size (15%)</div>
+                <div style="font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">90.0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Cantidad significativa</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Risk Mgmt (15%)</div>
+                <div style="font-size: 20px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-green);">94.0</div>
+                <div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Gestión de riesgo</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Following -->
+        <div id="tab-following" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>👥</span>
+                  <span>Traders que Sigues</span>
+                </div>
+                <div style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">
+                  3 de 20 seguidos (Plan Free)
+                </div>
+              </div>
+              <button class="btn btn-outline">
+                <span>⚙️</span>
+                <span>Configurar Notificaciones</span>
+              </button>
+            </div>
+
+            <div class="profile-grid">
+              <!-- Profile Card 1 -->
+              <div class="profile-card">
+                <div class="profile-card-header">
+                  <div class="profile-card-avatar">JM</div>
+                  <div class="profile-card-info">
+                    <div class="profile-card-name">JoséMartínez</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                      <span>🏆 Rank #1</span>
+                      <span style="margin-left: 8px;">📅 90 días activo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-card-stats">
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">89.4</div>
+                    <div class="profile-stat-label">SCORE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">61.2%</div>
+                    <div class="profile-stat-label">WIN RATE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">127</div>
+                    <div class="profile-stat-label">PICKS</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">+18.4%</div>
+                    <div class="profile-stat-label">ROI</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                  <span class="badge platinum">⭐ Top 10</span>
+                  <span class="badge gold">🎯 CLV Master</span>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" style="flex: 1;" data-action="view-profile" data-user="JoseMartinez">Ver Perfil</button>
+                  <button class="btn btn-primary" style="flex: 1;">
+                    <span>✓</span>
+                    <span>Siguiendo</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Profile Card 2 -->
+              <div class="profile-card">
+                <div class="profile-card-header">
+                  <div class="profile-card-avatar">MG</div>
+                  <div class="profile-card-info">
+                    <div class="profile-card-name">MaríaGómez</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                      <span>🏆 Rank #3</span>
+                      <span style="margin-left: 8px;">📅 65 días activo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-card-stats">
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">85.7</div>
+                    <div class="profile-stat-label">SCORE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">59.3%</div>
+                    <div class="profile-stat-label">WIN RATE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">104</div>
+                    <div class="profile-stat-label">PICKS</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">+16.8%</div>
+                    <div class="profile-stat-label">ROI</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                  <span class="badge gold">🏈 O/U Expert</span>
+                  <span class="badge gold">💪 Discipline</span>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" style="flex: 1;" data-action="view-profile" data-user="MariaGomez">Ver Perfil</button>
+                  <button class="btn btn-primary" style="flex: 1;">
+                    <span>✓</span>
+                    <span>Siguiendo</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Profile Card 3 -->
+              <div class="profile-card">
+                <div class="profile-card-header">
+                  <div class="profile-card-avatar">LP</div>
+                  <div class="profile-card-info">
+                    <div class="profile-card-name">LuisPerez</div>
+                    <div style="font-size: 12px; color: var(--text-muted);">
+                      <span>🏆 Rank #2</span>
+                      <span style="margin-left: 8px;">📅 120 días activo</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="profile-card-stats">
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">87.1</div>
+                    <div class="profile-stat-label">SCORE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">58.9%</div>
+                    <div class="profile-stat-label">WIN RATE</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value">95</div>
+                    <div class="profile-stat-label">PICKS</div>
+                  </div>
+                  <div class="profile-stat">
+                    <div class="profile-stat-value" style="color: var(--primary-green);">+15.2%</div>
+                    <div class="profile-stat-label">ROI</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;">
+                  <span class="badge gold">📊 Consistent</span>
+                  <span class="badge silver">⚡ Streak</span>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                  <button class="btn btn-outline" style="flex: 1;" data-action="view-profile" data-user="LuisPerez">Ver Perfil</button>
+                  <button class="btn btn-primary" style="flex: 1;">
+                    <span>✓</span>
+                    <span>Siguiendo</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📰</span>
+                <span>Feed de Actividad</span>
+              </div>
+            </div>
+
+            <div style="font-size: 14px; color: var(--text-secondary); text-align: center; padding: 40px;">
+              Aquí verás los picks y análisis recientes de los traders que sigues
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Discussions -->
+        <div id="tab-discussions" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>💬</span>
+                <span>Discusiones Recientes</span>
+              </div>
+              <button class="btn btn-primary" id="btn-new-discussion">
+                <span>➕</span>
+                <span>Nueva Discusión</span>
+              </button>
+            </div>
+
+            <!-- Filtros contextuales (MVP mock) -->
+            <div class="discussion-filters" style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+              <select id="filter-sport" class="filter-select">
+                <option>Fútbol</option>
+                <option>Basket</option>
+              </select>
+              <select id="filter-league" class="filter-select">
+                <option>Premier League</option>
+                <option>LaLiga</option>
+                <option>NBA</option>
+              </select>
+              <select id="filter-match" class="filter-select">
+                <option>— Partido —</option>
+              </select>
+              <select id="filter-market" class="filter-select">
+                <option>O/U</option>
+                <option>ML</option>
+                <option>Handicap</option>
+              </select>
+              <select id="filter-prelive" class="filter-select">
+                <option>PRE</option>
+                <option>LIVE</option>
+              </select>
+              <select id="filter-order" class="filter-select">
+                <option>Trending</option>
+                <option>Recientes</option>
+              </select>
+            </div>
+
+            <!-- Post 1: Match Discussion -->
+            <div class="post-card">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="post-author-avatar">JM</div>
+                  <div class="post-author-info">
+                    <div class="post-author-name">JoséMartínez</div>
+                    <div class="post-meta">Hace 2 horas • Match Discussion</div>
+                  </div>
+                </div>
+                <div class="post-type-badge">⚽ MATCH</div>
+              </div>
+
+              <div class="post-title">Liverpool vs Man City — Análisis de valor Over 2.5</div>
+
+              <div class="post-context">
+                <div class="post-context-label">PARTIDO</div>
+                <div class="post-context-value">Liverpool vs Manchester City • Premier League</div>
+              </div>
+
+              <div class="post-content">
+                Tras analizar las últimas 5 jornadas, veo valor claro en Over 2.5:<br><br>
+
+                📊 <strong>Datos clave:</strong><br>
+                • Liverpool promedia 2.1 goles en casa (últimos 10)<br>
+                • Man City promedia 1.9 goles como visitante<br>
+                • H2H: 4 de últimos 5 partidos fueron Over 2.5<br>
+                • Ambos equipos con defensa debilitada por lesiones<br><br>
+
+                💰 <strong>Valor:</strong><br>
+                Cuota actual: 1.75<br>
+                Closing line histórico: 1.65<br>
+                CLV potencial: <strong>+6%</strong>
+              </div>
+
+              <div class="post-actions">
+                <button class="post-action liked" data-action="like">
+                  <span>❤️</span>
+                  <span>24</span>
+                </button>
+                <button class="post-action" data-action="comment">
+                  <span>💬</span>
+                  <span>8 comentarios</span>
+                </button>
+                <button class="post-action">
+                  <span>💡</span>
+                  <span>Útil (12)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Post 2: Pick Analysis -->
+            <div class="post-card">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="post-author-avatar">MG</div>
+                  <div class="post-author-info">
+                    <div class="post-author-name">MaríaGómez</div>
+                    <div class="post-meta">Hace 5 horas • Pick Analysis</div>
+                  </div>
+                </div>
+                <div class="post-type-badge">📊 PICK</div>
+              </div>
+
+              <div class="post-title">Mi razonamiento para Lakers ML @ 1.85</div>
+
+              <div class="post-context">
+                <div class="post-context-label">PICK</div>
+                <div class="post-context-value">Lakers ML • NBA • Cuota: 1.85</div>
+              </div>
+
+              <div class="post-content">
+                Operando Lakers Moneyline basándome en:<br><br>
+
+                1. <strong>Ventaja en casa:</strong> Lakers 12-3 en Staples esta temporada<br>
+                2. <strong>Lesiones rivales:</strong> Warriors sin Curry y Thompson<br>
+                3. <strong>Tendencia reciente:</strong> Lakers 7-1 últimos 8 partidos<br>
+                4. <strong>Motivación:</strong> Buscan asegurar playoffs<br><br>
+
+                Aunque la cuota no es espectacular, la probabilidad implícita (54%) está subestimada. Calculando mi modelo en ~62-65%.
+              </div>
+
+              <div class="post-actions">
+                <button class="post-action" data-action="like">
+                  <span>❤️</span>
+                  <span>18</span>
+                </button>
+                <button class="post-action" data-action="comment">
+                  <span>💬</span>
+                  <span>5 comentarios</span>
+                </button>
+                <button class="post-action">
+                  <span>💡</span>
+                  <span>Útil (9)</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Post 3: Educational -->
+            <div class="post-card">
+              <div class="post-header">
+                <div class="post-author">
+                  <div class="post-author-avatar">LP</div>
+                  <div class="post-author-info">
+                    <div class="post-author-name">LuisPerez</div>
+                    <div class="post-meta">Hace 1 día • Educational</div>
+                  </div>
+                </div>
+                <div class="post-type-badge">📚 EDU</div>
+              </div>
+
+              <div class="post-title">Guía: Cómo calcular tu CLV real</div>
+
+              <div class="post-content">
+                Muchos hablan de CLV pero pocos lo calculan correctamente. Aquí mi método:<br><br>
+
+                <strong>Fórmula básica:</strong><br>
+                CLV% = ((Cuota obtenida / Cuota de cierre) - 1) × 100<br><br>
+
+                <strong>Ejemplo:</strong><br>
+                • Cuota obtenida: 2.10<br>
+                • Cuota de cierre: 1.95<br>
+                • CLV = ((2.10 / 1.95) - 1) × 100 = +7.7%<br><br>
+
+                📌 <strong>Tips importantes:</strong><br>
+                • Solo cuenta si operaste ANTES del cierre<br>
+                • CLV negativo = estás comprando caro<br>
+                • Objetivo: CLV promedio >0% a largo plazo
+              </div>
+
+              <div class="post-actions">
+                <button class="post-action" data-action="like">
+                  <span>❤️</span>
+                  <span>42</span>
+                </button>
+                <button class="post-action" data-action="comment">
+                  <span>💬</span>
+                  <span>15 comentarios</span>
+                </button>
+                <button class="post-action">
+                  <span>💡</span>
+                  <span>Útil (31)</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+      <!-- Internal screens placed inside content-area -->
+      <div id="view-post-detail" style="display:none; padding: 16px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <button class="btn btn-outline" id="btn-back-post">← Volver</button>
+              <span>Detalle de Post</span>
+            </div>
+          </div>
+          <div class="post-full">
+            <div class="post-title">[Título completo del post]</div>
+            <div class="post-content">[Contenido completo del post — placeholder]</div>
+            <div class="post-actions" style="margin-top: 12px;">
+              <button class="post-action" data-action="like"><span>❤️</span><span>0</span></button>
+              <button class="post-action"><span>💡</span><span>Útil</span></button>
+            </div>
+          </div>
+          <div class="comments" style="margin-top: 16px;">
+            <div class="section-title">Comentarios</div>
+            <div class="comment-row">@alias1: Muy buen análisis.</div>
+            <div class="comment-row">@alias2: ¿Cómo ves el mercado alternativo?</div>
+            <div style="display:flex; gap:8px; margin-top: 8px;">
+              <input type="text" placeholder="Escribe un comentario..." style="flex:1; padding:8px; border-radius:8px;" />
+              <button class="btn btn-primary">Publicar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="view-profile" style="display:none; padding: 16px;">
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <button class="btn btn-outline" id="btn-back-profile">← Volver</button>
+              <span>Perfil Público</span>
+            </div>
+          </div>
+          <div class="profile-header" style="display:flex; gap:16px; align-items:center;">
+            <div class="profile-avatar">JM</div>
+            <div class="profile-info">
+              <div class="profile-alias">JoséMartínez <span class="badge">PRO</span></div>
+              <div class="profile-stats">WR 58% • ROI +12% • Score 740 • Rank #12</div>
+              <div class="profile-specialization">Especialización: Premier League • Over/Under • Handicap</div>
+              <div class="profile-actions" style="margin-top:8px;">
+                <button class="btn btn-primary">Seguir</button>
+              </div>
+            </div>
+          </div>
+          <div class="profile-section" style="margin-top: 16px;">
+            <div class="section-title">Picks recientes</div>
+            <div class="profile-picks">
+              <div class="pick-row">Liverpool vs Man City — Over 2.5 @ 1.75</div>
+              <div class="pick-row">Real Madrid vs Girona — Handicap -1.5 @ 2.10</div>
+              <div class="pick-row">Lakers ML @ 1.85</div>
+            </div>
+          </div>
+          <div class="profile-section" style="margin-top: 16px;">
+            <div class="section-title">Comentarios recientes</div>
+            <div class="profile-comments">
+              <div class="comment-row">¡Gran análisis del Clásico!</div>
+              <div class="comment-row">Ojo con la lesión de Griezmann...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      </section>
+    </main>
+
+    <!-- Modal: Publicar Análisis (MVP) -->
+    <div id="publish-modal" class="modal-backdrop" style="display:none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); align-items: center; justify-content: center;">
+      <div class="modal" style="background: var(--bg-primary); padding: 16px; border-radius: 12px; width: 520px; max-width: 90vw;">
+        <div class="panel-header" style="justify-content: space-between;">
+          <div class="panel-title">
+            <span>📢</span>
+            <span>Publicar Análisis</span>
+          </div>
+          <button class="btn btn-outline" id="publish-cancel">Cancelar</button>
+        </div>
+        <div style="display: grid; gap: 12px;">
+          <label>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Tipo de post</div>
+            <select id="publish-type" class="filter-select" style="width: 100%;">
+              <option value="match_discussion">Match Discussion</option>
+              <option value="pick_analysis">Pick Analysis</option>
+              <option value="educational">Educational</option>
+            </select>
+          </label>
+          <label>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Título</div>
+            <input id="publish-title" type="text" class="filter-select" style="width: 100%; padding: 8px; border-radius: 8px;" placeholder="Ej: Valor en Over 2.5 en Liverpool vs City" />
+          </label>
+          <label>
+            <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Contenido</div>
+            <textarea id="publish-content" rows="6" class="filter-select" style="width: 100%; padding: 8px; border-radius: 8px;" placeholder="Explica tu razonamiento, datos, modelo, etc..."></textarea>
+          </label>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+            <label>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Liga</div>
+              <input id="publish-league" type="text" class="filter-select" style="width: 100%; padding: 8px; border-radius: 8px;" placeholder="Ej: Premier League" />
+            </label>
+            <label>
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Mercado</div>
+              <select id="publish-market" class="filter-select" style="width: 100%;">
+                <option value="OU">O/U</option>
+                <option value="ML">ML</option>
+                <option value="Handicap">Handicap</option>
+              </select>
+            </label>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:8px; margin-top: 8px;">
+            <button class="btn btn-outline" id="publish-cancel-2">Cancelar</button>
+            <button class="btn btn-primary" id="publish-submit">
+              <span>✅</span>
+              <span>Publicar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        content.style.display = 'none';
+      });
+      
+      const activeContent = document.getElementById(`tab-${tabName}`);
+      if (activeContent) {
+        activeContent.style.display = 'block';
+      }
+
+      // Ensure internal screens are hidden when switching tabs
+      const postDetail = document.getElementById('view-post-detail');
+      const profileView = document.getElementById('view-profile');
+      if (postDetail) postDetail.style.display = 'none';
+      if (profileView) profileView.style.display = 'none';
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        switchTab(this.dataset.tab);
+      });
+    });
+
+    // Follow button toggle
+    document.querySelectorAll('.follow-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        if (this.classList.contains('following')) {
+          this.classList.remove('following');
+          this.textContent = 'Seguir';
+        } else {
+          this.classList.add('following');
+          this.textContent = '✓ Siguiendo';
+        }
+      });
+    });
+
+    // Like button toggle — fix via data-action="like"
+    document.querySelectorAll('.post-action[data-action="like"]').forEach(action => {
+      action.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('liked');
+        const countEl = this.querySelector('span:last-child');
+        const count = parseInt(countEl?.textContent || '0');
+        countEl.textContent = this.classList.contains('liked') ? (count + 1) : Math.max(0, count - 1);
+      });
+    });
+
+    // Comment button opens post detail
+    document.querySelectorAll('[data-action="comment"]').forEach(btn => {
+      btn.addEventListener('click', function(e){
+        e.stopPropagation();
+        const card = this.closest('.post-card');
+        const title = card.querySelector('.post-title')?.textContent || '[Título]';
+        const content = card.querySelector('.post-content')?.innerHTML || '[Contenido]';
+        document.querySelector('#view-post-detail .post-title').textContent = title;
+        document.querySelector('#view-post-detail .post-content').innerHTML = content;
+        showInternal('view-post-detail');
+      });
+    });
+
+    // Abrir modal Publicar (topbar y nueva discusión)
+    function openPublishModal(){
+      const m = document.getElementById('publish-modal');
+      m.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+    document.getElementById('btn-open-publish')?.addEventListener('click', openPublishModal);
+    document.getElementById('btn-new-discussion')?.addEventListener('click', openPublishModal);
+
+    // Cerrar modal Publicar (botones, click fuera, ESC)
+    function closePublishModal(){
+      const m = document.getElementById('publish-modal');
+      m.style.display = 'none';
+      document.body.style.overflow = '';
+      // Resetear campos
+      document.getElementById('publish-title').value = '';
+      document.getElementById('publish-content').value = '';
+      document.getElementById('publish-league').value = '';
+      document.getElementById('publish-type').value = 'match_discussion';
+      document.getElementById('publish-market').value = 'OU';
+    }
+    ['publish-cancel','publish-cancel-2'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', closePublishModal);
+    });
+    document.getElementById('publish-modal')?.addEventListener('click', function(e){
+      if (e.target === this) closePublishModal();
+    });
+    document.addEventListener('keydown', function(e){
+      if (e.key === 'Escape') closePublishModal();
+    });
+
+    // Mock publicar
+    document.getElementById('publish-submit')?.addEventListener('click', function(){
+      console.log('Publicar (mock):', {
+        type: document.getElementById('publish-type')?.value,
+        title: document.getElementById('publish-title')?.value,
+        content: document.getElementById('publish-content')?.value,
+        league: document.getElementById('publish-league')?.value,
+        market: document.getElementById('publish-market')?.value,
+      });
+      closePublishModal();
+      alert('Tu análisis se publicó (mock).');
+    });
+
+    // Helpers para pantallas internas
+    function showInternal(id){
+      document.querySelectorAll('.tab-content').forEach(c => c.style.display='none');
+      document.getElementById(id).style.display='block';
+    }
+    function backToCurrentTab(){
+      const active = document.querySelector('.tab.active')?.dataset.tab || 'leaderboard';
+      document.getElementById(`tab-${active}`).style.display='block';
+      document.getElementById('view-post-detail').style.display='none';
+      document.getElementById('view-profile').style.display='none';
+    }
+    document.getElementById('btn-back-profile')?.addEventListener('click', backToCurrentTab);
+
+    // Mock de datos de usuario
+    const userProfiles = {
+      JoseMartinez: {
+        alias: 'JoseMartinez',
+        specialization: 'Especialista en La Liga',
+        stats: '8W-2L-0P | +12.5 UDS',
+        picks: ['Barcelona Gana', 'Atlético Madrid Over 2.5'],
+        comments: ['¡Gran análisis del Clásico!', 'Ojo con la lesión de Griezmann...']
+      },
+      MariaGomez: {
+        alias: 'MariaGomez',
+        specialization: 'Experta en Premier League',
+        stats: '15W-5L-1P | +21.8 UDS',
+        picks: ['Man City -1.5', 'Arsenal Ambos Marcan'],
+        comments: ['El City es una máquina', '¿Opiniones del Chelsea?']
+      },
+      LuisPerez: {
+        alias: 'LuisPerez',
+        specialization: 'Analista de NBA',
+        stats: '22W-10L-0P | +30.1 UDS',
+        picks: ['Lakers ML', 'Nuggets Over 220.5'],
+        comments: ['LeBron sigue dominando', 'Jokic para MVP']
+      }
+    };
+
+    // Abrir Perfil desde Following (MVP con data-user)
+    document.querySelectorAll('[data-action="view-profile"]').forEach(btn => {
+      btn.addEventListener('click', function(){
+        const userId = this.dataset.user;
+        const profile = userProfiles[userId];
+
+        if (profile) {
+          const initials = profile.alias.replace(/[^A-Za-z]/g,'').slice(0,2).toUpperCase();
+          document.querySelector('#view-profile .profile-avatar').textContent = initials;
+          document.querySelector('#view-profile .profile-alias').innerHTML = `${profile.alias} <span class="badge">PRO</span>`;
+          document.querySelector('#view-profile .profile-specialization').textContent = profile.specialization;
+          document.querySelector('#view-profile .profile-stats').textContent = profile.stats;
+          
+          const picksContainer = document.querySelector('#view-profile .profile-picks');
+          picksContainer.innerHTML = profile.picks.map(p => `<div class="pick-row">${p}</div>`).join('');
+
+          const commentsContainer = document.querySelector('#view-profile .profile-comments');
+          commentsContainer.innerHTML = profile.comments.map(c => `<div class="comment-row">${c}</div>`).join('');
+        }
+        
+        showInternal('view-profile');
+      });
+    });
+
+    // Abrir Detalle de Post desde cada card (copiar contenido)
+    document.querySelectorAll('#tab-discussions .post-card').forEach(card => {
+      card.addEventListener('click', function(e){
+        if (e.target.closest('[data-action]')) return; // Ignorar clicks en botones de acción
+        const title = this.querySelector('.post-title')?.textContent || '[Título]';
+        const content = this.querySelector('.post-content')?.innerHTML || '[Contenido]';
+        document.querySelector('#view-post-detail .post-title').textContent = title;
+        document.querySelector('#view-post-detail .post-content').innerHTML = content;
+        showInternal('view-post-detail');
+      });
+    });
+    document.getElementById('btn-back-post')?.addEventListener('click', backToCurrentTab);
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Dropdown toggle
+    function toggleDropdown(id){
+      const dd = document.getElementById(id);
+      if(!dd) return;
+      // Cerrar otros
+      document.querySelectorAll('.nav-dropdown').forEach(other => {
+        if(other.id !== id) other.classList.remove('open');
+      });
+      dd.classList.toggle('open');
+    }
+
+    console.log('Community Hub loaded');
+  </script>
+</body>
+</html>

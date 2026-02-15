@@ -1,0 +1,533 @@
+/* Estilos profesionales para el Dashboard de Usuario (scoped CSS Module) */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: var(--text-primary);
+  /* Centrar y limitar el ancho como en el diseño de referencia */
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ======= Métricas Superiores ======= */
+.statsGrid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    "plan"
+    "rango"
+    "equipo"
+    "pool"
+    "saldo"
+    "creditos"
+    "proximo"
+    "alertas"
+    "directos";
+}
+
+.statCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+  background: linear-gradient(180deg, rgba(37,37,69,0.85) 0%, rgba(30,30,56,0.85) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  overflow: hidden;
+  min-height: 92px;
+}
+
+.statCard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  pointer-events: none;
+  background: radial-gradient(120% 120% at 0% 0%, rgba(0,245,255,0.12) 0%, transparent 42%),
+              radial-gradient(120% 120% at 100% 100%, rgba(0,102,255,0.10) 0%, transparent 45%);
+}
+
+.statIcon {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-content: center;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0,245,255,0.12) 0%, rgba(0,102,255,0.12) 100%);
+  border: 1px solid rgba(255,255,255,0.08);
+  font-size: 20px;
+}
+
+.statContent { flex: 1; }
+
+.statValue {
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+/* Valor grande para KPIs destacados */
+.statValueLarge {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.05;
+}
+.statLabel {
+  margin-top: 4px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ======= Contenido Principal ======= */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.card {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.12s ease;
+}
+
+.card:hover {
+  border-color: rgba(0,245,255,0.35);
+  box-shadow: 0 12px 34px rgba(0,0,0,0.38), 0 0 0 2px rgba(0,245,255,0.08) inset;
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 16px 8px 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.cardHeader h2 {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cardBody {
+  padding: 16px;
+}
+
+.cardLink {
+  color: var(--text-secondary);
+  font-size: 12px;
+  border: 1px solid rgba(255,255,255,0.08);
+  padding: 6px 10px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.cardLink:hover {
+  color: #000;
+  background: var(--primary-cyan);
+  border-color: var(--primary-cyan);
+  box-shadow: 0 0 0 3px rgba(0,245,255,0.15);
+}
+
+/* Señales */
+.signalList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.signalItem {
+  display: grid;
+  grid-template-columns: 160px 1fr 80px;
+  gap: 12px;
+  align-items: center;
+  background: rgba(20,20,40,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+.signalInfo { display: flex; gap: 8px; }
+.signalSport { color: var(--text-secondary); }
+.signalLeague { color: var(--text-secondary); opacity: 0.9; }
+.signalPick { font-weight: 600; }
+.signalOdds { color: var(--primary-green); font-weight: 700; text-align: right; }
+
+/* Tipsters */
+.tipsterList { display: flex; flex-direction: column; gap: 12px; }
+.tipsterItem {
+  display: grid;
+  grid-template-columns: 42px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(20,20,40,0.6);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+
+.tipsterAvatar { width: 42px; height: 42px; display: grid; place-content: center; border-radius: 12px; background: rgba(176,38,255,0.12); border: 1px solid rgba(255,255,255,0.08); }
+.tipsterInfo h4 { font-size: 14px; font-weight: 700; }
+.tipsterInfo p { font-size: 12px; color: var(--text-secondary); }
+
+.followBtn {
+  padding: 8px 12px;
+  font-size: 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: transparent;
+  color: var(--text-primary);
+}
+.following {
+  background: linear-gradient(135deg, rgba(0,245,255,0.25), rgba(0,102,255,0.25));
+  border-color: var(--primary-blue);
+}
+
+/* Rendimiento */
+.performanceChart {
+  height: 180px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(37,37,69,0.35), rgba(30,30,56,0.35));
+  border: 1px dashed rgba(255,255,255,0.1);
+  display: grid;
+  place-items: center;
+  color: var(--text-secondary);
+}
+
+.performanceSummary { margin-top: 12px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+.summaryItem { display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; background: rgba(20,20,40,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+.summaryLabel { color: var(--text-secondary); font-size: 12px; }
+.summaryValue { font-weight: 700; }
+.positive { color: var(--primary-green); }
+
+/* Eventos */
+.eventList { display: flex; flex-direction: column; gap: 10px; }
+.eventItem { display: grid; grid-template-columns: 100px 1fr 80px; gap: 10px; align-items: center; padding: 10px 12px; background: rgba(20,20,40,0.6); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+.eventTime { color: var(--text-secondary); font-size: 12px; }
+.eventMatch { font-weight: 600; }
+.eventSport { text-align: right; }
+
+/* ======= Responsivo ======= */
+@media (max-width: 1200px) {
+  .statsGrid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .contentGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .statsGrid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .statsGrid { grid-template-columns: 1fr; }
+  .signalItem { grid-template-columns: 1fr; text-align: left; }
+  .eventItem { grid-template-columns: 1fr; }
+}
+
+
+/* Cabecera y meta para cards superiores */
+.statHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.statMeta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.actionBtn {
+  margin-top: 10px;
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.10);
+  background: linear-gradient(135deg, rgba(0,245,255,0.15), rgba(0,102,255,0.15));
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.kpiBadge {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-secondary);
+}
+
+.weekPrefix { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-right: 4px; }
+
+/* Progress bar mini */
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.progressFill { height: 100%; background: var(--gradient-primary); }
+
+/* Áreas del grid superior */
+.areaPlan { grid-area: plan; }
+.areaRango { grid-area: rango; }
+.areaEquipo { grid-area: equipo; }
+.areaPool { grid-area: pool; }
+.areaSaldo { grid-area: saldo; }
+.areaCreditos { grid-area: creditos; }
+.areaProximo { grid-area: proximo; }
+.areaAlertas { grid-area: alertas; }
+.areaDirectos { grid-area: directos; }
+
+/* Tablet layout (>=768px) */
+@media (min-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "plan rango"
+      "equipo pool"
+      "saldo creditos"
+      "proximo alertas"
+      "directos directos";
+  }
+}
+
+/* Desktop layout (>=1024px) */
+@media (min-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "plan rango equipo pool"
+      "saldo creditos proximo alertas"
+      "directos directos directos directos";
+  }
+}
+
+/* ======= Responsivo (ajustes existentes) ======= */
+@media (max-width: 1200px) {
+  /* Se mantiene el contentGrid en 1 columna; el statsGrid ya se controla por min-width */
+  .contentGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  /* No es necesario forzar columnas aquí para statsGrid; se controla con min-width */
+}
+
+@media (max-width: 600px) {
+  .signalItem { grid-template-columns: 1fr; text-align: left; }
+  .eventItem { grid-template-columns: 1fr; }
+}
+
+
+/* ======= Executive Header (KPIs principales) ======= */
+.executiveHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+}
+
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.kpiItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: linear-gradient(180deg, rgba(37,37,69,0.65) 0%, rgba(30,30,56,0.65) 100%);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+}
+
+.kpiLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: .6px;
+}
+
+.kpiValue {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'JetBrains Mono', 'Liberation Mono', monospace;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.kpiPositive { color: var(--primary-green); }
+.kpiWarning { color: var(--secondary-gold); }
+.kpiDanger { color: var(--secondary-red); }
+
+@media (max-width: 1000px) {
+  .kpiRow { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 640px) {
+  .kpiRow { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* ======= Overview secundario (chips reutilizables) ======= */
+.overviewRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.overviewGroup {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.overviewActions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  line-height: 1;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+.chipPositive {
+  background: rgba(0, 200, 83, 0.15);
+  color: #4ade80;
+  border-color: rgba(74, 222, 128, 0.35);
+}
+
+.modeBadge {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(0, 158, 253, 0.18) 0%, rgba(0, 94, 201, 0.18) 100%);
+  border: 1px solid rgba(0, 136, 255, 0.35);
+  color: #93c5fd;
+}
+
+/* Responsive del overview */
+@media (max-width: 768px) {
+  .overviewRow { flex-direction: column; align-items: flex-start; }
+}
+
+/* Afinar sombras/bordes al pasar el cursor para parecerse al diseño */
+.statCard:hover { border-color: rgba(0,245,255,0.25); box-shadow: 0 10px 28px rgba(0,0,0,0.36); }
+
+.kpiBadge {
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.10);
+  color: var(--text-secondary);
+}
+
+.weekPrefix { font-size: 12px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-right: 4px; }
+
+/* Progress bar mini */
+.progressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.progressFill { height: 100%; background: var(--gradient-primary); }
+
+/* Áreas del grid superior */
+.areaPlan { grid-area: plan; }
+.areaRango { grid-area: rango; }
+.areaEquipo { grid-area: equipo; }
+.areaPool { grid-area: pool; }
+.areaSaldo { grid-area: saldo; }
+.areaCreditos { grid-area: creditos; }
+.areaProximo { grid-area: proximo; }
+.areaAlertas { grid-area: alertas; }
+.areaDirectos { grid-area: directos; }
+
+/* Tablet layout (>=768px) */
+@media (min-width: 768px) {
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "plan rango"
+      "equipo pool"
+      "saldo creditos"
+      "proximo alertas"
+      "directos directos";
+  }
+}
+
+/* Desktop layout (>=1024px) */
+@media (min-width: 1024px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-areas:
+      "plan rango equipo pool"
+      "saldo creditos proximo alertas"
+      "directos directos directos directos";
+  }
+}
+
+/* ======= Responsivo (ajustes existentes) ======= */
+@media (max-width: 1200px) {
+  /* Se mantiene el contentGrid en 1 columna; el statsGrid ya se controla por min-width */
+  .contentGrid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  /* No es necesario forzar columnas aquí para statsGrid; se controla con min-width */
+}
+
+@media (max-width: 600px) {
+  .signalItem { grid-template-columns: 1fr; text-align: left; }
+  .eventItem { grid-template-columns: 1fr; }
+}

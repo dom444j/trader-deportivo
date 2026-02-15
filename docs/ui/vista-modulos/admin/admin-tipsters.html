@@ -1,0 +1,2539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Tipsters | Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --admin-primary: #f59e0b;
+      --admin-secondary: #d97706;
+      --admin-accent: #fbbf24;
+      --admin-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      --admin-glow: 0 0 20px rgba(245, 158, 11, 0.4);
+      --status-healthy: #00FF94;
+      --status-warn: #FFD700;
+      --status-degraded: #FF8C00;
+      --status-down: #FF4444;
+      --status-critical: #CC0000;
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR (idéntico a admin-users) */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--admin-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--admin-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
+      color: var(--admin-primary);
+      border-left-color: var(--admin-primary);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .nav-item.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+      cursor: default;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 24px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 300px;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .filter-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .filter-btn.active {
+      background: var(--admin-gradient);
+      color: white;
+      border-color: transparent;
+      box-shadow: var(--admin-glow);
+    }
+
+    .filter-btn:hover:not(.active) {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--admin-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      color: var(--bg-primary);
+    }
+
+    /* FILTERS PANEL */
+    .filters-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .filters-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+    }
+
+    /* CONTAINER SYSTEM FOR COMPACT PANELS */
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .header {
+      padding: 16px 0;
+    }
+
+    .header .container {
+      padding: 0 24px;
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      flex: 1;
+      padding: 24px 0;
+    }
+
+    /* BULK ACTIONS */
+    .bulk-actions {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .bulk-actions.active {
+      display: flex;
+    }
+
+    .bulk-info {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .bulk-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .tipsters-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1200px;
+    }
+
+    .tipsters-table thead {
+      background: var(--bg-tertiary);
+    }
+
+    .tipsters-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+      cursor: pointer;
+    }
+
+    .tipsters-table th:hover {
+      color: var(--admin-primary);
+    }
+
+    .tipsters-table td {
+      padding: 16px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .tipsters-table tbody tr {
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .tipsters-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .checkbox {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .tipster-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .tipster-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--admin-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .tipster-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tipster-handle {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .tipster-name {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.active { background: rgba(0, 255, 148, 0.15); color: var(--status-healthy); }
+    .badge.review { background: rgba(255, 215, 0, 0.15); color: var(--status-warn); }
+    .badge.suspended { background: rgba(255, 68, 68, 0.15); color: var(--secondary-red); }
+    .badge.verified { background: rgba(0, 255, 148, 0.15); color: var(--status-healthy); }
+    .badge.pending { background: rgba(255, 215, 0, 0.15); color: var(--status-warn); }
+    .badge.unverified { background: rgba(136, 136, 168, 0.15); color: var(--text-muted); }
+
+    .metric-positive {
+      color: var(--status-healthy);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-negative {
+      color: var(--secondary-red);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-neutral {
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .flags-cell {
+      position: relative;
+      cursor: help;
+    }
+
+    .flags-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .flags-badge.clean {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--status-healthy);
+    }
+
+    .tooltip {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      padding: 12px;
+      min-width: 200px;
+      display: none;
+      z-index: 10;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .flags-cell:hover .tooltip {
+      display: block;
+    }
+
+    .tooltip-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
+      font-size: 12px;
+    }
+
+    .flag-chip {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+    .flag-chip.high { background: rgba(255, 68, 68, 0.2); color: var(--secondary-red); }
+    .flag-chip.medium { background: rgba(255, 140, 0, 0.2); color: var(--secondary-orange); }
+    .flag-chip.low { background: rgba(255, 215, 0, 0.2); color: var(--status-warn); }
+
+    /* DRAWER (idéntico a admin-users pero más ancho) */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      z-index: 200;
+    }
+
+    .drawer-overlay.active {
+      display: block;
+    }
+
+    .drawer {
+      position: fixed;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 700px;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-primary);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      z-index: 201;
+    }
+
+    .drawer.active {
+      transform: translateX(0);
+    }
+
+    .drawer-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .drawer-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .drawer-close {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--text-muted);
+    }
+
+    .drawer-close:hover {
+      color: var(--text-primary);
+      border-color: var(--admin-primary);
+    }
+
+    .drawer-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 20px 24px 0;
+      border-bottom: 1px solid var(--border-primary);
+      overflow-x: auto;
+    }
+
+    .drawer-tab {
+      padding: 10px 16px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+      white-space: nowrap;
+    }
+
+    .drawer-tab.active {
+      color: var(--admin-primary);
+      border-bottom-color: var(--admin-primary);
+    }
+
+    .drawer-tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    .drawer-content {
+      padding: 24px;
+    }
+
+    .drawer-section {
+      margin-bottom: 24px;
+    }
+
+    .drawer-section-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .info-item {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-item {
+      background: var(--bg-tertiary);
+      padding: 16px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .kpi-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .kpi-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 300;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-primary);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-success {
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border-primary);
+    }
+
+    .pagination-info {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .page-btn {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .page-btn.active {
+      background: var(--admin-gradient);
+      color: white;
+      border-color: transparent;
+    }
+
+    .page-btn:hover:not(.active) {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .drawer {
+        width: 600px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .header {
+        padding: 16px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .search-input {
+        width: 100%;
+        min-width: auto;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .drawer {
+        width: 100%;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--admin-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">Admin Panel</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/admin" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/admin/users" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Usuarios</span>
+          </a>
+          <a href="/admin/tipsters" class="nav-item active">
+            <span class="nav-icon">⭐</span>
+            <span>Tipsters</span>
+          </a>
+          <a href="/admin/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/admin/bets" class="nav-item">
+            <span class="nav-icon">🎲</span>
+            <span>Apuestas</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Finanzas</div>
+          <a href="/admin/finance" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Finanzas</span>
+          </a>
+          <a href="/admin/finance?tab=withdrawals" class="nav-item">
+            <span class="nav-icon">📤</span>
+            <span>Retiros</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Operaciones</div>
+          <a href="/admin/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+          <a href="/admin/alerts" class="nav-item">
+            <span class="nav-icon">⚠️</span>
+            <span>Alertas</span>
+          </a>
+          <a href="/admin/audit" class="nav-item">
+            <span class="nav-icon">📋</span>
+            <span>Auditoría</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Sistema</div>
+          <a href="/admin/community" class="nav-item">
+            <span class="nav-icon">🌐</span>
+            <span>Comunidad</span>
+          </a>
+          <a href="/admin/referrals" class="nav-item">
+            <span class="nav-icon">🎁</span>
+            <span>Referidos</span>
+          </a>
+          <div class="nav-item disabled">
+            <span class="nav-icon">⚙️</span>
+            <span>Configuración</span>
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-top">
+          <div>
+            <h1 class="header-title">Gestión de Tipsters</h1>
+            <p class="header-subtitle">Verificación, performance y control de calidad</p>
+          </div>
+
+          <div class="header-controls">
+            <input type="text" class="search-input" placeholder="Buscar por handle, email o nombre..." id="search-tipsters">
+            <button class="btn btn-outline" onclick="exportTipsters()">📥 Export CSV</button>
+            <button class="btn btn-outline" onclick="refreshTipsters()">🔄 Refresh</button>
+          </div>
+        </div>
+
+        <div class="filter-btns">
+          <button class="filter-btn active" data-status="all" onclick="filterStatus('all')">Todos</button>
+          <button class="filter-btn" data-status="active" onclick="filterStatus('active')">Activos</button>
+          <button class="filter-btn" data-status="review" onclick="filterStatus('review')">En Revisión</button>
+          <button class="filter-btn" data-status="suspended" onclick="filterStatus('suspended')">Suspendidos</button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Advanced Filters -->
+        <div class="filters-panel">
+          <div class="filters-header">
+            <h3 class="filters-title">🔍 Filtros Avanzados</h3>
+            <button class="btn btn-outline btn-sm" onclick="clearFilters()">Limpiar Filtros</button>
+          </div>
+
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label class="filter-label">Estado</label>
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">MVP single-select; Fase 2 multi-select (CSV)</div>
+              <select class="filter-select" id="status-select">
+                <option value="">Todos</option>
+                <option value="active">ACTIVE</option>
+                <option value="review">REVIEW</option>
+                <option value="suspended">SUSPENDED</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Verificación</label>
+              <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 6px;">MVP single-select; Fase 2 multi-select (CSV)</div>
+              <select class="filter-select" id="verification-select">
+                <option value="">Todos</option>
+                <option value="verified">VERIFIED</option>
+                <option value="pending">PENDING</option>
+                <option value="unverified">UNVERIFIED</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Compliance Flags</label>
+              <select class="filter-select" id="flags-select">
+                <option value="">Todos</option>
+                <option value="odds_drift">Odds Drift High</option>
+                <option value="late_bets">Late Bets Frequent</option>
+                <option value="high_cancel">High Cancel Rate</option>
+                <option value="any">Tiene anomalías</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">ROI 30d</label>
+              <select class="filter-select" id="roi-select">
+                <option value="">Todos</option>
+                <option value="positive">Positivo (>0%)</option>
+                <option value="high">Alto (>10%)</option>
+                <option value="negative">Negativo (<0%)</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">ROI min/max (%)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="number" step="0.1" class="form-input" id="roi-min-input" placeholder="min %">
+                <input type="number" step="0.1" class="form-input" id="roi-max-input" placeholder="max %">
+              </div>
+            </div>
+            
+            <div class="filter-group">
+              <label class="filter-label">Winrate min/max (%)</label>
+              <div style="display:flex; gap:8px;">
+                <input type="number" step="0.1" class="form-input" id="winrate-min-input" placeholder="min %">
+                <input type="number" step="0.1" class="form-input" id="winrate-max-input" placeholder="max %">
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Drawdown máx (%)</label>
+              <input type="number" step="0.1" class="form-input" id="drawdown-max-input" placeholder="% máximo">
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Última actividad (rango) <span style="font-size: 11px; color: var(--text-muted); margin-left: 6px;">placeholder human time; backend usará ISO con lastActiveFrom/To</span></label>
+              <div style="display:flex; gap:8px;">
+                <input type="date" class="form-input" id="last-active-from" placeholder="Desde">
+                <input type="date" class="form-input" id="last-active-to" placeholder="Hasta">
+              </div>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Deporte</label>
+              <select class="filter-select" id="sport-select">
+                <option value="">Todos</option>
+                <option value="football">Fútbol</option>
+                <option value="basketball">Basket</option>
+                <option value="tennis">Tenis</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Liga</label>
+              <select class="filter-select" id="league-select">
+                <option value="">Todas</option>
+                <option value="la_liga">La Liga</option>
+                <option value="premier_league">Premier League</option>
+                <option value="nba">NBA</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="bulk-actions" id="bulk-actions">
+          <div class="bulk-info">
+            <span id="selected-count">0</span> tipsters seleccionados
+          </div>
+          <div class="bulk-btns">
+            <button class="btn btn-outline btn-sm" onclick="bulkAction('pause')">⏸️ Pausar (REVIEW)</button>
+            <button class="btn btn-outline btn-sm" onclick="bulkAction('reactivate')">✅ Reactivar</button>
+            <button class="btn btn-outline btn-sm" onclick="bulkAction('export')">📥 Exportar</button>
+          </div>
+        </div>
+
+        <!-- UI States -->
+        <div id="ui-loading" style="display:none; padding:16px;">
+          <div style="display:grid; gap:8px;">
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+            <div style="height:14px; background: var(--bg-tertiary); border:1px solid var(--border-primary); border-radius:6px;"></div>
+          </div>
+        </div>
+        <div id="ui-empty" style="display:none; padding:20px; border:1px dashed var(--border-primary); background: var(--bg-tertiary); border-radius:8px;">
+          <div style="font-weight:600; margin-bottom:6px;">Sin resultados</div>
+          <div style="color:var(--text-muted)">Ajusta filtros o limpia para ver tipsters.</div>
+        </div>
+        <div id="ui-error" style="display:none;">
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-text">Error al cargar datos. Intenta nuevamente.</div>
+          </div>
+        </div>
+        <div id="ui-partial" style="display:none;">
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-text">Datos parciales: algunos módulos no respondieron. La tabla puede estar incompleta.</div>
+          </div>
+        </div>
+
+        <!-- Tipsters Table -->
+        <div class="table-container" id="table-container">
+          <table class="tipsters-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" class="checkbox" id="select-all" onchange="toggleSelectAll()"></th>
+                <th onclick="sortTable('tipster')">Tipster ↕</th>
+                <th onclick="sortTable('status')">Estado ↕</th>
+                <th onclick="sortTable('verification')">Verificación ↕</th>
+                <th onclick="sortTable('roi')">ROI 30d ↕</th>
+                <th onclick="sortTable('winrate')">Winrate 30d ↕</th>
+                <th onclick="sortTable('drawdown')">Drawdown 30d ↕</th>
+                <th onclick="sortTable('followers')">Seguidores ↕</th>
+                <th onclick="sortTable('signals')">Señales 30d ↕</th>
+                <th onclick="sortTable('flags')">Flags ↕</th>
+                <th onclick="sortTable('activity')">Última Actividad ↕</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tipsters-tbody">
+              <!-- Tipster 1 - Clean -->
+              <tr onclick="openDrawer('tipster_001')">
+                <td onclick="event.stopPropagation()"><input type="checkbox" class="checkbox tipster-checkbox" data-tipster-id="tipster_001"></td>
+                <td>
+                  <div class="tipster-cell">
+                    <div class="tipster-avatar">CM</div>
+                    <div class="tipster-info">
+                      <div class="tipster-handle">@carlosbet</div>
+                      <div class="tipster-name">Carlos Méndez</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge active">ACTIVE</span></td>
+                <td><span class="badge verified">VERIFIED</span></td>
+                <td class="metric-positive">+12.5%</td>
+                <td class="metric-neutral">58.2%</td>
+                <td class="metric-positive">-4.2%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">1,247</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">142</td>
+                <td>
+                  <div class="flags-cell">
+                    <span class="flags-badge clean">✓ Clean</span>
+                  </div>
+                </td>
+                <td style="font-size: 12px; color: var(--text-muted);">2 hours ago</td>
+                <td onclick="event.stopPropagation()">
+                  <button class="btn btn-outline btn-sm" onclick="openDrawer('tipster_001')">Ver</button>
+                </td>
+              </tr>
+
+              <!-- Tipster 2 - With Flags -->
+              <tr onclick="openDrawer('tipster_002')">
+                <td onclick="event.stopPropagation()"><input type="checkbox" class="checkbox tipster-checkbox" data-tipster-id="tipster_002"></td>
+                <td>
+                  <div class="tipster-cell">
+                    <div class="tipster-avatar">MG</div>
+                    <div class="tipster-info">
+                      <div class="tipster-handle">@maria_picks</div>
+                      <div class="tipster-name">María García</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge active">ACTIVE</span></td>
+                <td><span class="badge verified">VERIFIED</span></td>
+                <td class="metric-positive">+8.7%</td>
+                <td class="metric-neutral">54.1%</td>
+                <td class="metric-positive">-2.8%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">892</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">87</td>
+                <td>
+                  <div class="flags-cell">
+                    <span class="flags-badge">⚠️ 1</span>
+                    <div class="tooltip">
+                      <div class="tooltip-item">
+                        <span class="flag-chip low">LOW</span>
+                        <span>LOW_ACTIVITY</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size: 12px; color: var(--text-muted);">1 day ago</td>
+                <td onclick="event.stopPropagation()">
+                  <button class="btn btn-outline btn-sm" onclick="openDrawer('tipster_002')">Ver</button>
+                </td>
+              </tr>
+
+              <!-- Tipster 3 - In Review -->
+              <tr onclick="openDrawer('tipster_003')">
+                <td onclick="event.stopPropagation()"><input type="checkbox" class="checkbox tipster-checkbox" data-tipster-id="tipster_003"></td>
+                <td>
+                  <div class="tipster-cell">
+                    <div class="tipster-avatar">PT</div>
+                    <div class="tipster-info">
+                      <div class="tipster-handle">@pro_trader</div>
+                      <div class="tipster-name">Pro Trader</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge review">REVIEW</span></td>
+                <td><span class="badge pending">PENDING</span></td>
+                <td class="metric-positive">+22.8%</td>
+                <td class="metric-neutral">62.5%</td>
+                <td class="metric-negative">-12.4%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">3,142</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">248</td>
+                <td>
+                  <div class="flags-cell">
+                    <span class="flags-badge">🚨 3</span>
+                    <div class="tooltip">
+                      <div class="tooltip-item">
+                        <span class="flag-chip high">HIGH</span>
+                        <span>ODDS_DRIFT_HIGH</span>
+                      </div>
+                      <div class="tooltip-item">
+                        <span class="flag-chip high">HIGH</span>
+                        <span>LATE_BETS_FREQUENT</span>
+                      </div>
+                      <div class="tooltip-item">
+                        <span class="flag-chip medium">MED</span>
+                        <span>STAKE_INCONSISTENCY</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size: 12px; color: var(--text-muted);">5 hours ago</td>
+                <td onclick="event.stopPropagation()">
+                  <button class="btn btn-outline btn-sm" onclick="openDrawer('tipster_003')">Revisar</button>
+                </td>
+              </tr>
+
+              <!-- Tipster 4 - Suspended -->
+              <tr onclick="openDrawer('tipster_004')">
+                <td onclick="event.stopPropagation()"><input type="checkbox" class="checkbox tipster-checkbox" data-tipster-id="tipster_004"></td>
+                <td>
+                  <div class="tipster-cell">
+                    <div class="tipster-avatar">SP</div>
+                    <div class="tipster-info">
+                      <div class="tipster-handle">@suspect_picks</div>
+                      <div class="tipster-name">Sospechoso</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge suspended">SUSPENDED</span></td>
+                <td><span class="badge unverified">UNVERIFIED</span></td>
+                <td class="metric-negative">-8.2%</td>
+                <td class="metric-neutral">42.1%</td>
+                <td class="metric-negative">-24.8%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">124</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">18</td>
+                <td>
+                  <div class="flags-cell">
+                    <span class="flags-badge">🚨 4</span>
+                    <div class="tooltip">
+                      <div class="tooltip-item">
+                        <span class="flag-chip high">HIGH</span>
+                        <span>USER_REPORTS_HIGH</span>
+                      </div>
+                      <div class="tooltip-item">
+                        <span class="flag-chip high">HIGH</span>
+                        <span>ODDS_DRIFT_HIGH</span>
+                      </div>
+                      <div class="tooltip-item">
+                        <span class="flag-chip medium">MED</span>
+                        <span>HIGH_CANCEL_RATE</span>
+                      </div>
+                      <div class="tooltip-item">
+                        <span class="flag-chip low">LOW</span>
+                        <span>PROFILE_INCOMPLETE</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size: 12px; color: var(--text-muted);">3 days ago</td>
+                <td onclick="event.stopPropagation()">
+                  <button class="btn btn-outline btn-sm" onclick="openDrawer('tipster_004')">Ver</button>
+                </td>
+              </tr>
+
+              <!-- Tipster 5 - New/Unverified -->
+              <tr onclick="openDrawer('tipster_005')">
+                <td onclick="event.stopPropagation()"><input type="checkbox" class="checkbox tipster-checkbox" data-tipster-id="tipster_005"></td>
+                <td>
+                  <div class="tipster-cell">
+                    <div class="tipster-avatar">NT</div>
+                    <div class="tipster-info">
+                      <div class="tipster-handle">@new_tipster</div>
+                      <div class="tipster-name">Nuevo Tipster</div>
+                    </div>
+                  </div>
+                </td>
+                <td><span class="badge active">ACTIVE</span></td>
+                <td><span class="badge pending">PENDING</span></td>
+                <td class="metric-positive">+5.2%</td>
+                <td class="metric-neutral">52.0%</td>
+                <td class="metric-positive">-1.2%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">42</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">12</td>
+                <td>
+                  <div class="flags-cell">
+                    <span class="flags-badge">⚠️ 1</span>
+                    <div class="tooltip">
+                      <div class="tooltip-item">
+                        <span class="flag-chip low">LOW</span>
+                        <span>PROFILE_INCOMPLETE</span>
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td style="font-size: 12px; color: var(--text-muted);">30 min ago</td>
+                <td onclick="event.stopPropagation()">
+                  <button class="btn btn-outline btn-sm" onclick="openDrawer('tipster_005')">Ver</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination -->
+          <div class="pagination">
+            <div class="pagination-info">Mostrando 1–5 de 342 tipsters</div>
+            <div class="pagination-size" style="display:flex; align-items:center; gap:8px;">
+              <label for="limit-select" class="filter-label" style="margin:0;">Por página</label>
+              <select id="limit-select" class="filter-select" style="width:auto;">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+              </select>
+            </div>
+            <div class="pagination-controls">
+              <button class="page-btn">← Anterior</button>
+              <button class="page-btn active">1</button>
+              <button class="page-btn">2</button>
+              <button class="page-btn">3</button>
+              <button class="page-btn">...</button>
+              <button class="page-btn">69</button>
+              <button class="page-btn">Siguiente →</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+    <!-- Drawer -->
+    <div class="drawer" id="tipster-drawer">
+      <div class="drawer-header">
+        <h2 class="drawer-title">Detalle de Tipster</h2>
+        <button class="drawer-close" onclick="closeDrawer()">×</button>
+      </div>
+
+      <div class="drawer-tabs">
+        <button class="drawer-tab active" data-tab="overview">Overview</button>
+        <button class="drawer-tab" data-tab="signals">Señales & Calidad</button>
+        <button class="drawer-tab" data-tab="compliance">Compliance</button>
+        <button class="drawer-tab" data-tab="subscribers">Suscriptores</button>
+        <button class="drawer-tab" data-tab="finance">Finanzas</button>
+        <button class="drawer-tab" data-tab="support">Soporte</button>
+        <button class="drawer-tab" data-tab="audit">Auditoría</button>
+      </div>
+
+      <div class="drawer-content">
+        <!-- Overview Tab -->
+        <div id="tab-overview">
+          <div class="drawer-section">
+            <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+              <div class="tipster-avatar" style="width: 80px; height: 80px; font-size: 32px;">CM</div>
+              <div style="flex: 1;">
+                <h3 style="font-size: 24px; font-weight: 700; margin-bottom: 4px;">@carlosbet</h3>
+                <p style="color: var(--text-muted); margin-bottom: 8px;">Carlos Méndez</p>
+                <p style="color: var(--text-muted); font-size: 13px;">carlos@email.com</p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; margin-bottom: 24px;">
+              <span class="badge active">ACTIVE</span>
+              <span class="badge verified">VERIFIED</span>
+              <span class="flags-badge clean">✓ Clean</span>
+            </div>
+          </div>
+
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">KPIs de Performance</h4>
+            <div class="kpi-grid">
+              <div class="kpi-item">
+                <div class="kpi-label">ROI 30d</div>
+                <div class="kpi-value metric-positive">+12.5%</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-label">Winrate 30d</div>
+                <div class="kpi-value metric-neutral">58.2%</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-label">Drawdown 30d</div>
+                <div class="kpi-value metric-positive">-4.2%</div>
+              </div>
+              <div class="kpi-item">
+                <div class="kpi-label">Seguidores</div>
+                <div class="kpi-value">1,247</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Acciones de Moderación</h4>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <button class="btn btn-success" onclick="openModal('approve-modal')">✅ Aprobar Verificación</button>
+              <button class="btn btn-danger" onclick="openModal('reject-modal')">❌ Rechazar Verificación</button>
+              <button class="btn btn-outline" onclick="openModal('review-modal')">⏸️ Marcar en Revisión</button>
+              <button class="btn btn-danger" onclick="openModal('suspend-modal')">🚫 Suspender Tipster</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Signals & Quality Tab -->
+        <div id="tab-signals" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Señales Recientes</h4>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">Últimas 5 señales publicadas</p>
+            <div class="table-container" style="margin-bottom: 16px;">
+              <table class="tipsters-table" style="min-width: 800px;">
+                <thead>
+                  <tr>
+                    <th>Evento</th>
+                    <th>Cuota</th>
+                    <th>Stake</th>
+                    <th>Resultado</th>
+                    <th>EV</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Real Madrid vs Barcelona</td>
+                    <td>2.10</td>
+                    <td>3u</td>
+                    <td>Ganada</td>
+                    <td>+0.25</td>
+                    <td>Settled</td>
+                  </tr>
+                  <tr>
+                    <td>Lakers vs Celtics</td>
+                    <td>1.85</td>
+                    <td>2u</td>
+                    <td>Perdida</td>
+                    <td>-0.10</td>
+                    <td>Settled</td>
+                  </tr>
+                  <tr>
+                    <td>Nadal vs Djokovic</td>
+                    <td>2.50</td>
+                    <td>1u</td>
+                    <td>Pendiente</td>
+                    <td>+0.05</td>
+                    <td>Live</td>
+                  </tr>
+                  <tr>
+                    <td>Arsenal vs Chelsea</td>
+                    <td>2.00</td>
+                    <td>2u</td>
+                    <td>Cancelada</td>
+                    <td>--</td>
+                    <td>Cancelled</td>
+                  </tr>
+                  <tr>
+                    <td>PSG vs Monaco</td>
+                    <td>1.95</td>
+                    <td>1.5u</td>
+                    <td>Ganada</td>
+                    <td>+0.12</td>
+                    <td>Settled</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="btn btn-primary" onclick="navigate('/admin/signals?tipsterId=tipster_001')">
+              Ver todas las señales →
+            </button>
+          </div>
+        </div>
+
+        <!-- Compliance Tab -->
+        <div id="tab-compliance" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Flags Activos</h4>
+            <div class="alert alert-success">
+              <span class="alert-icon">✓</span>
+              <div class="alert-content">
+                <div class="alert-text">Este tipster no tiene flags de compliance activos.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Historial de Revisiones</h4>
+            <p style="color: var(--text-muted); margin-bottom: 16px;">Sin revisiones previas</p>
+            <button class="btn btn-primary" onclick="navigate('/admin/audit?entity=tipster&entityId=tipster_001')">
+              Ver en Auditoría →
+            </button>
+          </div>
+        </div>
+
+        <!-- Subscribers Tab -->
+        <div id="tab-subscribers" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Suscriptores</h4>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Activos</div>
+                <div class="info-value">142</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Churn Rate</div>
+                <div class="info-value">4.2%</div>
+              </div>
+            </div>
+            <div style="margin-top:16px; overflow:auto;">
+              <table class="tipsters-table" style="min-width:700px;">
+                <thead>
+                  <tr>
+                    <th>Usuario</th>
+                    <th>Email</th>
+                    <th>Plan</th>
+                    <th>Inicio</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>Juan Perez</td><td>juan@example.com</td><td>Mensual</td><td>2026-02-01</td><td>Activo</td></tr>
+                  <tr><td>Laura García</td><td>laura@example.com</td><td>Trimestral</td><td>2026-01-20</td><td>Activo</td></tr>
+                  <tr><td>Carlos Ruiz</td><td>carlos@example.com</td><td>Anual</td><td>2025-12-15</td><td>Cancelado</td></tr>
+                  <tr><td>María López</td><td>maria@example.com</td><td>Mensual</td><td>2026-02-05</td><td>Pendiente</td></tr>
+                  <tr><td>Ana Torres</td><td>ana@example.com</td><td>Mensual</td><td>2026-02-07</td><td>Activo</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 16px;" onclick="navigate('/admin/subscriptions?tipsterId=tipster_001')">
+              Ver en Suscripciones →
+            </button>
+          </div>
+        </div>
+
+        <!-- Finance Tab -->
+        <div id="tab-finance" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Finanzas</h4>
+            <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">Ingresos 30d</div>
+                <div class="info-value">$2,840</div>
+              </div>
+              <div class="info-item">
+                <div class="info-label">Créditos Recibidos</div>
+                <div class="info-value">14,200</div>
+              </div>
+            </div>
+            <button class="btn btn-primary" style="margin-top: 16px;" onclick="navigate('/admin/finance?tipsterId=tipster_001')">
+              Ver en Finanzas →
+            </button>
+          </div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="tab-support" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Tickets de Soporte</h4>
+            <ul style="list-style:none; padding:0; margin:0; display:grid; gap:8px;">
+              <li style="display:flex; justify-content:space-between;"><span>#TK-1847</span><span style="color:var(--admin-primary)">Abierto</span><span>Alta</span></li>
+              <li style="display:flex; justify-content:space-between;"><span>#TK-1832</span><span style="color:var(--text-muted)">En curso</span><span>Media</span></li>
+              <li style="display:flex; justify-content:space-between;"><span>#TK-1799</span><span style="color:var(--admin-primary)">Resuelto</span><span>Baja</span></li>
+            </ul>
+            <button class="btn btn-primary" style="margin-top: 12px;" onclick="navigate('/admin/support?tipsterId=tipster_001')">
+              Ver en Soporte →
+            </button>
+          </div>
+        </div>
+
+        <!-- Audit Tab -->
+        <div id="tab-audit" style="display: none;">
+          <div class="drawer-section">
+            <h4 class="drawer-section-title">Eventos de Auditoría</h4>
+            <ul style="list-style:none; padding:0; margin:0; display:grid; gap:8px;">
+              <li><span style="color:var(--text-muted)">2026-02-10 14:21</span> — VERIFIED por admin_007</li>
+              <li><span style="color:var(--text-muted)">2026-02-09 10:02</span> — Estado cambiado a REVIEW</li>
+              <li><span style="color:var(--text-muted)">2026-02-01 08:45</span> — Nota interna añadida</li>
+            </ul>
+            <button class="btn btn-primary" style="margin-top: 12px;" onclick="navigate('/admin/audit?entity=tipster&entityId=tipster_001')">
+              Ver en Auditoría →
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Bulk Actions Preview -->
+    <div class="modal-overlay" id="bulk-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title" id="bulk-modal-title">Acción Masiva</h3>
+        </div>
+        <div class="modal-body">
+          <div class="alert alert-warning" id="bulk-impact-alert" style="display:none;">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+              <div class="alert-text">Esta acción afecta el estado de múltiples tipsters. Confirma que entiendes el impacto.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="info-label">Resumen</div>
+            <div class="info-value" id="bulk-count-text">0 seleccionados</div>
+          </div>
+          <div class="drawer-section">
+            <div class="drawer-section-title">Preview de afectados</div>
+            <ul id="bulk-list" style="list-style:none; padding:0; margin:0; display:grid; grid-template-columns: repeat(2, 1fr); gap:8px;"></ul>
+            <div id="bulk-more" style="margin-top:8px; color: var(--text-muted);"></div>
+          </div>
+          <div class="form-group" id="bulk-impact-group" style="display:none;">
+            <div class="checkbox-group">
+              <input type="checkbox" id="bulk-impact" />
+              <label for="bulk-impact">Entiendo el impacto de esta acción</label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeBulkModal()">Cancelar</button>
+          <button class="btn btn-primary" id="bulk-confirm-btn" disabled onclick="confirmBulkAction()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Approve Verification -->
+    <div class="modal-overlay" id="approve-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">✅ Aprobar Verificación</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-success">
+            <span class="alert-icon">✓</span>
+            <div class="alert-content">
+              <div class="alert-text">
+                Vas a aprobar la verificación de @carlosbet. El tipster recibirá el badge VERIFIED.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Motivo (Opcional)</label>
+            <textarea class="form-textarea" placeholder="Razón de la aprobación..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nota Interna (Opcional)</label>
+            <input type="text" class="form-input" placeholder="Nota solo visible para administradores">
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="notify-approve" checked>
+              <label for="notify-approve">Notificar al tipster sobre la aprobación</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('approve-modal')">Cancelar</button>
+          <button class="btn btn-success" onclick="confirmApprove()">Confirmar Aprobación</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Reject Verification -->
+    <div class="modal-overlay" id="reject-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">❌ Rechazar Verificación</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+              <div class="alert-text">
+                Vas a rechazar la verificación de @carlosbet. El tipster será notificado.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Motivo (Obligatorio)</label>
+            <textarea class="form-textarea" placeholder="Razón del rechazo..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nota Interna (Opcional)</label>
+            <input type="text" class="form-input" placeholder="Nota solo visible para administradores">
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="notify-reject" checked>
+              <label for="notify-reject">Notificar al tipster sobre el rechazo</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('reject-modal')">Cancelar</button>
+          <button class="btn btn-danger" onclick="confirmReject()">Confirmar Rechazo</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Suspend Tipster -->
+    <div class="modal-overlay" id="suspend-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">🚫 Suspender Tipster</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+              <div class="alert-text">
+                ADVERTENCIA: Vas a SUSPENDER a @carlosbet. Esta acción bloqueará el acceso del tipster.
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Motivo (Obligatorio)</label>
+            <textarea class="form-textarea" placeholder="Describe el motivo de la suspensión..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <div class="checkbox-group">
+              <input type="checkbox" id="confirm-suspend" required>
+              <label for="confirm-suspend">Entiendo que esta acción bloqueará el acceso del tipster</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('suspend-modal')">Cancelar</button>
+          <button class="btn btn-danger" onclick="confirmSuspend()" id="suspend-btn" disabled>Suspender</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal: Mark in Review -->
+    <div class="modal-overlay" id="review-modal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 class="modal-title">⏸️ Marcar en Revisión</h3>
+        </div>
+
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label">Motivo</label>
+            <textarea class="form-textarea" placeholder="Razón para marcar en revisión..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal('review-modal')">Cancelar</button>
+          <button class="btn btn-primary" onclick="confirmReview()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Navigation
+    function navigate(path) {
+      console.log('Navigate to:', path);
+      alert(`Navegando a: ${path}`);
+    }
+
+    // Query helpers
+    function readQueryParams() {
+      const url = new URL(window.location.href);
+      const p = url.searchParams;
+      return {
+        q: p.get('q') || '',
+        status: p.get('status') || '',
+        verification: p.get('verification') || '',
+        risk: p.get('risk') || '',
+        roiMin: p.get('roiMin') || '',
+        roiMax: p.get('roiMax') || '',
+        winrateMin: p.get('winrateMin') || '',
+        winrateMax: p.get('winrateMax') || '',
+        drawdownMax: p.get('drawdownMax') || '',
+        lastActiveFrom: p.get('lastActiveFrom') || '',
+        lastActiveTo: p.get('lastActiveTo') || '',
+        sport: p.get('sport') || '',
+        league: p.get('league') || '',
+        page: p.get('page') || '',
+        limit: p.get('limit') || '',
+        sort: p.get('sort') || '',
+        tipsterId: p.get('tipsterId') || '',
+        tab: p.get('tab') || ''
+      };
+    }
+
+    function setQueryParams(next) {
+      const url = new URL(window.location.href);
+      const p = url.searchParams;
+      Object.entries(next).forEach(([key, value]) => {
+        if (value === undefined || value === null || value === '') {
+          p.delete(key);
+        } else {
+          p.set(key, String(value));
+        }
+      });
+      history.replaceState(null, '', `${url.pathname}?${p.toString()}`);
+    }
+
+    function applyFiltersFromQuery() {
+      const qp = readQueryParams();
+      // Status
+      const statusSelect = document.getElementById('status-select');
+      if (statusSelect) {
+        statusSelect.value = qp.status || '';
+      }
+      // Verification
+      const verSelect = document.getElementById('verification-select');
+      if (verSelect) {
+        verSelect.value = qp.verification || '';
+      }
+      // Flags
+      const flagsSelect = document.getElementById('flags-select');
+      if (flagsSelect) {
+        flagsSelect.value = qp.risk || '';
+      }
+      // ROI
+      const roiSelect = document.getElementById('roi-select');
+      if (roiSelect && qp.roiMin && qp.roiMax) {
+        roiSelect.value = `${qp.roiMin}-${qp.roiMax}`;
+      }
+      // Advanced range inputs
+      const roiMinInput = document.getElementById('roi-min-input');
+      const roiMaxInput = document.getElementById('roi-max-input');
+      if (roiMinInput) roiMinInput.value = qp.roiMin || '';
+      if (roiMaxInput) roiMaxInput.value = qp.roiMax || '';
+      const wrMinInput = document.getElementById('winrate-min-input');
+      const wrMaxInput = document.getElementById('winrate-max-input');
+      if (wrMinInput) wrMinInput.value = qp.winrateMin || '';
+      if (wrMaxInput) wrMaxInput.value = qp.winrateMax || '';
+      const ddMaxInput = document.getElementById('drawdown-max-input');
+      if (ddMaxInput) ddMaxInput.value = qp.drawdownMax || '';
+      const lastFrom = document.getElementById('last-active-from');
+      const lastTo = document.getElementById('last-active-to');
+      if (lastFrom) lastFrom.value = qp.lastActiveFrom || '';
+      if (lastTo) lastTo.value = qp.lastActiveTo || '';
+      const sportSelectEl = document.getElementById('sport-select');
+      const leagueSelectEl = document.getElementById('league-select');
+      if (sportSelectEl) sportSelectEl.value = qp.sport || '';
+      if (leagueSelectEl) leagueSelectEl.value = qp.league || '';
+      // Search input (q)
+      const searchInput = document.getElementById('search-tipsters');
+      if (searchInput) {
+        searchInput.value = qp.q || '';
+      }
+      // Limit select
+      const limitSelect = document.getElementById('limit-select');
+      if (limitSelect) {
+        limitSelect.value = qp.limit || '';
+      }
+      // Chips reflect status
+      if (qp.status) {
+        filterStatus(qp.status);
+      } else {
+        filterStatus('all');
+      }
+
+      // Drawer & Tabs
+      if (qp.tipsterId) {
+        openDrawer(qp.tipsterId);
+      }
+      if (qp.tab) {
+        const tabId = `tab-${qp.tab}`;
+        const tabEl = document.getElementById(tabId);
+        if (tabEl) {
+          document.querySelectorAll('.drawer-tab').forEach(t => {
+            t.classList.toggle('active', t.dataset.tab === qp.tab);
+          });
+          document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+          tabEl.style.display = 'block';
+        }
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyFiltersFromQuery();
+      const statusSelect = document.getElementById('status-select');
+      if (statusSelect) {
+        statusSelect.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ status: val, page: undefined });
+          filterStatus(val || 'all');
+        });
+      }
+      const verSelect = document.getElementById('verification-select');
+      if (verSelect) {
+        verSelect.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ verification: val, page: undefined });
+        });
+      }
+      const flagsSelect = document.getElementById('flags-select');
+      if (flagsSelect) {
+        flagsSelect.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ risk: val, page: undefined });
+        });
+      }
+      const roiSelect = document.getElementById('roi-select');
+      if (roiSelect) {
+        roiSelect.addEventListener('change', (e) => {
+          const val = e.target.value || '';
+          if (val.includes('-')) {
+            const [min, max] = val.split('-');
+            setQueryParams({ roiMin: min, roiMax: max, page: undefined });
+          } else {
+            setQueryParams({ roiMin: undefined, roiMax: undefined, page: undefined });
+          }
+        });
+      }
+      // Advanced filters listeners
+      const roiMinInput2 = document.getElementById('roi-min-input');
+      const roiMaxInput2 = document.getElementById('roi-max-input');
+      if (roiMinInput2) {
+        roiMinInput2.addEventListener('input', (e) => {
+          const val = e.target.value;
+          setQueryParams({ roiMin: val || undefined, page: undefined });
+        });
+      }
+      if (roiMaxInput2) {
+        roiMaxInput2.addEventListener('input', (e) => {
+          const val = e.target.value;
+          setQueryParams({ roiMax: val || undefined, page: undefined });
+        });
+      }
+      const wrMinInput2 = document.getElementById('winrate-min-input');
+      const wrMaxInput2 = document.getElementById('winrate-max-input');
+      if (wrMinInput2) {
+        wrMinInput2.addEventListener('input', (e) => {
+          const val = e.target.value;
+          setQueryParams({ winrateMin: val || undefined, page: undefined });
+        });
+      }
+      if (wrMaxInput2) {
+        wrMaxInput2.addEventListener('input', (e) => {
+          const val = e.target.value;
+          setQueryParams({ winrateMax: val || undefined, page: undefined });
+        });
+      }
+      const ddMaxInput2 = document.getElementById('drawdown-max-input');
+      if (ddMaxInput2) {
+        ddMaxInput2.addEventListener('input', (e) => {
+          const val = e.target.value;
+          setQueryParams({ drawdownMax: val || undefined, page: undefined });
+        });
+      }
+      const lastFrom2 = document.getElementById('last-active-from');
+      const lastTo2 = document.getElementById('last-active-to');
+      if (lastFrom2) {
+        lastFrom2.addEventListener('change', (e) => {
+          const val = e.target.value;
+          setQueryParams({ lastActiveFrom: val || undefined, page: undefined });
+        });
+      }
+      if (lastTo2) {
+        lastTo2.addEventListener('change', (e) => {
+          const val = e.target.value;
+          setQueryParams({ lastActiveTo: val || undefined, page: undefined });
+        });
+      }
+      const sportSel2 = document.getElementById('sport-select');
+      const leagueSel2 = document.getElementById('league-select');
+      if (sportSel2) {
+        sportSel2.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ sport: val, page: undefined });
+        });
+      }
+      if (leagueSel2) {
+        leagueSel2.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ league: val, page: undefined });
+        });
+      }
+      // Search input sync (q)
+      const qp0 = readQueryParams();
+      const searchInput = document.getElementById('search-tipsters');
+      if (searchInput) {
+        searchInput.value = qp0.q || '';
+        searchInput.addEventListener('input', (e) => {
+          const val = e.target.value.trim();
+          setQueryParams({ q: val || undefined, page: undefined });
+        });
+      }
+      // Limit select sync
+      const limitSelect = document.getElementById('limit-select');
+      if (limitSelect) {
+        limitSelect.value = qp0.limit || '';
+        limitSelect.addEventListener('change', (e) => {
+          const val = e.target.value || undefined;
+          setQueryParams({ limit: val, page: 1 });
+        });
+      }
+      // Pagination buttons sync
+      document.querySelectorAll('.page-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const text = btn.textContent.trim();
+          const qp = readQueryParams();
+          let nextPage;
+          if (/^\d+$/.test(text)) {
+            nextPage = parseInt(text, 10);
+          } else if (text.includes('Siguiente')) {
+            nextPage = (parseInt(qp.page || '1', 10)) + 1;
+          } else if (text.includes('Anterior')) {
+            nextPage = Math.max(1, (parseInt(qp.page || '1', 10)) - 1);
+          } else {
+            return;
+          }
+          setQueryParams({ page: nextPage });
+        });
+      });
+    });
+
+    // Drawer Management
+    function openDrawer(tipsterId) {
+      console.log('Open drawer for tipster:', tipsterId);
+      document.getElementById('drawer-overlay').classList.add('active');
+      document.getElementById('tipster-drawer').classList.add('active');
+      // Sync URL with drawer state
+      const qp = readQueryParams();
+      setQueryParams({ tipsterId: tipsterId, tab: qp.tab || 'overview' });
+    }
+
+    function closeDrawer() {
+      document.getElementById('drawer-overlay').classList.remove('active');
+      document.getElementById('tipster-drawer').classList.remove('active');
+      // Remove drawer state from URL
+      setQueryParams({ tipsterId: undefined, tab: undefined });
+    }
+
+    // Drawer Tabs
+    document.querySelectorAll('.drawer-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        const tabName = tab.dataset.tab;
+        document.querySelectorAll('[id^="tab-"]').forEach(t => t.style.display = 'none');
+        document.getElementById(`tab-${tabName}`).style.display = 'block';
+        // Sync active tab with URL
+        setQueryParams({ tab: tabName });
+      });
+    });
+
+    // Modal Management
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Filter Status
+    function filterStatus(status) {
+      // Toggle active state on chips
+      const chips = document.querySelectorAll('.filter-btns .filter-btn');
+      chips.forEach(btn => {
+        const btnStatus = btn.getAttribute('data-status');
+        const isActive = (btnStatus === status) || (status === 'all' && btnStatus === 'all');
+        btn.classList.toggle('active', isActive);
+      });
+      // Reflect into the status select
+      const statusSelect = document.getElementById('status-select');
+      if (statusSelect) {
+        statusSelect.value = status === 'all' ? '' : status;
+      }
+      // Sync URL
+      if (typeof setQueryParams === 'function') {
+        setQueryParams({ status: status === 'all' ? undefined : status, page: undefined });
+      }
+      console.log('Filter by status:', status);
+    }
+
+    // Clear Filters
+    function clearFilters() {
+      console.log('Clear all filters');
+      document.querySelectorAll('.filter-select').forEach(select => select.value = '');
+    }
+
+    // Export Tipsters
+    function exportTipsters() {
+      console.log('Exporting tipsters to CSV...');
+      alert('Exportando tipsters a CSV (tipsters_2026-02-11.csv)');
+    }
+
+    // Refresh Tipsters
+    function refreshTipsters() {
+      console.log('Refreshing tipsters list...');
+      alert('Actualizando lista de tipsters...');
+    }
+
+    // Sort Table
+    function sortTable(column) {
+      console.log('Sort by:', column);
+      if (typeof setQueryParams === 'function') {
+        const qp = readQueryParams();
+        const current = qp.sort || '';
+        let next;
+        if (!current || !current.startsWith(column)) {
+          next = `${column}:asc`;
+        } else {
+          next = current.endsWith(':asc') ? `${column}:desc` : `${column}:asc`;
+        }
+        setQueryParams({ sort: next, page: undefined });
+      }
+    }
+
+    // Select All
+    function toggleSelectAll() {
+      const selectAll = document.getElementById('select-all').checked;
+      document.querySelectorAll('.tipster-checkbox').forEach(checkbox => {
+        checkbox.checked = selectAll;
+      });
+      updateBulkActions();
+    }
+
+    // Update Bulk Actions
+    document.querySelectorAll('.tipster-checkbox').forEach(checkbox => {
+      checkbox.addEventListener('change', updateBulkActions);
+    });
+
+    function updateBulkActions() {
+      const selected = document.querySelectorAll('.tipster-checkbox:checked').length;
+      document.getElementById('selected-count').textContent = selected;
+      
+      if (selected > 0) {
+        document.getElementById('bulk-actions').classList.add('active');
+      } else {
+        document.getElementById('bulk-actions').classList.remove('active');
+      }
+    }
+
+    // Bulk Actions
+    function bulkAction(action) {
+      const selected = document.querySelectorAll('.tipster-checkbox:checked').length;
+      console.log(`Bulk action: ${action} on ${selected} tipsters`);
+      
+      if (selected > 10) {
+        const ids = Array.from(document.querySelectorAll('.tipster-checkbox:checked')).map(cb => cb.getAttribute('data-tipster-id'));
+        openBulkModal(ids, action);
+        return;
+      }
+      
+      alert(`Acción "${action}" aplicada a ${selected} tipsters`);
+    }
+
+    // Bulk Actions Modal helpers
+    let __bulkActionState = { action: null, ids: [] };
+
+    function openBulkModal(ids, action) {
+      __bulkActionState = { action, ids };
+      const titleEl = document.getElementById('bulk-modal-title');
+      const countEl = document.getElementById('bulk-count-text');
+      const listEl = document.getElementById('bulk-list');
+      const moreEl = document.getElementById('bulk-more');
+      const impactAlert = document.getElementById('bulk-impact-alert');
+      const impactGroup = document.getElementById('bulk-impact-group');
+      const impactCheckbox = document.getElementById('bulk-impact');
+      const confirmBtn = document.getElementById('bulk-confirm-btn');
+
+      // Reset
+      listEl.innerHTML = '';
+      moreEl.textContent = '';
+      impactCheckbox.checked = false;
+      confirmBtn.disabled = (action === 'pause' || action === 'reactivate');
+
+      // Title & summary
+      const actionLabel = action === 'pause' ? 'Pausar' : action === 'reactivate' ? 'Reactivar' : 'Exportar';
+      titleEl.textContent = `Acción Masiva: ${actionLabel}`;
+      countEl.textContent = `${ids.length} seleccionados`;
+
+      // Preview list (top 10)
+      const preview = ids.slice(0, 10);
+      preview.forEach(id => {
+        const li = document.createElement('li');
+        li.textContent = id;
+        li.style.cssText = 'background: var(--bg-tertiary); padding: 8px 10px; border-radius: 8px; font-size: 12px;';
+        listEl.appendChild(li);
+      });
+      if (ids.length > 10) {
+        moreEl.textContent = `… y ${ids.length - 10} más`;
+      }
+
+      // Impact confirmation for state-changing actions
+      const needsImpact = (action === 'pause' || action === 'reactivate');
+      impactAlert.style.display = needsImpact ? 'flex' : 'none';
+      impactGroup.style.display = needsImpact ? 'block' : 'none';
+
+      // Checkbox enables confirm
+      impactCheckbox.onchange = () => {
+        confirmBtn.disabled = needsImpact && !impactCheckbox.checked;
+      };
+
+      // Show modal
+      document.getElementById('bulk-modal').classList.add('active');
+    }
+
+    function closeBulkModal() {
+      document.getElementById('bulk-modal').classList.remove('active');
+      __bulkActionState = { action: null, ids: [] };
+    }
+
+    function confirmBulkAction() {
+      const { action, ids } = __bulkActionState;
+      if (!action || !ids.length) {
+        closeBulkModal();
+        return;
+      }
+      const needsImpact = (action === 'pause' || action === 'reactivate');
+      const impactCheckbox = document.getElementById('bulk-impact');
+      if (needsImpact && !impactCheckbox.checked) {
+        alert('Debes confirmar que entiendes el impacto');
+        return;
+      }
+      // Simulate apply bulk action
+      alert(`Acción "${action}" aplicada a ${ids.length} tipsters`);
+      closeBulkModal();
+    }
+
+    // Confirm Actions
+    function confirmApprove() {
+      console.log('Tipster verification approved');
+      alert('Verificación aprobada. Se ha generado un registro de auditoría.');
+      closeModal('approve-modal');
+      closeDrawer();
+    }
+
+    function confirmReject() {
+      console.log('Tipster verification rejected');
+      alert('Verificación rechazada. El tipster ha sido notificado.');
+      closeModal('reject-modal');
+      closeDrawer();
+    }
+
+    function confirmReview() {
+      console.log('Tipster marked in review');
+      alert('Tipster marcado en revisión.');
+      closeModal('review-modal');
+      closeDrawer();
+    }
+
+    function confirmSuspend() {
+      const confirmed = document.getElementById('confirm-suspend').checked;
+      if (!confirmed) {
+        alert('Debes confirmar la acción');
+        return;
+      }
+      
+      console.log('Tipster suspended');
+      alert('Tipster suspendido. Se ha generado un registro de auditoría.');
+      closeModal('suspend-modal');
+      closeDrawer();
+    }
+
+    // Enable/Disable suspend button
+    document.getElementById('confirm-suspend')?.addEventListener('change', (e) => {
+      document.getElementById('suspend-btn').disabled = !e.target.checked;
+    });
+
+    // Mobile menu
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.innerWidth <= 768) {
+        const header = document.querySelector('.header');
+        const btn = document.createElement('button');
+        btn.textContent = '☰';
+        btn.style.cssText = 'position: absolute; top: 24px; left: 16px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; z-index: 100;';
+        btn.addEventListener('click', toggleSidebar);
+        header.appendChild(btn);
+      }
+
+      // Demo: alternar estados UI rápidamente desde query (?ui=loading|empty|error|partial)
+      const uiStateFromQuery = new URLSearchParams(window.location.search).get('ui');
+      if (uiStateFromQuery) setUIState(uiStateFromQuery);
+    });
+
+    function setUIState(state) {
+      const blocks = {
+        loading: document.getElementById('ui-loading'),
+        empty: document.getElementById('ui-empty'),
+        error: document.getElementById('ui-error'),
+        partial: document.getElementById('ui-partial'),
+      };
+      const table = document.getElementById('table-container');
+
+      // Ocultar todo
+      Object.values(blocks).forEach(el => el && (el.style.display = 'none'));
+      if (table) table.style.display = 'none';
+
+      // Mostrar según estado
+      switch (state) {
+        case 'loading':
+          blocks.loading && (blocks.loading.style.display = 'block');
+          break;
+        case 'empty':
+          blocks.empty && (blocks.empty.style.display = 'block');
+          break;
+        case 'error':
+          blocks.error && (blocks.error.style.display = 'block');
+          break;
+        case 'partial':
+          blocks.partial && (blocks.partial.style.display = 'block');
+          break;
+        default:
+          // estado normal
+          if (table) table.style.display = 'block';
+          break;
+      }
+    }
+
+    console.log('Admin Tipsters loaded');
+  </script>
+</body>
+</html>

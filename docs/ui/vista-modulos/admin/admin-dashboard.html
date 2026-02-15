@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Admin Colors (Orange/Amber) - Diferenciado de Tipster */
+      --admin-primary: #f59e0b;
+      --admin-secondary: #d97706;
+      --admin-accent: #fbbf24;
+      --admin-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      --admin-glow: 0 0 20px rgba(245, 158, 11, 0.4);
+      
+      /* Status Colors */
+      --status-healthy: #00FF94;
+      --status-warn: #FFD700;
+      --status-degraded: #FF8C00;
+      --status-down: #FF4444;
+      --status-critical: #CC0000;
+      
+      /* Base Colors */
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--admin-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--admin-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
+      color: var(--admin-primary);
+      border-left: 3px solid var(--admin-primary);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 24px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .control-select,
+    .control-btn {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .control-btn:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    .status-chips {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .chip.healthy {
+      background: rgba(0, 255, 148, 0.1);
+      border-color: rgba(0, 255, 148, 0.3);
+      color: var(--status-healthy);
+    }
+
+    .chip.warn {
+      background: rgba(255, 215, 0, 0.1);
+      border-color: rgba(255, 215, 0, 0.3);
+      color: var(--status-warn);
+    }
+
+    .chip.degraded {
+      background: rgba(255, 140, 0, 0.1);
+      border-color: rgba(255, 140, 0, 0.3);
+      color: var(--status-degraded);
+    }
+
+    .chip.down {
+      background: rgba(255, 68, 68, 0.1);
+      border-color: rgba(255, 68, 68, 0.3);
+      color: var(--status-down);
+    }
+
+    .chip.critical {
+      background: rgba(204,0,0,0.1); 
+      border-color: rgba(204,0,0,0.3); 
+      color: var(--status-critical);
+    }
+
+    .chip-badge {
+      background: rgba(255, 255, 255, 0.2);
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    /* KPI GRID */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-bottom: 32px;
+    }
+
+    .kpi-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--admin-primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(245, 158, 11, 0.2);
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .kpi-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .kpi-delta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .kpi-delta.positive {
+      color: var(--status-healthy);
+    }
+
+    .kpi-delta.negative {
+      color: var(--secondary-red);
+    }
+
+    .kpi-link {
+      font-size: 12px;
+      color: var(--admin-primary);
+      text-decoration: none;
+      margin-top: 8px;
+      display: inline-block;
+    }
+
+    /* GRID LAYOUT */
+    .grid-2-1 {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .grid-1-2 {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    /* SECTION CARD */
+    .section-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    .section-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--admin-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--admin-primary);
+      color: var(--admin-primary);
+    }
+
+    .btn-sm {
+      padding: 4px 10px;
+      font-size: 12px;
+    }
+
+    /* TABLE */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table thead {
+      background: var(--bg-tertiary);
+    }
+
+    .data-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .data-table td {
+      padding: 14px 12px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .data-table tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    .data-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    /* STATUS BADGE */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.healthy { background: rgba(0, 255, 148, 0.15); color: var(--status-healthy); }
+    .badge.warn { background: rgba(255, 215, 0, 0.15); color: var(--status-warn); }
+    .badge.degraded { background: rgba(255, 140, 0, 0.15); color: var(--status-degraded); }
+    .badge.down { background: rgba(255, 68, 68, 0.15); color: var(--status-down); }
+    .badge.critical { background: rgba(204, 0, 0, 0.15); color: var(--status-critical); }
+
+    /* ALERT */
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-critical {
+      background: rgba(204, 0, 0, 0.1);
+      border: 1px solid rgba(204, 0, 0, 0.3);
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-success {
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ACTIVITY FEED */
+    .activity-feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .activity-item {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .activity-time {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      margin-left: auto;
+    }
+
+    /* QUICK ACTIONS */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .quick-action {
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .quick-action:hover {
+      border-color: var(--admin-primary);
+      background: var(--bg-elevated);
+    }
+
+    .quick-action-icon {
+      font-size: 24px;
+    }
+
+    .quick-action-text {
+      flex: 1;
+    }
+
+    .quick-action-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .quick-action-desc {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* PENDING APPROVALS */
+    .approval-item {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .approval-item:hover {
+      border-color: var(--admin-primary);
+      background: var(--bg-elevated);
+    }
+
+    .approval-info {
+      flex: 1;
+    }
+
+    .approval-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .approval-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .approval-badge {
+      padding: 4px 12px;
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--admin-primary);
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .tab.active {
+      color: var(--admin-primary);
+      border-bottom-color: var(--admin-primary);
+    }
+
+    .tab:hover:not(.active) {
+      color: var(--text-primary);
+    }
+
+    /* EMPTY STATE */
+    .empty-state {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-text {
+      font-size: 14px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .grid-2-1,
+      .grid-1-2,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .header {
+        padding: 16px;
+      }
+
+      .header-top {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+
+      .data-table {
+        font-size: 12px;
+      }
+
+      .data-table th,
+      .data-table td {
+        padding: 8px;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--admin-primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">Admin Panel</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/admin" class="nav-item active">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/admin/users" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Usuarios</span>
+          </a>
+          <a href="/admin/tipsters" class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span>Tipsters</span>
+          </a>
+          <a href="/admin/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/admin/bets" class="nav-item">
+            <span class="nav-icon">🎲</span>
+            <span>Apuestas</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Finanzas</div>
+          <a href="/admin/finance" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Finanzas</span>
+          </a>
+          <a href="/admin/credits" class="nav-item">
+            <span class="nav-icon">💳</span>
+            <span>Créditos</span>
+          </a>
+          <a href="/admin/subscriptions" class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span>Suscripciones</span>
+          </a>
+
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Operaciones</div>
+          <a href="/admin/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+          <a href="/admin/alerts" class="nav-item">
+            <span class="nav-icon">⚠️</span>
+            <span>Alertas</span>
+          </a>
+          <a href="/admin/compliance" class="nav-item">
+            <span class="nav-icon">🔒</span>
+            <span>Compliance</span>
+          </a>
+          <a href="/admin/audit" class="nav-item">
+            <span class="nav-icon">📋</span>
+            <span>Auditoría</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Sistema</div>
+          <a href="/admin/community" class="nav-item">
+            <span class="nav-icon">🌐</span>
+            <span>Comunidad</span>
+          </a>
+          <a href="/admin/referrals" class="nav-item">
+            <span class="nav-icon">🎁</span>
+            <span>Referidos</span>
+          </a>
+
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-top">
+          <div>
+            <div class="flex items-center">
+    <h1 class="header-title">Admin Dashboard</h1>
+    <span class="ml-3 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">DEMO</span>
+</div>
+            <p class="header-subtitle">Estado operativo y control ejecutivo</p>
+          </div>
+
+          <div class="header-controls">
+            <select class="control-select">
+              <option>Hoy</option>
+              <option>7 días</option>
+              <option selected>30 días</option>
+              <option>Custom</option>
+            </select>
+            <select class="control-select">
+              <option selected>Global</option>
+              <option>Por Deporte</option>
+              <option>Por Tipster</option>
+              <option>Por Liga</option>
+            </select>
+            <button class="control-btn">🔄 Refresh</button>
+            <button class="control-btn">📥 Export</button>
+          </div>
+        </div>
+
+        <div class="status-chips">
+          <div class="chip healthy">
+            <span>🟢</span>
+            <span>API: Healthy</span>
+          </div>
+          <div class="chip healthy">
+            <span>📊</span>
+            <span>Sport Data</span>
+          </div>
+          <div class="chip warn">
+            <span>🎲</span>
+            <span>Odds</span>
+          </div>
+          <div class="chip healthy">
+            <span>⚙️</span>
+            <span>Queue: OK</span>
+          </div>
+          <div class="chip critical">
+            <span>⚠️</span>
+            <span>Alertas</span>
+            <span class="chip-badge">3</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card" onclick="navigate('/admin/users')">
+            <div class="kpi-header">
+              <div class="kpi-icon">👥</div>
+              <div class="kpi-label">Usuarios Activos</div>
+            </div>
+            <div class="kpi-value">12,847</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+12.5%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/users" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/tipsters')">
+            <div class="kpi-header">
+              <div class="kpi-icon">⭐</div>
+              <div class="kpi-label">Tipsters Activos</div>
+            </div>
+            <div class="kpi-value">342</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+8.3%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/tipsters" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/signals')">
+            <div class="kpi-header">
+              <div class="kpi-icon">📡</div>
+              <div class="kpi-label">Señales Activas</div>
+            </div>
+            <div class="kpi-value">1,847</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+22.1%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/signals" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/finance')">
+            <div class="kpi-header">
+              <div class="kpi-icon">💰</div>
+              <div class="kpi-label">Ingresos (30d)</div>
+            </div>
+            <div class="kpi-value">$48.2K</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+15.7%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/finance" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/credits')">
+            <div class="kpi-header">
+              <div class="kpi-icon">💳</div>
+              <div class="kpi-label">Créditos Vendidos</div>
+            </div>
+            <div class="kpi-value">142.5K</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+18.2%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/credits" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/support')">
+            <div class="kpi-header">
+              <div class="kpi-icon">💬</div>
+              <div class="kpi-label">Tickets Abiertos</div>
+            </div>
+            <div class="kpi-value">28</div>
+            <div class="kpi-delta negative">
+              <span>▼</span>
+              <span>-32.4%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/support" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card" onclick="navigate('/admin/alerts')">
+            <div class="kpi-header">
+              <div class="kpi-icon">⚠️</div>
+              <div class="kpi-label">Alertas de Riesgo</div>
+            </div>
+            <div class="kpi-value">12</div>
+            <div class="kpi-delta negative">
+              <span>▲</span>
+              <span>+50.0%</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+            <a href="/admin/alerts" class="kpi-link">Ver detalles →</a>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <div class="kpi-icon">📈</div>
+              <div class="kpi-label">Conversión</div>
+            </div>
+            <div class="kpi-value">4.2%</div>
+            <div class="kpi-delta positive">
+              <span>▲</span>
+              <span>+0.8pp</span>
+              <span style="color: var(--text-muted); font-weight: 400;">vs 30d</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- System Health & Alerts -->
+        <div class="grid-2-1">
+          <!-- System Health -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">🔧</span>
+                <span>System Health & Providers</span>
+              </h2>
+              <div class="section-actions">
+                <button class="btn btn-outline btn-sm" onclick="navigate('/admin/alerts?tab=system')">🔄 Health Check</button>
+              <button class="btn btn-outline btn-sm" onclick="navigate('/admin/audit?tab=health')">📊 Ver Historial</button>
+              </div>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Provider</th>
+                    <th>Status</th>
+                    <th>Latencia</th>
+                    <th>Error Rate</th>
+                    <th>Rate Limit</th>
+                    <th>Last Check</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Sport Data API</td>
+                    <td><span class="badge healthy">Healthy</span></td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">245ms</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">0.12%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">8.5K/10K</td>
+                    <td style="font-size: 12px; color: var(--text-muted);">2 min ago</td>
+                    <td><button class="btn btn-sm btn-outline">Conectar</button></td>
+                  </tr>
+                  <tr>
+                    <td>Odds Provider</td>
+                    <td><span class="badge warn">Warn</span></td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">687ms</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">1.8%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">1.2K/5K</td>
+                    <td style="font-size: 12px; color: var(--text-muted);">5 min ago</td>
+                    <td><button class="btn btn-sm btn-outline">Conectar</button></td>
+                  </tr>
+                  <tr>
+                    <td>Payment Gateway</td>
+                    <td><span class="badge healthy">Healthy</span></td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">142ms</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">0.05%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">N/A</td>
+                    <td style="font-size: 12px; color: var(--text-muted);">1 min ago</td>
+                    <td><button class="btn btn-sm btn-outline">Conectar</button></td>
+                  </tr>
+                  <tr>
+                    <td>Email Service</td>
+                    <td><span class="badge healthy">Healthy</span></td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">89ms</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">0.02%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">45K/50K</td>
+                    <td style="font-size: 12px; color: var(--text-muted);">30 sec ago</td>
+                    <td><button class="btn btn-sm btn-outline">Conectar</button></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination">
+                <span>Mostrando 1-4 de 4</span>
+                <div class="pagination-controls">
+                  <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                  <button class="btn btn-sm btn-outline" disabled>Siguiente</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alertas Críticas -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">⚠️</span>
+                <span>Alertas Críticas</span>
+              </h2>
+              <button class="btn btn-outline btn-sm" onclick="navigate('/admin/alerts')">Ver Todas</button>
+            </div>
+
+            <div class="activity-feed">
+              <div class="activity-item" style="border-left: 3px solid var(--status-critical);">
+                <div class="activity-icon" style="color: var(--status-critical);">🔴</div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; margin-bottom: 4px;">CRITICAL: Fraude detectado</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Usuario @suspect_user · IP múltiples</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Ack</button>
+              </div>
+
+              <div class="activity-item" style="border-left: 3px solid var(--secondary-red);">
+                <div class="activity-icon" style="color: var(--secondary-red);">⚠️</div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; margin-bottom: 4px;">ERROR: Odds provider degraded</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Latencia >800ms · Error rate 1.8%</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Ack</button>
+              </div>
+
+              <div class="activity-item" style="border-left: 3px solid var(--status-warn);">
+                <div class="activity-icon" style="color: var(--status-warn);">⚡</div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; margin-bottom: 4px;">WARN: Tipster bajo revisión</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">@tipster_pro · ROI sospechoso +85%</div>
+                </div>
+                <button class="btn btn-outline btn-sm">Review</button>
+              </div>
+
+              <div class="empty-state" style="padding: 20px;">
+                <div style="font-size: 14px; color: var(--text-muted);">3 alertas restantes...</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 16px; display: flex; gap: 8px;">
+              <button class="btn btn-primary" style="flex: 1;" onclick="navigate('/admin/alerts')">Ir a Alertas</button>
+              <button class="btn btn-outline" style="flex: 1;" onclick="navigate('/admin/compliance')">Compliance</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions & Pending Approvals -->
+        <div class="grid-1-2">
+          <!-- Quick Actions -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">⚡</span>
+                <span>Acciones Rápidas</span>
+              </h2>
+            </div>
+
+            <div class="quick-actions">
+              <div class="quick-action" onclick="navigate('/admin/community?tab=announcements')">
+                <div class="quick-action-icon">📢</div>
+                <div class="quick-action-text">
+                  <div class="quick-action-label">Crear Anuncio</div>
+                  <div class="quick-action-desc">Noticia o actualización</div>
+                </div>
+              </div>
+
+              <div class="quick-action" onclick="navigate('/admin/finance?tab=payments&status=pending')">
+                <div class="quick-action-icon">💳</div>
+                <div class="quick-action-text">
+                  <div class="quick-action-label">Pagos Pendientes</div>
+                  <div class="quick-action-desc">Revisar y aprobar</div>
+                </div>
+              </div>
+
+              <div class="quick-action" onclick="navigate('/admin/finance?tab=withdrawals&status=pending')">
+                <div class="quick-action-icon">📤</div>
+                <div class="quick-action-text">
+                  <div class="quick-action-label">Retiros Pendientes</div>
+                  <div class="quick-action-desc">Procesar payouts</div>
+                </div>
+              </div>
+
+              <div class="quick-action" onclick="navigate('/admin/support?severity=critical')">
+                <div class="quick-action-icon">🆘</div>
+                <div class="quick-action-text">
+                  <div class="quick-action-label">Soporte Crítico</div>
+                  <div class="quick-action-desc">Abrir ticket urgente</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pending Approvals -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">📋</span>
+                <span>Pending Approvals</span>
+              </h2>
+            </div>
+
+            <div class="approval-item" onclick="navigate('/admin/tipsters?tab=approvals')">
+              <div class="approval-info">
+                <div class="approval-title">Tipsters por Aprobar</div>
+                <div class="approval-meta">Nuevas solicitudes de verificación</div>
+              </div>
+              <div class="approval-badge">8</div>
+            </div>
+
+            <div class="approval-item" onclick="navigate('/admin/signals?tab=review')">
+              <div class="approval-info">
+                <div class="approval-title">Señales en Revisión</div>
+                <div class="approval-meta">Contenido marcado para moderación</div>
+              </div>
+              <div class="approval-badge">12</div>
+            </div>
+
+            <div class="approval-item" onclick="navigate('/admin/support?assigned=false')">
+              <div class="approval-info">
+                <div class="approval-title">Tickets sin Asignar</div>
+                <div class="approval-meta">Requieren atención inmediata</div>
+              </div>
+              <div class="approval-badge">5</div>
+            </div>
+
+            <div class="approval-item" onclick="navigate('/admin/finance?tab=payments&review=true')">
+              <div class="approval-info">
+                <div class="approval-title">Pagos por Verificar</div>
+                <div class="approval-meta">Transacciones pendientes de validación</div>
+              </div>
+              <div class="approval-badge">3</div>
+            </div>
+
+            <div class="approval-item" onclick="navigate('/admin/finance?tab=refunds&status=pending')">
+              <div class="approval-info">
+                <div class="approval-title">Refunds Pendientes</div>
+                <div class="approval-meta">Solicitudes de reembolso</div>
+              </div>
+              <div class="approval-badge">7</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Top Tipsters & Señales Anómalas -->
+        <div class="grid-2">
+          <!-- Top Tipsters -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">🏆</span>
+                <span>Top Tipsters (30d)</span>
+              </h2>
+              <button class="btn btn-outline btn-sm" onclick="navigate('/admin/tipsters?tab=top')">Ver Más</button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Tipster</th>
+                    <th>ROI</th>
+                    <th>Winrate</th>
+                    <th>Seguidores</th>
+                    <th>Flags</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight: 600;">@carlosbet</td>
+                    <td style="color: var(--status-healthy); font-family: 'JetBrains Mono', monospace;">+12.5%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">58.2%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">1,247</td>
+                    <td><span class="badge healthy">Clean</span></td>
+                    <td>
+                      <button class="btn btn-outline btn-sm">Ver</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 600;">@maria_picks</td>
+                    <td style="color: var(--status-healthy); font-family: 'JetBrains Mono', monospace;">+8.7%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">54.1%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">892</td>
+                    <td><span class="badge healthy">Clean</span></td>
+                    <td>
+                      <button class="btn btn-outline btn-sm">Ver</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight: 600;">@pro_trader</td>
+                    <td style="color: var(--status-warn); font-family: 'JetBrains Mono', monospace;">+22.8%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">62.5%</td>
+                    <td style="font-family: 'JetBrains Mono', monospace;">3,142</td>
+                    <td><span class="badge warn">Review</span></td>
+                    <td>
+                      <button class="btn btn-outline btn-sm">Review</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination">
+                <span>Mostrando 1-3 de 3</span>
+                <div class="pagination-controls">
+                  <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                  <button class="btn btn-sm btn-outline" disabled>Siguiente</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Señales con Anomalías -->
+          <div class="section-card">
+            <div class="section-header">
+              <h2 class="section-title">
+                <span class="section-icon">🔍</span>
+                <span>Señales con Anomalías</span>
+              </h2>
+              <button class="btn btn-outline btn-sm" onclick="navigate('/admin/signals?tab=anomalies')">Ver Más</button>
+            </div>
+
+            <div class="table-container">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Señal</th>
+                    <th>Tipster</th>
+                    <th>Odds Drift</th>
+                    <th>Reportes</th>
+                    <th>Estado</th>
+                    <th>Acción</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-size: 13px;">Real Madrid ML</td>
+                    <td style="font-weight: 600;">@suspect</td>
+                    <td style="color: var(--status-warn); font-family: 'JetBrains Mono', monospace;">+15.2%</td>
+                    <td><span class="badge warn">3</span></td>
+                    <td><span class="badge warn">Review</span></td>
+                    <td>
+                      <button class="btn btn-outline btn-sm">Pause</button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="font-size: 13px;">Lakers -5.5</td>
+                    <td style="font-weight: 600;">@fishy_picks</td>
+                    <td style="color: var(--secondary-red); font-family: 'JetBrains Mono', monospace;">+28.5%</td>
+                    <td><span class="badge critical">7</span></td>
+                    <td><span class="badge critical">Flagged</span></td>
+                    <td>
+                      <button class="btn btn-outline btn-sm">Pause</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="pagination">
+                <span>Mostrando 1-2 de 2</span>
+                <div class="pagination-controls">
+                  <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                  <button class="btn btn-sm btn-outline" disabled>Siguiente</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Actividad en Tiempo Real -->
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-icon">⚡</span>
+              <span>Actividad en Tiempo Real</span>
+            </h2>
+            <div class="section-actions">
+              <button class="btn btn-outline btn-sm active">Live</button>
+              <button class="btn btn-outline btn-sm">Last 30m</button>
+              <button class="btn btn-outline btn-sm">Last 24h</button>
+            </div>
+          </div>
+
+          <div class="activity-feed">
+            <div class="activity-item">
+              <div class="activity-icon">💳</div>
+              <div>@usuario_123 compró 50 créditos</div>
+              <div class="activity-time">2 min ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">📡</div>
+              <div>@carlosbet publicó señal: Real Madrid ML</div>
+              <div class="activity-time">5 min ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">✅</div>
+              <div>Señal liquidada: Lakers -5.5 (Win)</div>
+              <div class="activity-time">8 min ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">💬</div>
+              <div>Nuevo ticket de soporte #1847</div>
+              <div class="activity-time">12 min ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="activity-icon">⭐</div>
+              <div>@nuevo_tipster solicitó verificación</div>
+              <div class="activity-time">15 min ago</div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 16px;">
+            <button class="btn btn-outline" onclick="navigate('/admin/audit?tab=activity')">Ver Más Actividad</button>
+          </div>
+        </div>
+
+        <!-- Finanzas Resumidas -->
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-icon">💰</span>
+              <span>Finanzas Resumidas</span>
+            </h2>
+            <button class="btn btn-primary" onclick="navigate('/admin/finance')">Ir a Finanzas</button>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active">Suscripciones</button>
+            <button class="tab">Créditos</button>
+          </div>
+
+          <div class="grid-2">
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Revenue (30d)</div>
+              <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--status-healthy);">$28.5K</div>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Refunds (30d)</div>
+              <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--secondary-red);">$1.2K</div>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Churn Rate</div>
+              <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">4.2%</div>
+            </div>
+            <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+              <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">Active Subs</div>
+              <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace;">1,847</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Soporte -->
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-icon">💬</span>
+              <span>Soporte</span>
+            </h2>
+            <button class="btn btn-outline btn-sm" onclick="navigate('/admin/support')">Ver Todos</button>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Ticket</th>
+                  <th>Usuario</th>
+                  <th>Categoría</th>
+                  <th>Prioridad</th>
+                  <th>Estado</th>
+                  <th>Asignado</th>
+                  <th>Creado</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-family: 'JetBrains Mono', monospace;">#1847</td>
+                  <td style="font-weight: 600;">@user_abc</td>
+                  <td>Pagos</td>
+                  <td><span class="badge critical">Alta</span></td>
+                  <td><span class="badge warn">Abierto</span></td>
+                  <td>—</td>
+                  <td style="font-size: 12px; color: var(--text-muted);">5 min ago</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm">Asignar</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-family: 'JetBrains Mono', monospace;">#1846</td>
+                  <td style="font-weight: 600;">@user_xyz</td>
+                  <td>Cuenta</td>
+                  <td><span class="badge warn">Media</span></td>
+                  <td><span class="badge healthy">En Progreso</span></td>
+                  <td>Admin_1</td>
+                  <td style="font-size: 12px; color: var(--text-muted);">2 hours ago</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm">Ver</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+              <div class="pagination">
+                <span>Mostrando 1-2 de 2</span>
+                <div class="pagination-controls">
+                  <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                  <button class="btn btn-sm btn-outline" disabled>Siguiente</button>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <!-- Auditoría Rápida -->
+        <div class="section-card">
+          <div class="section-header">
+            <h2 class="section-title">
+              <span class="section-icon">📋</span>
+              <span>Auditoría Rápida</span>
+            </h2>
+            <button class="btn btn-outline btn-sm" onclick="navigate('/admin/audit')">Ver Completa</button>
+          </div>
+
+          <div class="table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Actor</th>
+                  <th>Acción</th>
+                  <th>Entidad</th>
+                  <th>Risk Level</th>
+                  <th>Timestamp</th>
+                  <th>Ver</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight: 600;">admin_1</td>
+                  <td>suspend_user</td>
+                  <td>@suspect_user</td>
+                  <td><span class="badge critical">HIGH</span></td>
+                  <td style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-11 14:30</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm">👁️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">admin_2</td>
+                  <td>approve_tipster</td>
+                  <td>@new_tipster</td>
+                  <td><span class="badge warn">MED</span></td>
+                  <td style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-11 14:15</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm">👁️</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-weight: 600;">system</td>
+                  <td>auto_refund</td>
+                  <td>payment_#1234</td>
+                  <td><span class="badge healthy">LOW</span></td>
+                  <td style="font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-11 14:00</td>
+                  <td>
+                    <button class="btn btn-outline btn-sm">👁️</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+              <div class="pagination">
+                <span>Mostrando 1-3 de 3</span>
+                <div class="pagination-controls">
+                  <button class="btn btn-sm btn-outline" disabled>Anterior</button>
+                  <button class="btn btn-sm btn-outline" disabled>Siguiente</button>
+                </div>
+              </div>
+            </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Navigation
+    function navigate(path) {
+      window.location.href = path;
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.innerWidth <= 768) {
+        const header = document.querySelector('.header');
+        const btn = document.createElement('button');
+        btn.textContent = '☰';
+        btn.style.cssText = 'position: absolute; top: 24px; left: 16px; background: var(--bg-tertiary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; z-index: 100;';
+        btn.addEventListener('click', toggleSidebar);
+        header.appendChild(btn);
+      }
+    });
+
+    console.log('Admin Dashboard loaded');
+  </script>
+</body>
+</html>
+

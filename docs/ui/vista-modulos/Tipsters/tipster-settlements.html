@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liquidaciones | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-header {
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .topbar-badges {
+      display: flex;
+      gap: 12px;
+    }
+
+    .badge-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+    }
+
+    .badge-info.pending {
+      border-color: var(--secondary-orange);
+    }
+
+    .badge-info.review {
+      border-color: var(--secondary-gold);
+    }
+
+    .badge-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .badge-count {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-count.pending {
+      color: var(--secondary-orange);
+    }
+
+    .badge-count.review {
+      color: var(--secondary-gold);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* TABS */
+    .tabs-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      padding: 6px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .tab-badge {
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .settlements-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .settlements-table thead {
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .settlements-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .settlements-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .settlements-table tbody tr {
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .settlements-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .event-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .event-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .event-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.single {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .badge.combo {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--tipster-primary);
+    }
+
+    .badge.free {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.credits {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .badge.subscription {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--tipster-primary);
+    }
+
+    .badge.pending {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .badge.in-review {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .badge.settled {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.win {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.loss {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .actions-cell {
+      position: relative;
+    }
+
+    .actions-btn {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .actions-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-muted);
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .signal-summary {
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 24px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .summary-row:last-child {
+      border-bottom: none;
+    }
+
+    .summary-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .summary-value {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-label.required::after {
+      content: '*';
+      color: var(--secondary-red);
+      margin-left: 4px;
+    }
+
+    .outcome-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .outcome-btn {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .outcome-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--tipster-primary);
+    }
+
+    .outcome-btn.selected {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .form-input,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--secondary-orange);
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* COMBO LEGS */
+    .combo-legs {
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+
+    .combo-leg {
+      padding: 12px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .combo-leg:last-child {
+      margin-bottom: 0;
+    }
+
+    .leg-header {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .leg-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .leg-outcome-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 6px;
+    }
+
+    .leg-outcome-btn {
+      padding: 6px 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+      text-align: center;
+    }
+
+    .leg-outcome-btn:hover {
+      border-color: var(--tipster-primary);
+    }
+
+    .leg-outcome-btn.selected {
+      background: var(--tipster-gradient);
+      color: white;
+      border-color: var(--tipster-primary);
+    }
+
+    .combo-summary {
+      padding: 12px;
+      background: var(--bg-elevated);
+      border-radius: 8px;
+      margin-top: 12px;
+    }
+
+    .combo-summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+    }
+
+    .combo-summary-row:last-child {
+      border-top: 1px solid var(--border-primary);
+      padding-top: 12px;
+      margin-top: 6px;
+      font-weight: 700;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        padding: 16px;
+        gap: 12px;
+      }
+
+      .topbar-badges {
+        width: 100%;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .settlements-table {
+        min-width: 1000px;
+      }
+
+      .outcome-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .modal {
+        max-width: 100%;
+        max-height: 100%;
+        border-radius: 0;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item active">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="page-header">
+          <h1 class="page-title">✅ Liquidaciones</h1>
+          <p class="page-subtitle">Liquida resultados de tus señales. Esto actualiza tus estadísticas y ranking.</p>
+        </div>
+
+        <div class="topbar-badges">
+          <div class="badge-info pending">
+            <span class="badge-label">Pendientes:</span>
+            <span class="badge-count pending">5</span>
+          </div>
+          <div class="badge-info review">
+            <span class="badge-label">En Revisión:</span>
+            <span class="badge-count review">1</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Tabs -->
+        <div class="tabs-section">
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="pending" onclick="switchTab('pending')">
+              <span>Pendientes</span>
+              <span class="tab-badge">5</span>
+            </button>
+            <button class="tab-btn" data-tab="in_review" onclick="switchTab('in_review')">
+              <span>En Revisión</span>
+              <span class="tab-badge">1</span>
+            </button>
+            <button class="tab-btn" data-tab="settled" onclick="switchTab('settled')">
+              <span>Historial</span>
+              <span class="tab-badge">142</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table class="settlements-table">
+            <thead>
+              <tr>
+                <th>Evento</th>
+                <th>Mercado</th>
+                <th>Cuota</th>
+                <th>Fecha Evento</th>
+                <th>Tipo</th>
+                <th>Access</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="settlements-tbody">
+              <!-- Pending Single 1 -->
+              <tr data-status="pending">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Real Madrid vs Barcelona</div>
+                    <div class="event-meta">La Liga</div>
+                  </div>
+                </td>
+                <td>Over 2.5</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">1.95</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-10 20:00</td>
+                <td><span class="badge single">Single</span></td>
+                <td><span class="badge free">Free</span></td>
+                <td><span class="badge pending">🟡 Pendiente</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="openSettlementModal('sig_001', 'single')">Liquidar</button>
+                </td>
+              </tr>
+
+              <!-- Pending Single 2 -->
+              <tr data-status="pending">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Lakers vs Celtics</div>
+                    <div class="event-meta">NBA</div>
+                  </div>
+                </td>
+                <td>Lakers ML</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">2.10</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-09 22:00</td>
+                <td><span class="badge single">Single</span></td>
+                <td><span class="badge credits">Credits</span></td>
+                <td><span class="badge pending">🟡 Pendiente</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="openSettlementModal('sig_002', 'single')">Liquidar</button>
+                </td>
+              </tr>
+
+              <!-- Pending Single 3 -->
+              <tr data-status="pending">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">PSG vs Bayern</div>
+                    <div class="event-meta">Champions League</div>
+                  </div>
+                </td>
+                <td>BTTS Yes</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">1.85</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-09 18:00</td>
+                <td><span class="badge single">Single</span></td>
+                <td><span class="badge subscription">Subscription</span></td>
+                <td><span class="badge pending">🟡 Pendiente</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="openSettlementModal('sig_003', 'single')">Liquidar</button>
+                </td>
+              </tr>
+
+              <!-- Pending Combo 1 -->
+              <tr data-status="pending">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Weekend Combo (3 legs)</div>
+                    <div class="event-meta">Multi-Sport</div>
+                  </div>
+                </td>
+                <td>Combo 3x</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">6.49</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-10</td>
+                <td><span class="badge combo">Combo</span></td>
+                <td><span class="badge credits">Credits</span></td>
+                <td><span class="badge pending">🟡 Pendiente</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="openSettlementModal('combo_001', 'combo')">Liquidar</button>
+                </td>
+              </tr>
+
+              <!-- Pending Combo 2 -->
+              <tr data-status="pending">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Tuesday Special (2 legs)</div>
+                    <div class="event-meta">Rugby + Tennis</div>
+                  </div>
+                </td>
+                <td>Combo 2x</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">4.14</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-09</td>
+                <td><span class="badge combo">Combo</span></td>
+                <td><span class="badge free">Free</span></td>
+                <td><span class="badge pending">🟡 Pendiente</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="openSettlementModal('combo_002', 'combo')">Liquidar</button>
+                </td>
+              </tr>
+
+              <!-- In Review Single -->
+              <tr data-status="in_review" style="display: none;">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Nadal vs Djokovic</div>
+                    <div class="event-meta">ATP Finals</div>
+                  </div>
+                </td>
+                <td>Nadal +1.5 Sets</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">1.80</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-08 15:00</td>
+                <td><span class="badge single">Single</span></td>
+                <td><span class="badge credits">Credits</span></td>
+                <td><span class="badge in-review">🟠 En Revisión</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="alert('En revisión por administrador')">Ver Detalles</button>
+                </td>
+              </tr>
+
+              <!-- Settled Single Win -->
+              <tr data-status="settled" style="display: none;">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Chiefs vs Bills</div>
+                    <div class="event-meta">NFL</div>
+                  </div>
+                </td>
+                <td>Chiefs -3</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">1.90</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-07 18:30</td>
+                <td><span class="badge single">Single</span></td>
+                <td><span class="badge subscription">Subscription</span></td>
+                <td><span class="badge win">🟢 Win</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="alert('Liquidado: Win')">Ver Detalles</button>
+                </td>
+              </tr>
+
+              <!-- Settled Combo Loss -->
+              <tr data-status="settled" style="display: none;">
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Monday Combo (2 legs)</div>
+                    <div class="event-meta">Multi-Sport</div>
+                  </div>
+                </td>
+                <td>Combo 2x</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold); font-weight: 700;">3.20</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-06</td>
+                <td><span class="badge combo">Combo</span></td>
+                <td><span class="badge free">Free</span></td>
+                <td><span class="badge loss">🔴 Loss</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="alert('Liquidado: Loss')">Ver Detalles</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal Settlement (SINGLE) -->
+  <div class="modal-overlay" id="modal-single">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">✅ Liquidar Señal</h2>
+        <button class="modal-close" onclick="closeModal('modal-single')">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Signal Summary -->
+        <div class="signal-summary">
+          <div class="summary-row">
+            <span class="summary-label">Evento:</span>
+            <span class="summary-value">Real Madrid vs Barcelona</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Liga:</span>
+            <span class="summary-value">La Liga</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Mercado:</span>
+            <span class="summary-value">Over 2.5</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Cuota:</span>
+            <span class="summary-value">1.95</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Estructura:</span>
+            <span class="summary-value">Single</span>
+          </div>
+        </div>
+
+        <!-- Outcome Selection -->
+        <div class="form-group">
+          <label class="form-label required">Resultado</label>
+          <div class="outcome-grid">
+            <button class="outcome-btn" onclick="selectOutcome(this, 'win')">
+              <span>🟢</span>
+              <span>Win</span>
+            </button>
+            <button class="outcome-btn" onclick="selectOutcome(this, 'loss')">
+              <span>🔴</span>
+              <span>Loss</span>
+            </button>
+            <button class="outcome-btn" onclick="selectOutcome(this, 'void')">
+              <span>⚪</span>
+              <span>Void</span>
+            </button>
+            <button class="outcome-btn" onclick="selectOutcome(this, 'push')">
+              <span>🟡</span>
+              <span>Push</span>
+            </button>
+            <button class="outcome-btn" onclick="selectOutcome(this, 'half_win')">
+              <span>🟢½</span>
+              <span>Half Win</span>
+            </button>
+            <button class="outcome-btn" onclick="selectOutcome(this, 'half_loss')">
+              <span>🔴½</span>
+              <span>Half Loss</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Evidence -->
+        <div class="form-group">
+          <label class="form-label required">Evidencia / Link</label>
+          <input type="text" class="form-input" placeholder="URL del resultado o scoreboard">
+          <p class="form-hint">Link público del partido, scoreboard o fuente oficial</p>
+        </div>
+
+        <!-- Comment -->
+        <div class="form-group">
+          <label class="form-label">Comentario (opcional)</label>
+          <textarea class="form-textarea" placeholder="Notas adicionales sobre el resultado..."></textarea>
+          <p class="form-hint">Máximo 240 caracteres</p>
+        </div>
+
+        <!-- Warning -->
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Importante</div>
+            <div class="alert-text">Esto actualizará tus estadísticas y ranking. No se puede deshacer.</div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn btn-primary" onclick="submitSettlement()">
+          <span>✅</span>
+          <span>Confirmar Liquidación</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Settlement (COMBO) -->
+  <div class="modal-overlay" id="modal-combo">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">✅ Liquidar Combo</h2>
+        <button class="modal-close" onclick="closeModal('modal-combo')">×</button>
+      </div>
+      <div class="modal-body">
+        <!-- Signal Summary -->
+        <div class="signal-summary">
+          <div class="summary-row">
+            <span class="summary-label">Combo:</span>
+            <span class="summary-value">Weekend Combo (3 legs)</span>
+          </div>
+          <div class="summary-row">
+            <span class="summary-label">Cuota Total:</span>
+            <span class="summary-value">6.49</span>
+          </div>
+        </div>
+
+        <!-- Combo Legs -->
+        <div class="form-group">
+          <label class="form-label required">Resultado por Leg</label>
+          <div class="combo-legs">
+            <!-- Leg 1 -->
+            <div class="combo-leg">
+              <div class="leg-header">Leg 1: Juventus vs Milan</div>
+              <div class="leg-info">Juventus ML @1.75</div>
+              <div class="leg-outcome-grid">
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'win')">Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'loss')">Loss</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'void')">Void</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'push')">Push</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'half_win')">½ Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 1, 'half_loss')">½ Loss</button>
+              </div>
+            </div>
+
+            <!-- Leg 2 -->
+            <div class="combo-leg">
+              <div class="leg-header">Leg 2: Man United vs Arsenal</div>
+              <div class="leg-info">Over 2.5 @1.90</div>
+              <div class="leg-outcome-grid">
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'win')">Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'loss')">Loss</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'void')">Void</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'push')">Push</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'half_win')">½ Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 2, 'half_loss')">½ Loss</button>
+              </div>
+            </div>
+
+            <!-- Leg 3 -->
+            <div class="combo-leg">
+              <div class="leg-header">Leg 3: Heat vs Nuggets</div>
+              <div class="leg-info">Nuggets -5.5 @1.95</div>
+              <div class="leg-outcome-grid">
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'win')">Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'loss')">Loss</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'void')">Void</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'push')">Push</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'half_win')">½ Win</button>
+                <button class="leg-outcome-btn" onclick="selectLegOutcome(this, 3, 'half_loss')">½ Loss</button>
+              </div>
+            </div>
+
+            <!-- Combo Summary -->
+            <div class="combo-summary">
+              <div class="combo-summary-row">
+                <span>Cuota Original:</span>
+                <span>6.49</span>
+              </div>
+              <div class="combo-summary-row">
+                <span>Cuota Efectiva:</span>
+                <span id="effective-odds">-</span>
+              </div>
+              <div class="combo-summary-row">
+                <span>Resultado Total:</span>
+                <span id="combo-result">Selecciona resultados</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Evidence -->
+        <div class="form-group">
+          <label class="form-label required">Evidencia / Link</label>
+          <input type="text" class="form-input" placeholder="URL del resultado o scoreboard">
+        </div>
+
+        <!-- Comment -->
+        <div class="form-group">
+          <label class="form-label">Comentario (opcional)</label>
+          <textarea class="form-textarea" placeholder="Notas adicionales..."></textarea>
+        </div>
+
+        <!-- Warning -->
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Importante</div>
+            <div class="alert-text">El resultado final se calcula automáticamente según las reglas de combos.</div>
+          </div>
+        </div>
+
+        <!-- Submit -->
+        <button class="btn btn-primary" onclick="submitSettlement()">
+          <span>✅</span>
+          <span>Confirmar Liquidación</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabName) {
+      // Update active tab button
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      
+      // Filter table rows based on tab
+      filterTableByStatus(tabName);
+      
+      console.log('Switched to tab:', tabName);
+    }
+
+    // Filter table rows by settlement status
+    function filterTableByStatus(status) {
+      const rows = document.querySelectorAll('#settlements-tbody tr');
+      
+      rows.forEach(row => {
+        const rowStatus = row.getAttribute('data-status');
+        
+        // Show/hide based on tab selection
+        switch(status) {
+          case 'pending':
+            row.style.display = rowStatus === 'pending' ? '' : 'none';
+            break;
+          case 'in_review':
+            row.style.display = rowStatus === 'in_review' ? '' : 'none';
+            break;
+          case 'settled':
+            row.style.display = rowStatus === 'settled' ? '' : 'none';
+            break;
+          default:
+            row.style.display = '';
+        }
+      });
+    }
+
+    // Open settlement modal
+    function openSettlementModal(signalId, type) {
+      const modalId = type === 'single' ? 'modal-single' : 'modal-combo';
+      document.getElementById(modalId).classList.add('active');
+      console.log('Opening settlement for:', signalId, type);
+    }
+
+    // Close modal
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Select outcome (single)
+    let selectedOutcome = null;
+    function selectOutcome(btn, outcome) {
+      document.querySelectorAll('.outcome-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedOutcome = outcome;
+      console.log('Outcome selected:', outcome);
+    }
+
+    // Select leg outcome (combo)
+    const legOutcomes = {};
+    function selectLegOutcome(btn, legNumber, outcome) {
+      // Remove selected from siblings
+      const parent = btn.parentElement;
+      parent.querySelectorAll('.leg-outcome-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      
+      legOutcomes[legNumber] = outcome;
+      console.log('Leg', legNumber, 'outcome:', outcome);
+      
+      // Calculate combo result
+      calculateComboResult();
+    }
+
+    // Calculate combo result
+    function calculateComboResult() {
+      const outcomes = Object.values(legOutcomes);
+      const expectedLegs = document.querySelectorAll('#modal-combo .combo-leg').length;
+      
+      if (outcomes.length !== expectedLegs) {
+        document.getElementById('combo-result').textContent = 'Selecciona todos los legs';
+        document.getElementById('effective-odds').textContent = '-';
+        return;
+      }
+
+      // COMBO RULES
+      // 1. Any loss = total loss
+      if (outcomes.includes('loss')) {
+        document.getElementById('combo-result').textContent = '🔴 Loss';
+        document.getElementById('effective-odds').textContent = '0.00';
+        return;
+      }
+
+      // 2. All void/push = void
+      if (outcomes.every(o => o === 'void' || o === 'push')) {
+        document.getElementById('combo-result').textContent = '⚪ Void';
+        document.getElementById('effective-odds').textContent = '1.00';
+        return;
+      }
+
+      // 3. Calculate effective odds (only wins, void/push = 1.0)
+      // Leer odds dinámicamente desde el DOM
+      const legs = document.querySelectorAll('#modal-combo .combo-leg');
+      const legOdds = Array.from(legs).map(leg => {
+        const info = leg.querySelector('.leg-info')?.textContent || '';
+        const m = info.match(/@([\d.]+)/);
+        return m ? parseFloat(m[1]) : 1.0;
+      });
+      
+      let effectiveOdds = 1;
+      
+      outcomes.forEach((outcome, index) => {
+        if (outcome === 'win') {
+          effectiveOdds *= legOdds[index];
+        }
+        // void/push = multiply by 1.0 (no effect)
+      });
+
+      document.getElementById('effective-odds').textContent = effectiveOdds.toFixed(2);
+      document.getElementById('combo-result').textContent = '🟢 Win';
+    }
+
+    // Submit settlement
+    function submitSettlement() {
+      if (!selectedOutcome && Object.keys(legOutcomes).length === 0) {
+        alert('Por favor selecciona un resultado');
+        return;
+      }
+
+      console.log('Submitting settlement...');
+      alert('Liquidación confirmada. Tus estadísticas se están actualizando.');
+      
+      // Close modal
+      document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('active'));
+      
+      // Reset selections
+      selectedOutcome = null;
+      Object.keys(legOutcomes).forEach(key => delete legOutcomes[key]);
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768) {
+        const btn = document.createElement('button');
+        btn.className = 'mobile-menu-btn';
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; margin-bottom: 12px;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.insertBefore(btn, topbar.firstChild);
+      }
+    });
+
+    console.log('Settlements loaded');
+  </script>
+</body>
+</html>

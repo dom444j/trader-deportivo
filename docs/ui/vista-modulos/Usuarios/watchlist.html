@@ -1,0 +1,2218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Watchlist — Radar Personal | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      bottom: -1px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-cyan);
+      border-bottom-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.08);
+    }
+
+    /* ========== STATS CARDS ========== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-secondary);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .stat-value.positive { color: var(--primary-green); }
+    .stat-value.neutral { color: var(--primary-cyan); }
+    .stat-value.warning { color: var(--secondary-gold); }
+
+    .stat-meta {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== PANEL ========== */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ========== CHIPS ========== */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .chip.success {
+      background: rgba(0, 255, 148, 0.12);
+      border-color: rgba(0, 255, 148, 0.35);
+      color: var(--primary-green);
+    }
+
+    .chip.warning {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: rgba(255, 215, 0, 0.35);
+      color: var(--secondary-gold);
+    }
+
+    .chip.danger {
+      background: rgba(255, 68, 68, 0.12);
+      border-color: rgba(255, 68, 68, 0.35);
+      color: var(--secondary-red);
+    }
+
+    .chip.primary {
+      background: rgba(0, 245, 255, 0.12);
+      border-color: rgba(0, 245, 255, 0.35);
+      color: var(--primary-cyan);
+    }
+
+    .chip.purple {
+      background: rgba(176, 38, 255, 0.12);
+      border-color: rgba(176, 38, 255, 0.35);
+      color: var(--secondary-purple);
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+      50% { box-shadow: 0 0 0 4px transparent; }
+    }
+
+    /* ========== BUTTONS ========== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    /* ========== WATCHLIST CARDS ========== */
+    .watchlist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .watchlist-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    .watchlist-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-secondary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .watchlist-card.pinned {
+      border-color: var(--secondary-gold);
+      background: rgba(255, 215, 0, 0.05);
+    }
+
+    .watchlist-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .watchlist-match {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .watchlist-league {
+      font-size: 13px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .watchlist-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .watchlist-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .pin-icon {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 16px;
+      color: var(--secondary-gold);
+    }
+
+    /* ========== USER PICKS ========== */
+    .pick-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .pick-card:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-secondary);
+    }
+
+    .pick-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .pick-match {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .pick-selection {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .pick-odds {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+    }
+
+    .pick-confidence {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .confidence-bar {
+      flex: 1;
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .confidence-fill {
+      height: 100%;
+      background: var(--gradient-success);
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    .pick-reasoning {
+      background: var(--bg-secondary);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 12px;
+      border-left: 3px solid var(--primary-cyan);
+    }
+
+    .pick-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .pick-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* ========== ALERTS ========== */
+    .alert {
+      padding: 14px 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    .alert.success {
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+      color: var(--primary-green);
+    }
+
+    .alert.warning {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--secondary-gold);
+    }
+
+    /* ========== FILTERS ========== */
+    .filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== EMPTY STATE ========== */
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .empty-text {
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+
+    /* ========== MONO ========== */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ========== EXPORT QUEUE TABLE ========== */
+    .export-queue {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .export-queue-header {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 80px;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .export-queue-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr 80px;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-primary);
+      align-items: center;
+      transition: background 0.3s ease;
+    }
+
+    .export-queue-row:hover {
+      background: var(--bg-elevated);
+    }
+
+    .export-queue-row:last-child {
+      border-bottom: none;
+    }
+
+    .export-pick-info {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .export-pick-detail {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .export-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      border: 1px solid;
+    }
+
+    .export-status.queued {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: rgba(255, 215, 0, 0.35);
+      color: var(--secondary-gold);
+    }
+
+    .export-status.exported {
+      background: rgba(0, 255, 148, 0.12);
+      border-color: rgba(0, 255, 148, 0.35);
+      color: var(--primary-green);
+    }
+
+    .export-status.failed {
+      background: rgba(255, 68, 68, 0.12);
+      border-color: rgba(255, 68, 68, 0.35);
+      color: var(--secondary-red);
+    }
+
+    .export-status.executed {
+      background: rgba(0, 245, 255, 0.12);
+      border-color: rgba(0, 245, 255, 0.35);
+      color: var(--primary-cyan);
+    }
+
+    .export-queue-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .export-queue-actions .btn {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    /* ========== MODAL ========== */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 4px;
+      border-radius: 6px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    /* ========== PROFESSIONAL LAYER CHIPS ========== */
+    .chip-group {
+      margin-bottom: 20px;
+    }
+
+    .chip-group-label {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+
+    .chip-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .chip-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .chip-toggle:hover {
+      border-color: var(--border-secondary);
+      color: var(--text-primary);
+    }
+
+    .chip-toggle.active {
+      background: rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .chip-toggle.active .chip-dot {
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    /* ========== AGENDA CARDS ========== */
+    .agenda-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .agenda-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .agenda-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-secondary);
+    }
+
+    .agenda-card-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .agenda-card-title {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .agenda-card-icon {
+      font-size: 16px;
+    }
+
+    .agenda-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .agenda-stat {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+    }
+
+    .agenda-stat-label {
+      color: var(--text-secondary);
+    }
+
+    .agenda-stat-value {
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .watchlist-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/smart-portfolio" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span>Smart Portfolio</span>
+          </a>
+          <a href="/trader-master" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>Trader Master</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item active">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a href="/premium/plans" class="nav-item">
+            <span class="nav-icon">💎</span>
+            <span>Planes</span>
+          </a>
+          <a href="/premium/credits" class="nav-item">
+            <span class="nav-icon">🪙</span>
+            <span>Créditos</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">👁️ Watchlist — Radar Personal</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Capital & Control</span>
+            <span>›</span>
+            <span>Watchlist</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 12px;">
+          <button class="btn btn-primary" onclick="openProfessionalModal()">
+            <span>➕</span>
+            <span>Agregar</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Concept Alert -->
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div>
+            <strong>Watchlist es tu radar personal y laboratorio de trader.</strong><br>
+            Monitorea eventos, registra tus picks, trackea tu rendimiento y diferénciate del azar mediante CLV, especialización y disciplina.
+          </div>
+        </div>
+
+        <!-- Privacy Notice -->
+        <div class="alert success" style="background: linear-gradient(135deg, var(--bg-success) 0%, rgba(46, 204, 113, 0.1) 100%); border-color: var(--success-green);">
+          <span class="alert-icon">🔒</span>
+          <div>
+            <strong>Tu rendimiento es privado.</strong> Nadie ve tus picks.<br>
+            Los rankings públicos están deshabilitados para proteger tu ventaja competitiva y mantener la integridad del ecosistema.
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" onclick="switchTab('monitoreo')">
+            <span>📡</span>
+            <span>Monitoreo</span>
+          </button>
+          <button class="tab" onclick="switchTab('mis-picks')">
+            <span>🎯</span>
+            <span>Mis Picks</span>
+          </button>
+          <button class="tab" onclick="switchTab('resueltas')">
+            <span>📊</span>
+            <span>Resueltas</span>
+          </button>
+        </div>
+
+        <!-- Stats Grid (Mis Picks Stats) -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Picks</div>
+            <div class="stat-value neutral mono">42</div>
+            <div class="stat-meta">25 ejecutadas • 17 solo registro</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Win Rate</div>
+            <div class="stat-value positive mono">58.3%</div>
+            <div class="stat-meta">35W - 25L - 2V</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">ROI 30d</div>
+            <div class="stat-value positive mono">+12.5%</div>
+            <div class="stat-meta">Promedio: +5% • Top 10%: +18%</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Avg CLV</div>
+            <div class="stat-value positive mono">+2.1%</div>
+            <div class="stat-meta">Ventaja vs cierre del mercado</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Racha Actual</div>
+            <div class="stat-value positive mono">+5</div>
+            <div class="stat-meta">Máx racha: +8</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">Especialización</div>
+            <div class="stat-value warning mono">68/100</div>
+            <div class="stat-meta">Mejor: Over/Under (72%)</div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Monitoreo -->
+        <div id="tab-monitoreo" class="tab-content">
+          <!-- Filters -->
+          <div class="filters">
+            <button class="filter-btn active">Todos</button>
+            <button class="filter-btn">⚽ PRE</button>
+            <button class="filter-btn">🔴 LIVE</button>
+            <button class="filter-btn">⭐ Alta Prioridad</button>
+            <button class="filter-btn">📌 Pinned</button>
+          </div>
+
+          <!-- Watchlist Grid -->
+          <div class="watchlist-grid">
+            <!-- Pinned Match -->
+            <div class="watchlist-card pinned">
+              <span class="pin-icon">📌</span>
+              <div class="watchlist-card-header">
+                <div>
+                  <div class="watchlist-match">Real Madrid vs Barcelona</div>
+                  <div class="watchlist-league">
+                    <span>🏆 La Liga</span>
+                  </div>
+                </div>
+                <div class="chip primary">PRE</div>
+              </div>
+              <div class="watchlist-time">🕐 Hoy, 15:00</div>
+              <div style="display: flex; gap: 8px; margin-top: 12px;">
+                <div class="chip purple" style="font-size: 10px; padding: 4px 8px;">Alta Prioridad</div>
+              </div>
+              <div class="watchlist-actions">
+                <button class="btn btn-outline" style="flex: 1;">
+                  <span>📡</span>
+                  <span>Ver Señales</span>
+                </button>
+                <button class="btn btn-primary" style="flex: 1;">
+                  <span>➕</span>
+                  <span>Añadir Pick</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- LIVE Match -->
+            <div class="watchlist-card">
+              <div class="watchlist-card-header">
+                <div>
+                  <div class="watchlist-match">Liverpool vs Chelsea</div>
+                  <div class="watchlist-league">
+                    <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿 Premier League</span>
+                  </div>
+                </div>
+                <div class="chip warning">
+                  <span class="chip-dot"></span>
+                  <span>LIVE</span>
+                </div>
+              </div>
+              <div class="watchlist-time">⚽ Minuto 62' • 1-1</div>
+              <div class="watchlist-actions">
+                <button class="btn btn-outline" style="flex: 1;">
+                  <span>🔴</span>
+                  <span>Señales LIVE</span>
+                </button>
+                <button class="btn btn-primary" style="flex: 1;">
+                  <span>⚡</span>
+                  <span>Trader Master</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Follow -->
+            <div class="watchlist-card">
+              <div class="watchlist-card-header">
+                <div>
+                  <div class="watchlist-match">🔵 Manchester City</div>
+                  <div class="watchlist-league">
+                    <span>Siguiendo equipo</span>
+                  </div>
+                </div>
+                <div class="chip primary">PRE</div>
+              </div>
+              <div class="watchlist-time">Próximo: vs Arsenal • Sábado 17:30</div>
+              <div class="watchlist-actions">
+                <button class="btn btn-outline" style="flex: 1;">
+                  <span>📅</span>
+                  <span>Ver Partidos</span>
+                </button>
+                <button class="btn btn-outline">
+                  <span>✕</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- League Follow -->
+            <div class="watchlist-card">
+              <div class="watchlist-card-header">
+                <div>
+                  <div class="watchlist-match">🏆 UEFA Champions League</div>
+                  <div class="watchlist-league">
+                    <span>Siguiendo liga</span>
+                  </div>
+                </div>
+                <div class="chip success">Activo</div>
+              </div>
+              <div class="watchlist-time">8 partidos esta semana</div>
+              <div class="watchlist-actions">
+                <button class="btn btn-outline" style="flex: 1;">
+                  <span>📡</span>
+                  <span>Ver Señales</span>
+                </button>
+                <button class="btn btn-outline">
+                  <span>✕</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export Queue Panel -->
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>📤</span>
+                  <span>Export Queue (TradeIntent)</span>
+                </div>
+                <div class="panel-subtitle">3 picks en cola para exportación • Última exportación: hace 15min</div>
+              </div>
+            </div>
+
+            <div class="export-queue">
+              <div class="export-queue-header">
+                <div>Pick</div>
+                <div>Stake Plan</div>
+                <div>Broker</div>
+                <div>Estado</div>
+                <div>Acciones</div>
+              </div>
+
+              <div class="export-queue-row">
+                <div class="export-pick-info">
+                  <div>Real Madrid vs Barcelona</div>
+                  <div class="export-pick-detail">Over 2.5 Goals @1.95</div>
+                </div>
+                <div class="mono" style="font-size: 13px;">$50 (2%)</div>
+                <div class="mono" style="font-size: 13px;">Cloudbet</div>
+                <div>
+                  <span class="export-status queued">
+                    <span class="chip-dot"></span>
+                    <span>QUEUED</span>
+                  </span>
+                </div>
+                <div class="export-queue-actions">
+                  <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="showExportPayload(this)">
+                    <span>👁️</span>
+                  </button>
+                  <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px; color: var(--secondary-red); border-color: rgba(255, 68, 68, 0.3);" onclick="cancelExport(this)">
+                    <span>✕</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="export-queue-row">
+                <div class="export-pick-info">
+                  <div>Liverpool vs Chelsea</div>
+                  <div class="export-pick-detail">Liverpool ML @1.75</div>
+                </div>
+                <div class="mono" style="font-size: 13px;">$37.5 (1.5%)</div>
+                <div class="mono" style="font-size: 13px;">Cloudbet</div>
+                <div>
+                  <span class="export-status exported">
+                    <span>✓</span>
+                    <span>EXPORTED</span>
+                  </span>
+                </div>
+                <div class="export-queue-actions">
+                  <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="showExportPayload(this)">
+                    <span>👁️</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="export-queue-row">
+                <div class="export-pick-info">
+                  <div>Atlético vs Sevilla</div>
+                  <div class="export-pick-detail">Under 2.5 Goals @1.85</div>
+                </div>
+                <div class="mono" style="font-size: 13px;">$25 (1%)</div>
+                <div class="mono" style="font-size: 13px;">Cloudbet</div>
+                <div>
+                  <span class="export-status executed">
+                    <span>⚡</span>
+                    <span>EXECUTED</span>
+                  </span>
+                </div>
+                <div class="export-queue-actions">
+                  <button class="btn btn-outline" style="padding: 4px 8px; font-size: 11px;" onclick="showExportPayload(this)">
+                    <span>👁️</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Mis Picks -->
+        <div id="tab-mis-picks" class="tab-content" style="display: none;">
+          <!-- Behavioral Guidance Alert -->
+          <div class="alert warning">
+            <span class="alert-icon">💡</span>
+            <div>
+              <strong>Tus mejores resultados:</strong> Over/Under pre-match (Franja 18-22h).<br>
+              Los traders profesionales dominan primero un mercado antes de expandirse.
+              <div style="margin-top: 8px;">
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">
+                  Usar como mercado principal
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Operational Agenda -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>📅</span>
+                  <span>Agenda Operativa</span>
+                </div>
+                <div class="panel-subtitle">Tu día de trading deportivo</div>
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="agenda-card">
+                <div class="agenda-card-header">
+                  <span>📆</span>
+                  <span>Hoy</span>
+                </div>
+                <div class="agenda-stats">
+                  <div class="agenda-stat">
+                    <span class="agenda-number">2</span>
+                    <span class="agenda-label">Eventos</span>
+                  </div>
+                  <div class="agenda-stat">
+                    <span class="agenda-number">3</span>
+                    <span class="agenda-label">Picks pendientes</span>
+                  </div>
+                  <div class="agenda-stat">
+                    <span class="agenda-number">1</span>
+                    <span class="agenda-label">LIVE</span>
+                  </div>
+                </div>
+              </div>
+              <div class="agenda-card">
+                <div class="agenda-card-header">
+                  <span>⏰</span>
+                  <span>Pendientes</span>
+                </div>
+                <div class="agenda-stats">
+                  <div class="agenda-stat">
+                    <span class="agenda-number">2</span>
+                    <span class="agenda-label">Por ejecutar</span>
+                  </div>
+                  <div class="agenda-stat">
+                    <span class="agenda-number">1</span>
+                    <span class="agenda-label">Por resolver</span>
+                  </div>
+                </div>
+              </div>
+              <div class="agenda-card">
+                <div class="agenda-card-header">
+                  <span>🔮</span>
+                  <span>Próximos 7 días</span>
+                </div>
+                <div class="agenda-stats">
+                  <div class="agenda-stat">
+                    <span class="agenda-number">8</span>
+                    <span class="agenda-label">Eventos</span>
+                  </div>
+                  <div class="agenda-stat">
+                    <span class="agenda-number">12</span>
+                    <span class="agenda-label">Slots disponibles</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Export Queue Panel -->
+          <div class="panel" style="margin-bottom: 24px;">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>📤</span>
+                  <span>Export Queue (TradeIntent)</span>
+                </div>
+                <div class="panel-subtitle">Picks listos para exportar a ejecución</div>
+              </div>
+            </div>
+            <div class="export-queue-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pick</th>
+                    <th>Stake Plan</th>
+                    <th>Broker</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>
+                      <div class="export-pick-info">
+                        <div class="export-pick-match">Real Madrid vs Barcelona</div>
+                        <div class="export-pick-selection">Over 2.5 Goals @1.95</div>
+                      </div>
+                    </td>
+                    <td><span class="stake-badge">2u</span></td>
+                    <td><span class="broker-badge">Cloudbet</span></td>
+                    <td><span class="status-badge queued">QUEUED</span></td>
+                    <td>
+                      <div class="export-actions">
+                        <button class="btn-text" onclick="viewExportPayload('pick-123')">Ver payload</button>
+                        <button class="btn-text cancel" onclick="cancelExport('pick-123')">Cancelar</button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="export-pick-info">
+                        <div class="export-pick-match">Liverpool vs Chelsea</div>
+                        <div class="export-pick-selection">Liverpool ML @1.75</div>
+                      </div>
+                    </td>
+                    <td><span class="stake-badge">1.5u</span></td>
+                    <td><span class="broker-badge">Cloudbet</span></td>
+                    <td><span class="status-badge exported">EXPORTED</span></td>
+                    <td>
+                      <div class="export-actions">
+                        <button class="btn-text" onclick="viewExportPayload('pick-124')">Ver payload</button>
+                        <span class="export-time">hace 5min</span>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <div class="export-pick-info">
+                        <div class="export-pick-match">PSG vs Marseille</div>
+                        <div class="export-pick-selection">PSG -1 AH @1.85</div>
+                      </div>
+                    </td>
+                    <td><span class="stake-badge">3u</span></td>
+                    <td><span class="broker-badge">Cloudbet</span></td>
+                    <td><span class="status-badge executed">EXECUTED</span></td>
+                    <td>
+                      <div class="export-actions">
+                        <button class="btn-text" onclick="viewExportPayload('pick-125')">Ver payload</button>
+                        <span class="export-time">hace 1h</span>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Picks List -->
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>🎯</span>
+                  <span>Picks Pendientes</span>
+                </div>
+                <div class="panel-subtitle">5 picks esperando resultado</div>
+              </div>
+              <button class="btn btn-primary" onclick="openProfessionalModal()">➕ Agregar</button>
+            </div>
+
+            <!-- Pick Card 1 -->
+            <div class="pick-card">
+              <div class="pick-header">
+                <div style="flex: 1;">
+                  <div class="pick-match">Real Madrid vs Barcelona</div>
+                  <div class="pick-selection">
+                    <span style="color: var(--primary-cyan); font-weight: 600;">Over 2.5 Goals</span>
+                    <span> • </span>
+                    <span class="pick-odds">@1.95</span>
+                  </div>
+                </div>
+                <div class="chip primary">
+                  <span class="chip-dot"></span>
+                  <span>PENDING</span>
+                </div>
+              </div>
+
+              <div class="pick-confidence">
+                <span style="font-size: 12px; font-weight: 600; width: 80px;">Confianza: 75%</span>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" style="width: 75%;"></div>
+                </div>
+              </div>
+
+              <div class="pick-reasoning">
+                <strong>💭 Razonamiento:</strong><br>
+                "Ambos equipos promedian 2.8 goles por partido en últimos 5 partidos. Historial de Clásicos con media de 3.2 goles. Defensa del Barcelona vulnerable últimamente."
+              </div>
+
+              <div class="pick-meta">
+                <span>🏆 La Liga • ⚽ PRE</span>
+                <span>📅 Creado hace 2h</span>
+              </div>
+
+              <div class="pick-actions">
+                <button class="btn btn-outline">
+                  <span>✏️</span>
+                  <span>Editar</span>
+                </button>
+                <button class="btn btn-primary">
+                  <span>✅</span>
+                  <span>Marcar Ejecutado</span>
+                </button>
+                <button class="btn btn-outline" style="color: var(--secondary-red); border-color: rgba(255, 68, 68, 0.3);" title="Eliminar pick de watchlist">
+                  <span>✕</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Pick Card 2 (LOCKED) -->
+            <div class="pick-card locked">
+              <div class="pick-header">
+                <div style="flex: 1;">
+                  <div class="pick-match">Manchester City vs Arsenal</div>
+                  <div class="pick-selection">
+                    <span style="color: var(--primary-cyan); font-weight: 600;">Under 2.5 Goals</span>
+                    <span> • </span>
+                    <span class="pick-odds">@1.82</span>
+                  </div>
+                </div>
+                <div class="chip locked">
+                  <span>🔒</span>
+                  <span>LOCKED</span>
+                </div>
+              </div>
+
+              <div class="pick-confidence">
+                <span style="font-size: 12px; font-weight: 600; width: 80px;">Confianza: 70%</span>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" style="width: 70%;"></div>
+                </div>
+              </div>
+
+              <div class="pick-meta">
+                <span>🏴 EPL • 🟡 EN 15 MIN</span>
+                <span>📅 Creado hace 3h</span>
+              </div>
+
+              <div class="pick-actions">
+                <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed;">
+                  <span>✏️</span>
+                  <span>Editar</span>
+                </button>
+                <button class="btn btn-primary" disabled style="opacity: 0.5; cursor: not-allowed;">
+                  <span>✅</span>
+                  <span>Marcar Ejecutado</span>
+                </button>
+                <button class="btn btn-outline" style="color: var(--secondary-red); border-color: rgba(255, 68, 68, 0.3); opacity: 0.5; cursor: not-allowed;" disabled title="Eliminar pick (deshabilitado)">
+                  <span>✕</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Pick Card 3 (Simple) -->
+            <div class="pick-card">
+              <div class="pick-header">
+                <div style="flex: 1;">
+                  <div class="pick-match">Liverpool vs Chelsea</div>
+                  <div class="pick-selection">
+                    <span style="color: var(--primary-cyan); font-weight: 600;">Liverpool ML</span>
+                    <span> • </span>
+                    <span class="pick-odds">@1.75</span>
+                  </div>
+                </div>
+                <div class="chip primary">
+                  <span class="chip-dot"></span>
+                  <span>PENDING</span>
+                </div>
+              </div>
+
+              <div class="pick-confidence">
+                <span style="font-size: 12px; font-weight: 600; width: 80px;">Confianza: 80%</span>
+                <div class="confidence-bar">
+                  <div class="confidence-fill" style="width: 80%;"></div>
+                </div>
+              </div>
+
+              <div class="pick-meta">
+                <span>🏴󠁧󠁢󠁥󠁮󠁧󠁿 EPL • 🔴 LIVE (Min 15')</span>
+                <span>📅 Creado hace 20min</span>
+              </div>
+
+              <div class="pick-actions">
+                <button class="btn btn-outline">
+                  <span>✏️</span>
+                  <span>Editar</span>
+                </button>
+                <button class="btn btn-primary" onclick="openExportSettingsModal()">
+                  <span>📤</span>
+                  <span>Exportar</span>
+                </button>
+                <button class="btn btn-primary">
+                  <span>✅</span>
+                  <span>Marcar Ejecutado</span>
+                </button>
+                <button class="btn btn-outline" style="color: var(--secondary-red); border-color: rgba(255, 68, 68, 0.3);" title="Eliminar pick de watchlist">
+                  <span>✕</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Resueltas -->
+        <div id="tab-resueltas" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div>
+                <div class="panel-title">
+                  <span>📊</span>
+                  <span>Historial de Picks</span>
+                </div>
+                <div class="panel-subtitle">Últimas 30 picks resueltas</div>
+              </div>
+              <div>
+                <button class="btn btn-outline">
+                  <span>⬇️</span>
+                  <span>Exportar</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Resolved Pick WIN -->
+            <div class="pick-card">
+              <div class="pick-header">
+                <div style="flex: 1;">
+                  <div class="pick-match">Bayern Munich vs Dortmund</div>
+                  <div class="pick-selection">
+                    <span style="color: var(--primary-cyan); font-weight: 600;">Over 2.5 Goals</span>
+                    <span> • </span>
+                    <span class="pick-odds">@1.88</span>
+                  </div>
+                </div>
+                <div class="chip success">
+                  <span>✓</span>
+                  <span>WIN</span>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">Stake</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700;">$25</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">Resultado</div>
+                  <div style="font-size: 14px; font-weight: 700;">3-1</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">P&L</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--primary-green);">+$22</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">CLV</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--primary-green);">+3.2%</div>
+                </div>
+              </div>
+
+              <div class="pick-meta">
+                <span>🏆 Bundesliga • Resuelto hace 2 días</span>
+                <div class="chip success" style="font-size: 10px; padding: 3px 8px;">
+                  <span>✓</span>
+                  <span>Proceso correcto</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Resolved Pick LOSS (but quality loss) -->
+            <div class="pick-card">
+              <div class="pick-header">
+                <div style="flex: 1;">
+                  <div class="pick-match">PSG vs Marseille</div>
+                  <div class="pick-selection">
+                    <span style="color: var(--primary-cyan); font-weight: 600;">PSG -1 AH</span>
+                    <span> • </span>
+                    <span class="pick-odds">@2.10</span>
+                  </div>
+                </div>
+                <div class="chip danger">
+                  <span>✕</span>
+                  <span>LOSS</span>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px;">
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">Stake</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700;">$20</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">Resultado</div>
+                  <div style="font-size: 14px; font-weight: 700;">2-1</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">P&L</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--secondary-red);">-$20</div>
+                </div>
+                <div style="text-align: center;">
+                  <div style="font-size: 11px; color: var(--text-muted);">CLV</div>
+                  <div class="mono" style="font-size: 14px; font-weight: 700; color: var(--primary-green);">+2.5%</div>
+                </div>
+              </div>
+
+              <div class="alert success" style="margin-bottom: 0; padding: 10px 12px;">
+                <span class="alert-icon" style="font-size: 16px;">✨</span>
+                <div style="font-size: 12px;">
+                  <strong>Quality Loss:</strong> Proceso correcto (CLV +2.5%, lectura correcta). Varianza te jugó en contra. No cambies tu enfoque.
+                </div>
+              </div>
+
+              <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div class="pick-meta">
+                  <span>🇫🇷 Ligue 1 • Resuelto hace 3 días</span>
+                </div>
+                <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;" onclick="openReflectionModal()">
+                  <span>✍️</span>
+                  <span>Añadir reflexión</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Streak Context Alert -->
+        <div class="alert success">
+          <span class="alert-icon">🔥</span>
+          <div>
+            <strong>5 victorias seguidas — ¡Excelente!</strong><br>
+            Con tu win rate de 58%, rachas así ocurren 12% del tiempo por varianza normal. Mantén tu disciplina y no aumentes stakes impulsivamente.
+          </div>
+        </div>
+
+        <!-- Performance Insights -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">
+                <span>📈</span>
+                <span>Insights de Rendimiento</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px;">Especialización</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>Over/Under</span>
+                  <span class="mono" style="color: var(--primary-green); font-weight: 700;">72% WR</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>BTTS</span>
+                  <span class="mono" style="color: var(--primary-green); font-weight: 700;">65% WR</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>Moneyline</span>
+                  <span class="mono" style="color: var(--text-muted);">48% WR</span>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+              <div style="font-size: 13px; font-weight: 600; margin-bottom: 12px;">Patrones Temporales</div>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>Mejor día:</span>
+                  <span style="font-weight: 700;">Martes (+18% ROI)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>Mejor horario:</span>
+                  <span style="font-weight: 700;">19-22h (+15% ROI)</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <span>Peor día:</span>
+                  <span style="color: var(--secondary-red);">Viernes (-5% ROI)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Professional Layer Modal -->
+  <div id="professionalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">🎯 Añadir Pick Profesional</div>
+        <button class="modal-close" onclick="closeProfessionalModal()">×</button>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Partido</label>
+        <input type="text" placeholder="Ej: Real Madrid vs Barcelona" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Selección</label>
+        <input type="text" placeholder="Ej: Over 2.5 Goals @1.95" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px;">
+      </div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">¿Por qué ves valor? (múltiple)</div>
+        <div class="chip-selector">
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Stats clave</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Forma reciente</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Alineaciones</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Historial H2H</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Estilo de juego</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Motivación</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">Tipo de entrada</div>
+        <div class="chip-selector">
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Estudiado</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Oportunista</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Recreativo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">Expectativa mercado</div>
+        <div class="chip-selector">
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Cuota bajará</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Cuota subirá</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>Solo resultado</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">Invalidation triggers (opcional)</div>
+        <div class="chip-selector">
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Cambio de portero</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Lesión clave</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Cambio táctico</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Clima extremo</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">Evidence sources</div>
+        <div class="chip-selector">
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>StatsBomb</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>WhoScored</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>Transfermarkt</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChip(this)">
+            <span class="chip-dot"></span>
+            <span>FlashScore</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Fuente / link (opcional)</label>
+        <input type="text" placeholder="lesiones, alineación, stats, artículo…" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <div class="chip-group-label">Razonamiento adicional (opcional)</div>
+        <textarea placeholder="Explica tu razonamiento en 2-3 frases..." style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px; min-height: 80px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn btn-outline" onclick="closeProfessionalModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveProfessionalPick()">Guardar Pick</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Payload Modal -->
+  <div id="exportPayloadModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">📋 TradeIntent Payload</div>
+        <button class="modal-close" onclick="closeExportPayloadModal()">×</button>
+      </div>
+      <pre id="exportPayloadContent" style="background: var(--bg-primary); padding: 16px; border-radius: 8px; font-size: 12px; overflow-x: auto; border: 1px solid var(--border-primary);"></pre>
+      <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px;">
+        <button class="btn btn-outline" onclick="closeExportPayloadModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reflection Modal -->
+  <div id="reflectionModal" class="modal">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title">📝 Reflexión Post-Resultado</div>
+        <button class="modal-close" onclick="closeReflectionModal()">×</button>
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">¿Qué salió como esperabas?</label>
+        <textarea placeholder="Describe lo que funcionó según tu análisis..." style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px; min-height: 60px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">¿Qué invalidó tu idea?</label>
+        <textarea placeholder="Factores que no anticipaste o que cambiaron..." style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px; min-height: 60px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">¿Qué harías distinto?</label>
+        <textarea placeholder="Lecciones para aplicar en picks futuros..." style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px; min-height: 60px; resize: vertical;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn btn-outline" onclick="closeReflectionModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveReflection()">Guardar Reflexión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Settings Modal -->
+  <div id="exportSettingsModal" class="modal">
+    <div class="modal-content" style="max-width: 450px;">
+      <div class="modal-header">
+        <div class="modal-title">⚙️ Configurar Exportación</div>
+        <button class="modal-close" onclick="closeExportSettingsModal()">×</button>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Modo</label>
+        <div class="chip-selector">
+          <div class="chip-toggle active" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>PRE-LIVE</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>LIVE</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Max Slippage %</label>
+        <input type="number" value="5" min="1" max="20" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px;">
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Expira en</label>
+        <div class="chip-selector">
+          <div class="chip-toggle active" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>30m</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>2h</span>
+          </div>
+          <div class="chip-toggle" onclick="toggleChipSingle(this)">
+            <span class="chip-dot"></span>
+            <span>6h</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Stake Plan</label>
+        <input type="text" value="2u" placeholder="Ej: 2u, 3u, 0.5u" style="width: 100%; padding: 10px; background: var(--bg-primary); border: 1px solid var(--border-primary); border-radius: 8px; color: var(--text-primary); font-size: 14px;">
+      </div>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn btn-outline" onclick="closeExportSettingsModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmExport()">Confirmar Export</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+     // Professional Modal Functions
+     function openProfessionalModal() {
+       document.getElementById('professionalModal').style.display = 'flex';
+     }
+
+     function closeProfessionalModal() {
+       document.getElementById('professionalModal').style.display = 'none';
+     }
+
+     function saveProfessionalPick() {
+       // Aquí iría la lógica para guardar el pick con la capa profesional
+       console.log('Pick profesional guardado');
+       closeProfessionalModal();
+     }
+
+     // Export Payload Modal Functions
+     function openExportPayloadModal(payload) {
+       document.getElementById('exportPayloadContent').textContent = JSON.stringify(payload, null, 2);
+       document.getElementById('exportPayloadModal').style.display = 'flex';
+     }
+
+     function closeExportPayloadModal() {
+       document.getElementById('exportPayloadModal').style.display = 'none';
+     }
+
+     // Chip Functions
+     function toggleChip(chipElement) {
+       chipElement.classList.toggle('active');
+     }
+
+     function toggleChipSingle(chipElement) {
+       // Desactivar todos los chips del mismo grupo
+       const group = chipElement.closest('.chip-selector');
+       group.querySelectorAll('.chip-toggle').forEach(chip => {
+         chip.classList.remove('active');
+       });
+       // Activar el chip clickeado
+       chipElement.classList.add('active');
+     }
+
+     // Export Queue Functions
+     function viewExportPayload(pickId) {
+       const mockPayload = {
+         pick_id: pickId,
+         broker: "Cloudbet",
+         stake_plan: "2u",
+         odds_at_execution: 1.95,
+         timestamp: new Date().toISOString(),
+         market: "Over 2.5 Goals",
+         event: "Real Madrid vs Barcelona"
+       };
+       openExportPayloadModal(mockPayload);
+     }
+
+     function cancelExport(pickId) {
+       if (confirm('¿Cancelar exportación?')) {
+         console.log('Exportación cancelada:', pickId);
+         // Actualizar estado en la UI
+       }
+     }
+
+     // Reflection Modal Functions
+     function openReflectionModal() {
+       document.getElementById('reflectionModal').style.display = 'flex';
+     }
+
+     function closeReflectionModal() {
+       document.getElementById('reflectionModal').style.display = 'none';
+     }
+
+     function saveReflection() {
+       const textareas = document.querySelectorAll('#reflectionModal textarea');
+       const reflection = {
+         whatWorked: textareas[0].value,
+         whatInvalidated: textareas[1].value,
+         whatDifferent: textareas[2].value,
+         timestamp: new Date().toISOString()
+       };
+       console.log('Reflexión guardada:', reflection);
+       closeReflectionModal();
+       alert('✅ Reflexión guardada exitosamente');
+     }
+
+     // Export Settings Modal Functions
+     function openExportSettingsModal() {
+       document.getElementById('exportSettingsModal').style.display = 'flex';
+     }
+
+     function closeExportSettingsModal() {
+       document.getElementById('exportSettingsModal').style.display = 'none';
+     }
+
+     function confirmExport() {
+       const modal = document.getElementById('exportSettingsModal');
+       const mode = modal.querySelector('.chip-selector .chip-toggle.active span:last-child').textContent;
+       const slippage = modal.querySelector('input[type="number"]').value;
+       const expires = modal.querySelectorAll('.chip-selector')[1].querySelector('.chip-toggle.active span:last-child').textContent;
+       const stakePlan = modal.querySelector('input[type="text"]').value;
+       
+       const exportConfig = {
+         mode: mode,
+         maxSlippage: slippage + '%',
+         expiresIn: expires,
+         stakePlan: stakePlan,
+         timestamp: new Date().toISOString()
+       };
+       
+       console.log('Export configurado:', exportConfig);
+       closeExportSettingsModal();
+       alert('✅ Pick añadido a Export Queue');
+     }
+
+     // Tab switching
+    function switchTab(tabName) {
+      // Update tab buttons
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach((tab, index) => {
+        tab.classList.remove('active');
+        if ((index === 0 && tabName === 'monitoreo') ||
+            (index === 1 && tabName === 'mis-picks') ||
+            (index === 2 && tabName === 'resueltas')) {
+          tab.classList.add('active');
+        }
+      });
+
+      // Update tab content
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach((content, index) => {
+        content.style.display = 'none';
+        if ((index === 0 && tabName === 'monitoreo') ||
+            (index === 1 && tabName === 'mis-picks') ||
+            (index === 2 && tabName === 'resueltas')) {
+          content.style.display = 'block';
+        }
+      });
+    }
+
+    // Filter buttons
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Demo interactivity
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('Watchlist Module loaded');
+    });
+  </script>
+</body>
+</html>

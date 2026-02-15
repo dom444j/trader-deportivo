@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tipster Dashboard | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Tipster Colors (Violet/Purple) */
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      
+      /* Keep existing colors for neutral elements */
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== TIPSTER HEADER ========== */
+    .tipster-header {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .tipster-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .tipster-avatar {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--tipster-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--bg-primary);
+      box-shadow: var(--tipster-glow);
+    }
+
+    .tipster-details {
+      flex: 1;
+    }
+
+    .tipster-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+
+    .tipster-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tipster-badge.verified {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .tipster-badge.shadow {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    .tipster-badge.provisional {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    /* Period Selector */
+    .period-selector {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    .period-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .period-btn.active {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .period-btn:hover:not(.active) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    /* ========== KPI CARDS ========== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .kpi-card:hover {
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .kpi-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kpi-icon {
+      font-size: 24px;
+    }
+
+    .kpi-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .kpi-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 8px;
+    }
+
+    .kpi-value.positive {
+      color: var(--primary-green);
+    }
+
+    .kpi-value.negative {
+      color: var(--secondary-red);
+    }
+
+    .kpi-value.neutral {
+      color: var(--tipster-primary);
+    }
+
+    .kpi-change {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .kpi-change.up {
+      color: var(--primary-green);
+    }
+
+    .kpi-change.down {
+      color: var(--secondary-red);
+    }
+
+    /* ========== PERFORMANCE SECTION ========== */
+    .performance-section {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .performance-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .card-icon {
+      font-size: 24px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* PnL Chart Placeholder */
+    .pnl-chart {
+      height: 250px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pnl-chart::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.05), rgba(0, 255, 148, 0.05));
+    }
+
+    .chart-placeholder {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .pnl-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .pnl-stat {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+    }
+
+    .pnl-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    .pnl-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Market Breakdown Table */
+    .market-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .market-table th {
+      padding: 10px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .market-table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .market-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .market-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    /* Streaks */
+    .streaks-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .streak-card {
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .streak-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .streak-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--tipster-primary);
+      margin-bottom: 4px;
+    }
+
+    .streak-description {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    /* ========== RECENT SIGNALS ========== */
+    .signals-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .signals-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .signals-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .signals-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .signals-table tr:hover {
+      background: var(--bg-tertiary);
+      cursor: pointer;
+    }
+
+    .signal-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .signal-status.pending {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .signal-status.win {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .signal-status.loss {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .signal-status.void {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    /* ========== COACH INSIGHTS ========== */
+    .insights-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .insights-grid {
+      display: grid;
+      gap: 12px;
+    }
+
+    .insight-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 10px;
+      border-left: 3px solid transparent;
+    }
+
+    .insight-card.positive {
+      background: rgba(0, 255, 148, 0.05);
+      border-left-color: var(--primary-green);
+    }
+
+    .insight-card.nudge {
+      background: rgba(255, 215, 0, 0.05);
+      border-left-color: var(--secondary-gold);
+    }
+
+    .insight-card.warning {
+      background: rgba(255, 140, 0, 0.05);
+      border-left-color: var(--secondary-orange);
+    }
+
+    .insight-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .insight-content {
+      flex: 1;
+    }
+
+    .insight-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .insight-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* ========== QUICK ACTIONS ========== */
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* Alert chips */
+    .alert-chip {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid var(--border-primary);
+      color: var(--text-secondary);
+      background: var(--bg-tertiary);
+    }
+    .alert-chip.ok {
+      border-color: var(--primary-green);
+      color: var(--primary-green);
+      background: rgba(0, 255, 148, 0.08);
+    }
+    .alert-chip.positive {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+      background: rgba(168, 85, 247, 0.08);
+    }
+    .alert-chip.warning {
+      border-color: var(--secondary-orange);
+      color: var(--secondary-orange);
+      background: rgba(255, 140, 0, 0.08);
+    }
+
+    /* Sidebar Overlay */
+    .sidebar-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 80; /* under sidebar (z-index:100), above content */
+      transition: opacity 0.3s ease;
+    }
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1200px) {
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .performance-section {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tipster-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .period-selector {
+        width: 100%;
+        overflow-x: auto;
+      }
+
+      .pnl-summary {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item active">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <!-- Volver a Usuario (separado, último item) -->
+        <div class="nav-section">
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">←</span>
+            <span>Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">📊 Tipster Dashboard</h1>
+          <div class="breadcrumbs">
+            <span>Tipster</span>
+            <span>›</span>
+            <span>Dashboard</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Tipster Header -->
+        <div class="tipster-header">
+          <div class="tipster-info">
+            <div class="tipster-avatar">CM</div>
+            <div class="tipster-details">
+              <div class="tipster-name">Carlos Méndez</div>
+              <div class="tipster-badge verified">
+                <span>✓</span>
+                <span>Verified Tipster</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="period-selector">
+            <button class="period-btn" data-period="7d">7D</button>
+            <button class="period-btn active" data-period="30d">30D</button>
+            <button class="period-btn" data-period="ytd">YTD</button>
+            <button class="period-btn" data-period="all">All Time</button>
+          </div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <!-- ROI -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">📈</span>
+              <span class="kpi-label">ROI</span>
+            </div>
+            <div class="kpi-value positive">+12.5%</div>
+            <div class="kpi-change up">
+              <span>▲</span>
+              <span>+2.1%</span>
+            </div>
+          </div>
+
+          <!-- Yield -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">💰</span>
+              <span class="kpi-label">Yield (%)</span>
+            </div>
+            <div class="kpi-value positive">+8.3%</div>
+            <div class="kpi-change up">
+              <span>▲</span>
+              <span>+1.5%</span>
+            </div>
+          </div>
+
+          <!-- Win Rate -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">🎯</span>
+              <span class="kpi-label">Win Rate</span>
+            </div>
+            <div class="kpi-value neutral">58.2%</div>
+            <div class="kpi-change down">
+              <span>▼</span>
+              <span>-3.1%</span>
+            </div>
+          </div>
+
+          <!-- CLV Avg -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">📊</span>
+              <span class="kpi-label">CLV Avg</span>
+            </div>
+            <div class="kpi-value positive">+2.8%</div>
+            <div class="kpi-change up">
+              <span>▲</span>
+              <span>+0.5%</span>
+            </div>
+          </div>
+
+          <!-- Picks Published -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">📡</span>
+              <span class="kpi-label">Unidades Netas</span>
+            </div>
+            <div class="kpi-value positive">+28.5u</div>
+            <div class="kpi-change up"><span>▲</span><span>+3.2u</span></div>
+          </div>
+
+          <!-- Rating -->
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">⭐</span>
+              <span class="kpi-label">Rating</span>
+            </div>
+            <div class="kpi-value neutral">4.6/5.0</div>
+            <div style="font-size: 12px; color: var(--text-muted);">Placeholder</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-header">
+              <span class="kpi-icon">📐</span>
+              <span class="kpi-label">Stake Promedio</span>
+            </div>
+            <div class="kpi-value neutral">2.3%</div>
+            <div class="kpi-change neutral"><span>•</span><span>±0.0%</span></div>
+          </div>
+        </div>
+
+        <!-- Performance Section -->
+        <div class="performance-section">
+          <!-- PnL Chart -->
+          <div class="performance-card">
+            <div class="card-header">
+              <span class="card-icon">📈</span>
+              <div>
+                <div class="card-title">Profit & Loss (30 días)</div>
+                <div class="card-subtitle">Evolución de ganancias</div>
+              </div>
+            </div>
+
+            <div class="pnl-chart">
+              <div class="chart-placeholder">
+                <div style="font-size: 48px; margin-bottom: 12px;">📊</div>
+                <div style="font-size: 14px;">Gráfico PnL Placeholder</div>
+                <div style="font-size: 12px;">(Chart.js o similar)</div>
+              </div>
+            </div>
+
+            <div class="pnl-summary">
+              <div class="pnl-stat">
+                <div class="pnl-stat-label">Total</div>
+                <div class="pnl-stat-value" style="color: var(--primary-green);">+$1,240</div>
+              </div>
+              <div class="pnl-stat">
+                <div class="pnl-stat-label">Peak</div>
+                <div class="pnl-stat-value" style="color: var(--tipster-primary);">+$1,850</div>
+              </div>
+              <div class="pnl-stat">
+                <div class="pnl-stat-label">DD</div>
+                <div class="pnl-stat-value" style="color: var(--secondary-red);">-$420</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Streaks & Breakdown -->
+          <div class="performance-card">
+            <div class="card-header">
+              <span class="card-icon">🔥</span>
+              <div>
+                <div class="card-title">Rachas & Performance</div>
+              </div>
+            </div>
+
+            <div class="streaks-grid">
+              <div class="streak-card">
+                <div class="streak-label">Racha Actual</div>
+                <div class="streak-value">🔥 W5</div>
+                <div class="streak-description">5 wins consecutivos</div>
+              </div>
+              <div class="streak-card">
+                <div class="streak-label">Mejor Racha</div>
+                <div class="streak-value">🏆 W12</div>
+                <div class="streak-description">Ene 10-15</div>
+              </div>
+            </div>
+
+            <div style="margin-top: 16px;">
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-primary);">Performance por Mercado</div>
+              <table class="market-table">
+                <thead>
+                  <tr>
+                    <th>Mercado</th>
+                    <th>Picks</th>
+                    <th>ROI</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Moneyline</td>
+                    <td>45</td>
+                    <td style="color: var(--primary-green); font-weight: 600;">+15.2%</td>
+                  </tr>
+                  <tr>
+                    <td>Totales</td>
+                    <td>38</td>
+                    <td style="color: var(--primary-green); font-weight: 600;">+10.8%</td>
+                  </tr>
+                  <tr>
+                    <td>Handicaps</td>
+                    <td>32</td>
+                    <td style="color: var(--primary-green); font-weight: 600;">+8.5%</td>
+                  </tr>
+                  <tr>
+                    <td>Live</td>
+                    <td>9</td>
+                    <td style="color: var(--secondary-red); font-weight: 600;">-2.1%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Signals -->
+        <div class="performance-card" style="margin-bottom: 24px;">
+          <div class="card-header">
+            <span class="card-icon">📡</span>
+            <div>
+              <div class="card-title">Señales Recientes</div>
+              <div class="card-subtitle">Últimas 10 señales publicadas</div>
+            </div>
+          </div>
+
+          <table class="signals-table">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Evento</th>
+                <th>Mercado</th>
+                <th>Odds</th>
+                <th>Valor (CLV)</th>
+                <th>Stake</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Feb 09</td>
+                <td>Real Madrid vs Barcelona</td>
+                <td>Over 2.5</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">1.95</td>
+                <td>+3.1%</td>
+                <td>2%</td>
+                <td><span class="signal-status pending">⏳ Pending</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Feb 08</td>
+                <td>Lakers vs Celtics</td>
+                <td>Moneyline</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">2.10</td>
+                <td>+1.8%</td>
+                <td>3%</td>
+                <td><span class="signal-status win">✅ Win +3.3%</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Feb 08</td>
+                <td>PSG vs Bayern</td>
+                <td>BTTS</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">1.85</td>
+                <td>-0.8%</td>
+                <td>2%</td>
+                <td><span class="signal-status loss">❌ Loss -2%</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Feb 07</td>
+                <td>Juventus vs Milan</td>
+                <td>Under 2.5</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">2.05</td>
+                <td>+0.9%</td>
+                <td>2%</td>
+                <td><span class="signal-status win">✅ Win +2.1%</span></td>
+              </tr>
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">Feb 07</td>
+                <td>Man United vs Man City</td>
+                <td>AH -1.5</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">1.90</td>
+                <td>—</td>
+                <td>2.5%</td>
+                <td><span class="signal-status pending">⏳ Pending</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Coach Insights -->
+        <div class="insights-section">
+          <div class="card-header" style="border: none; padding-bottom: 0;">
+            <span class="card-icon">🎓</span>
+            <div>
+              <div class="card-title">Insights del Coach</div>
+              <div class="card-subtitle">Sugerencias para mejorar tu rendimiento</div>
+            </div>
+          </div>
+
+          <div class="insights-grid" style="margin-top: 20px;">
+            <div class="insight-card positive">
+              <div class="insight-icon">ℹ️</div>
+              <div class="insight-content">
+                <div class="insight-title">Tu CLV ha mejorado +1.2% este mes</div>
+                <div class="insight-description">Sigues encontrando valor antes del cierre. ¡Excelente trabajo!</div>
+              </div>
+            </div>
+
+            <div class="insight-card nudge">
+              <div class="insight-icon">⚠️</div>
+              <div class="insight-content">
+                <div class="insight-title">Mucha dispersión en stakes (1.5%-3.5%)</div>
+                <div class="insight-description">Considera un staking más consistente para reducir varianza.</div>
+              </div>
+            </div>
+
+            <div class="insight-card positive">
+              <div class="insight-icon">✅</div>
+              <div class="insight-content">
+                <div class="insight-title">7 días consecutivos con picks publicados</div>
+                <div class="insight-description">¡Excelente consistencia! Tus suscriptores lo aprecian.</div>
+              </div>
+            </div>
+
+            <div class="insight-card warning">
+              <div class="insight-icon">💡</div>
+              <div class="insight-content">
+                <div class="insight-title">Tus picks live tienen -2.1% ROI</div>
+                <div class="insight-description">Considera reducir exposición en live o revisar tu estrategia.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="performance-card">
+          <div class="card-header">
+            <span class="card-icon">⚡</span>
+            <div>
+              <div class="card-title">Acciones Rápidas</div>
+            </div>
+          </div>
+
+          <div class="quick-actions">
+            <a href="/tipster/signals/new" class="btn btn-primary">
+              <span>➕</span>
+              <span>Crear Nueva Señal</span>
+            </a>
+            <a href="/tipster/signals" class="btn btn-outline">
+              <span>📡</span>
+              <span>Ver Mis Señales</span>
+            </a>
+            <a href="/tipster/profile" class="btn btn-outline">
+              <span>👤</span>
+              <span>Completar Perfil</span>
+            </a>
+            <a href="/tipster/wallet" class="btn btn-outline">
+              <span>💰</span>
+              <span>Ver Billetera</span>
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Period Selector
+    document.querySelectorAll('.period-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const period = btn.dataset.period;
+        localStorage.setItem('tipsterPeriod', period);
+        console.log('Period changed to:', period);
+        // Aquí iría la lógica para actualizar KPIs, gráfico, etc.
+      });
+    });
+
+    // KPI Card Tooltips (simple hover)
+    document.querySelectorAll('.kpi-card').forEach(card => {
+      card.addEventListener('click', () => {
+        console.log('KPI clicked - mostrar modal con breakdown');
+      });
+    });
+
+    // Signal Row Click
+    document.querySelectorAll('.signals-table tbody tr').forEach(row => {
+      row.addEventListener('click', () => {
+        console.log('Signal clicked - ir a detalle');
+        // window.location.href = '/tipster/signals/{id}';
+      });
+    });
+
+    // Mobile Menu Toggle + Overlay
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (!sidebar) return;
+      sidebar.classList.toggle('sidebar-open');
+      if (overlay) overlay.classList.toggle('active', sidebar.classList.contains('sidebar-open'));
+    }
+
+    function closeSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      if (!sidebar) return;
+      sidebar.classList.remove('sidebar-open');
+      if (overlay) overlay.classList.remove('active');
+    }
+
+    // Mobile menu button (created dynamically) + Period init + overlay listeners
+    document.addEventListener('DOMContentLoaded', () => {
+      // Create mobile menu button
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768 && !document.querySelector('.mobile-menu-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'mobile-menu-btn';
+        btn.setAttribute('aria-label', 'Abrir menú');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.appendChild(btn);
+      }
+
+      // Period selector persistence
+      const stored = localStorage.getItem('tipsterPeriod') || '30d';
+      const targetBtn = document.querySelector(`.period-btn[data-period="${stored}"]`);
+      if (targetBtn) {
+        document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+        targetBtn.classList.add('active');
+      } else {
+        localStorage.setItem('tipsterPeriod', '30d');
+      }
+
+      // Overlay click closes sidebar
+      const overlay = document.getElementById('sidebar-overlay');
+      if (overlay) {
+        overlay.addEventListener('click', closeSidebar);
+      }
+
+      // ESC key closes sidebar
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSidebar();
+      });
+    });
+
+    console.log('Tipster Dashboard loaded');
+  </script>
+</body>
+</html>

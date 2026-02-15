@@ -1,0 +1,3091 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trading Deportivo - Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --sidebar-collapsed: 80px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-ai: linear-gradient(135deg, #B026FF 0%, #7000CC 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4), 0 0 40px rgba(0, 255, 148, 0.2);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      line-height: 1.5;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 40px 40px;
+      opacity: 0.2;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes gridPulse {
+      0%, 100% { opacity: 0.1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Radial gradient accent */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30%;
+      right: -30%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.05) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+      animation: glowPulse 6s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(1.05); }
+    }
+
+    /* Grid Background */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.08;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* Main Layout */
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ==== SIDEBAR ==== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: 1000;
+      overflow: hidden;
+    }
+
+    .sidebar.collapsed {
+      width: var(--sidebar-collapsed);
+    }
+
+    /* Logo Section */
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08) 0%, rgba(176, 38, 255, 0.08) 100%);
+      min-height: var(--topbar-height);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .sidebar-logo::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--primary-cyan) 0%, var(--secondary-purple) 100%);
+      opacity: 0.03;
+      z-index: 0;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: var(--glow-cyan);
+      position: relative;
+      z-index: 1;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    }
+
+    .logo-icon:hover {
+      transform: scale(1.05) rotate(-3deg);
+      box-shadow: 
+        0 6px 24px rgba(0, 245, 255, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed .logo-text {
+      opacity: 0;
+      width: 0;
+    }
+
+    /* Quick Status Bar */
+    .quick-status {
+      padding: 16px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.06), rgba(0, 255, 148, 0.04));
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quick-status::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-cyan), var(--primary-green));
+      opacity: 0.6;
+    }
+
+    .status-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      opacity: 0.8;
+    }
+
+    .sidebar.collapsed .status-title {
+      display: none;
+    }
+
+    .status-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sidebar.collapsed .status-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .status-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .status-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar.collapsed .status-label {
+      display: none;
+    }
+
+    .status-value {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .status-value.positive {
+      color: var(--primary-green);
+    }
+
+    .status-value.warning {
+      color: var(--secondary-gold);
+    }
+
+    .status-value.danger {
+      color: var(--secondary-red);
+    }
+
+    /* Navigation */
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px 8px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 3px;
+    }
+
+    .nav-section {
+      margin-bottom: 24px;
+    }
+
+    .nav-section-title {
+      padding: 8px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed .nav-section-title {
+      opacity: 0;
+      height: 0;
+      padding: 0;
+      margin: 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 12px;
+      margin-bottom: 4px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      transform: translateX(4px);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+    }
+
+    .nav-item.sub-item {
+      padding-left: 24px;
+      font-size: 14px;
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .nav-label {
+      white-space: nowrap;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed .nav-label {
+      opacity: 0;
+      width: 0;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 10px;
+      min-width: 20px;
+      text-align: center;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed .nav-badge {
+      opacity: 0;
+      width: 0;
+    }
+
+    .nav-badge.danger {
+      background: var(--secondary-red);
+    }
+
+    .nav-badge.success {
+      background: var(--primary-green);
+    }
+
+    .nav-badge.gold {
+      background: var(--secondary-gold);
+      color: var(--bg-primary);
+    }
+
+    /* Dropdown Menu Styles */
+    .nav-dropdown {
+      position: relative;
+    }
+
+    .nav-dropdown-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+
+    .dropdown-arrow {
+      font-size: 12px;
+      transition: transform 0.3s ease;
+      margin-left: auto;
+    }
+
+    .nav-dropdown.open .dropdown-arrow {
+      transform: rotate(180deg);
+    }
+
+    .nav-dropdown-menu {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      margin: 4px 0;
+    }
+
+    .nav-dropdown.open .nav-dropdown-menu {
+      max-height: 200px;
+    }
+
+    .nav-dropdown-menu .nav-item {
+      padding-left: 36px;
+      margin: 2px 0;
+      font-size: 13px;
+    }
+
+    .nav-dropdown-menu .nav-item:hover {
+      background: var(--bg-elevated);
+    }
+
+    /* User Profile */
+    .sidebar-user {
+      padding: 16px;
+      border-top: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .sidebar-user:hover {
+      background: var(--bg-elevated);
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      background: var(--gradient-premium);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .user-info {
+      flex: 1;
+      min-width: 0;
+      opacity: 1;
+      transition: opacity 0.3s;
+    }
+
+    .sidebar.collapsed .user-info {
+      opacity: 0;
+      width: 0;
+    }
+
+    .user-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-tier {
+      font-size: 12px;
+      color: var(--secondary-gold);
+      font-weight: 600;
+    }
+
+    /* Toggle Button */
+    .sidebar-toggle {
+      position: absolute;
+      top: 20px;
+      right: -15px;
+      width: 30px;
+      height: 30px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-secondary);
+      font-size: 16px;
+      transition: all 0.3s;
+      z-index: 10;
+    }
+
+    .sidebar-toggle:hover {
+      background: var(--primary-cyan);
+      border-color: var(--primary-cyan);
+      color: var(--bg-primary);
+      transform: scale(1.1);
+    }
+
+    /* ==== MAIN CONTENT ==== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      transition: margin-left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .sidebar.collapsed ~ .main-content {
+      margin-left: var(--sidebar-collapsed);
+    }
+
+    /* Top Bar */
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-top: none;
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      margin-top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 0 0 0 transparent;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-input {
+      width: 300px;
+      padding: 10px 16px 10px 44px;
+      background: var(--bg-primary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transition: all 0.3s;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 0 4px rgba(0, 245, 255, 0.1);
+      width: 400px;
+    }
+
+    .bank-total-kpi {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 8px 16px;
+      margin-right: 16px;
+    }
+
+    .kpi-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-green);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 18px;
+    }
+
+    .action-btn {
+      width: 44px;
+      height: 44px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .action-btn:hover {
+      background: var(--bg-primary);
+      color: var(--primary-cyan);
+      border-color: var(--primary-cyan);
+      transform: translateY(-2px);
+    }
+
+    .action-btn .badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--secondary-red);
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
+    }
+
+    /* Stats Cards Grid */
+    .stats-grid {
+      display: grid;
+      gap: 24px;
+      margin-bottom: 32px;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        "plan"
+        "rango"
+        "equipo"
+        "pool"
+        "saldo"
+        "creditos"
+        "proximo"
+        "alertas"
+        "directos";
+    }
+
+    /* Grid area assignment classes */
+    .area-plan { grid-area: plan; }
+    .area-rango { grid-area: rango; }
+    .area-proximo { grid-area: proximo; }
+    .area-alertas { grid-area: alertas; }
+    .area-pool { grid-area: pool; }
+    .area-saldo { grid-area: saldo; }
+    .area-creditos { grid-area: creditos; }
+    .area-equipo { grid-area: equipo; }
+    .area-directos { grid-area: directos; }
+
+    /* Tablet layout (>=768px) */
+    @media (min-width: 768px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+          "plan rango"
+          "equipo pool"
+          "saldo creditos"
+          "proximo alertas"
+          "directos directos";
+      }
+    }
+
+    /* Desktop layout (>=1024px) */
+    @media (min-width: 1024px) {
+      .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-areas:
+          "plan rango equipo pool"
+          "saldo creditos proximo alertas"
+          "directos directos directos directos";
+      }
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 24px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 32px rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--primary-cyan), var(--primary-green));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .stat-card:hover::before {
+      opacity: 0.6;
+    }
+
+    .stat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+
+    .stat-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 102, 255, 0.1));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 8px;
+    }
+
+    /* Ajustes tipográficos para Próximo pago */
+    .proximo-card .stat-value { font-size: 24px; line-height: 1.2; }
+    .proximo-card .week-prefix { font-size: 14px; color: var(--text-muted); font-weight: 600; letter-spacing: 0.5px; margin-right: 4px; }
+    .proximo-card .stat-header { margin-bottom: 12px; }
+
+    /* Ajustes tipográficos para saldos grandes */
+    .area-saldo .stat-value,
+    .area-creditos .stat-value {
+      font-size: 26px;
+      line-height: 1.15;
+      letter-spacing: 0.2px;
+    }
+
+    .stat-value.positive {
+      color: var(--primary-green);
+    }
+
+    .stat-change {
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .stat-change.positive {
+      color: var(--primary-green);
+    }
+
+    .stat-change.negative {
+      color: var(--secondary-red);
+    }
+
+    .stat-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stat-meta span.gold {
+      color: var(--secondary-gold);
+      font-weight: 700;
+    }
+
+    .stat-meta span.purple {
+      color: var(--secondary-purple);
+      font-weight: 700;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-primary);
+      transition: width 0.3s;
+    }
+
+    /* Payment Card */
+    .payment-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .payment-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .payment-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .payment-status {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .payment-status.eligible {
+      color: var(--primary-green);
+    }
+
+    .payment-status.not-eligible {
+      color: var(--secondary-red);
+    }
+
+    .payment-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .payment-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+    }
+
+    .payment-label {
+      color: var(--text-muted);
+    }
+
+    .payment-value {
+      font-weight: 600;
+    }
+
+    .cutoff-alert {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid var(--secondary-red);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--text-primary);
+    }
+
+    .cutoff-icon {
+      font-size: 20px;
+      color: var(--secondary-red);
+    }
+
+    /* Chart Container */
+    .chart-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 32px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .chart-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .chart-tabs {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-primary);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .chart-tab {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .chart-tab.active {
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+    }
+
+    .chart-placeholder {
+      height: 300px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.03), rgba(0, 102, 255, 0.03));
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* Signals Section */
+    .signals-section {
+      margin-bottom: 32px;
+    }
+
+    .signals-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .signals-header-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .signals-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-white);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .view-all-link {
+      color: var(--primary-cyan);
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+    }
+
+    .view-all-link:hover {
+      color: var(--primary-green);
+      transform: translateX(4px);
+    }
+
+    .signals-toggle {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-primary);
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .signals-toggle-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .signals-toggle-btn.active {
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+    }
+
+
+    /* Recommend Grid */
+    .recommend-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+      gap: 24px;
+    }
+
+    .recommend-card {
+      background: linear-gradient(135deg, rgba(20, 20, 40, 0.8) 0%, rgba(30, 30, 56, 0.6) 100%);
+      border: 2px solid var(--border-primary);
+      border-radius: 20px;
+      padding: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .recommend-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--primary-cyan), var(--primary-green));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .recommend-card:hover {
+      transform: translateY(-6px);
+      border-color: var(--primary-cyan);
+      box-shadow: 0 16px 48px rgba(0, 245, 255, 0.25);
+    }
+
+    .recommend-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Variantes de colores por tipo */
+    .recommend-card.live {
+      border-color: rgba(0, 255, 148, 0.3);
+    }
+
+    .recommend-card.live:hover {
+      border-color: var(--primary-green);
+      box-shadow: 0 16px 48px rgba(0, 255, 148, 0.25);
+    }
+
+    .recommend-card.live::before {
+      background: var(--primary-green);
+    }
+
+    .recommend-card.pre {
+      border-color: rgba(176, 38, 255, 0.3);
+    }
+
+    .recommend-card.pre:hover {
+      border-color: var(--secondary-purple);
+      box-shadow: 0 16px 48px rgba(176, 38, 255, 0.25);
+    }
+
+    .recommend-card.pre::before {
+      background: var(--secondary-purple);
+    }
+
+    .recommend-card.ev-plus {
+      border-color: rgba(0, 245, 255, 0.3);
+    }
+
+    .recommend-card.ev-plus:hover {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 16px 48px rgba(0, 245, 255, 0.25);
+    }
+
+    .recommend-card.ev-plus::before {
+      background: var(--primary-cyan);
+    }
+
+    .recommend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .badge-pill {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-pill.live {
+      background: var(--primary-green);
+      color: var(--bg-primary);
+      box-shadow: 0 0 20px rgba(0, 255, 148, 0.5);
+    }
+
+    .badge-pill.pre {
+      background: var(--secondary-purple);
+      color: var(--text-primary);
+      box-shadow: 0 0 20px rgba(176, 38, 255, 0.5);
+    }
+
+    .badge-pill.ev-plus {
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+    }
+
+    .ev-badge {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text-primary);
+      font-family: 'JetBrains Mono', monospace;
+      text-shadow: 0 0 10px currentColor;
+    }
+
+    .recommend-body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .recommend-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-white);
+      line-height: 1.3;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .recommend-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .odds-section {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      padding: 16px 0;
+      border-top: 1px solid var(--border-primary);
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .odds-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .odds-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .odds-value {
+      font-size: 22px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-white);
+    }
+
+    .odds-value.highlight {
+      color: var(--primary-green);
+      text-shadow: 0 0 10px var(--primary-green);
+    }
+
+    .odds-value.positive {
+      color: var(--primary-green);
+    }
+
+    .recommend-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .recommend-actions .action-btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: none;
+    }
+
+    .recommend-actions .btn-primary {
+      background: var(--primary-green);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 16px rgba(0, 255, 148, 0.4);
+    }
+
+    .recommend-actions .btn-primary:hover {
+      background: var(--primary-cyan);
+      box-shadow: 0 6px 24px rgba(0, 245, 255, 0.6);
+      transform: translateY(-2px);
+    }
+
+    .recommend-actions .btn-secondary {
+      background: var(--secondary-purple);
+      color: var(--text-white);
+      box-shadow: 0 4px 16px rgba(176, 38, 255, 0.4);
+    }
+
+    .recommend-actions .btn-secondary:hover {
+      background: var(--secondary-purple);
+      box-shadow: 0 6px 24px rgba(176, 38, 255, 0.6);
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+    .recommend-actions .btn-tertiary {
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 16px rgba(0, 245, 255, 0.4);
+    }
+
+    .recommend-actions .btn-tertiary:hover {
+      background: var(--primary-cyan);
+      box-shadow: 0 6px 24px rgba(0, 245, 255, 0.6);
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+
+
+    /* Table */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    table.table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      padding: 16px 24px;
+      text-align: left;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .table td {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    /* Payout Banner - Próximo pago semanal */
+    .payout-banner {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 18px;
+      border-radius: 14px;
+      background: rgba(184, 184, 208, 0.06);
+      border: 1px solid var(--border-primary);
+      margin-bottom: 24px;
+    }
+    .payout-left {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-width: 280px;
+    }
+    .payout-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(255, 199, 0, 0.10);
+      border: 1px solid rgba(255, 199, 0, 0.25);
+      font-size: 18px;
+    }
+    .payout-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .payout-meta {
+      margin-top: 4px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.35;
+    }
+    .payout-tags {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .mini-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      border: 1px solid var(--border-primary);
+      background: rgba(184, 184, 208, 0.06);
+      color: var(--text-secondary);
+    }
+    .mini-tag.good {
+      border-color: rgba(0, 255, 148, 0.30);
+      background: rgba(0, 255, 148, 0.10);
+      color: var(--primary-green);
+    }
+    .mini-tag.warn {
+      border-color: rgba(255, 199, 0, 0.30);
+      background: rgba(255, 199, 0, 0.10);
+      color: var(--secondary-gold);
+    }
+
+    /* Tooltip */
+    .tooltip-wrapper {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+    }
+
+    .tooltip-icon {
+      width: 18px;
+      height: 18px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      cursor: help;
+      transition: all 0.3s;
+    }
+
+    .tooltip-icon:hover {
+      background: var(--primary-cyan);
+      border-color: var(--primary-cyan);
+      color: var(--bg-primary);
+      transform: scale(1.1);
+    }
+
+    .tooltip-content {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      width: 280px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    .tooltip-wrapper:hover .tooltip-content {
+      opacity: 1;
+      visibility: visible;
+      bottom: calc(100% + 12px);
+    }
+
+    .tooltip-content::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: var(--bg-elevated);
+    }
+
+    .tooltip-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 10px;
+    }
+
+    .tooltip-text {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .tooltip-text strong {
+      color: var(--text-white);
+      font-weight: 700;
+    }
+
+    .tooltip-text em {
+      color: var(--primary-cyan);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    /* Modal de Historial de Pagos */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 80vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-tertiary);
+    }
+
+    .modal-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text-white);
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .modal-close {
+      width: 36px;
+      height: 36px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      color: var(--text-secondary);
+      transition: all 0.3s;
+    }
+
+    .modal-close:hover {
+      background: var(--secondary-red);
+      border-color: var(--secondary-red);
+      color: var(--text-white);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 28px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .payment-history-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      gap: 20px;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .payment-history-item:hover {
+      border-color: var(--primary-cyan);
+      transform: translateX(4px);
+    }
+
+    .payment-week {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+    }
+
+    .payment-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .payment-rank {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .payment-rank .rank-badge {
+      background: var(--secondary-gold);
+      color: var(--bg-primary);
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    .payment-amount {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-green);
+    }
+
+    .payment-status {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .payment-status.paid {
+      background: rgba(0, 255, 148, 0.1);
+      color: var(--primary-green);
+      border: 1px solid var(--primary-green);
+    }
+
+    .payment-status.pending {
+      background: rgba(255, 215, 0, 0.1);
+      color: var(--secondary-gold);
+      border: 1px solid var(--secondary-gold);
+    }
+
+    .payment-history-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .payment-history-empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    /* Info Banner - Aportes al Bank */
+    .info-banner {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(176, 38, 255, 0.06));
+      border: 1px solid var(--border-primary);
+      border-radius: 16px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .info-banner-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+
+    .info-banner-content {
+      flex: 1;
+    }
+
+    .info-banner-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 8px;
+    }
+
+    .info-banner-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .info-banner-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-banner-item-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+    }
+
+    .info-banner-item-value {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .info-banner-item-value.basic {
+      color: var(--text-secondary);
+    }
+
+    .info-banner-item-value.pro {
+      color: var(--primary-cyan);
+    }
+
+    .info-banner-item-value.premium {
+      color: var(--secondary-gold);
+    }
+
+    /* Rank Progress Detail */
+    .rank-progress-detail {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(0, 245, 255, 0.05);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .rank-progress-detail .progress-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rank-progress-detail .progress-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+      color: var(--text-secondary);
+    }
+
+    .rank-progress-detail .progress-row strong {
+      color: var(--text-white);
+    }
+
+    .rank-progress-detail .progress-row .needed {
+      color: var(--primary-cyan);
+      font-weight: 700;
+    }
+
+    .rank-progress-detail .progress-note {
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-primary);
+      color: var(--text-muted);
+      font-style: italic;
+      font-size: 11px;
+    }
+
+    /* Eligible Weeks Display */
+    .eligible-weeks-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .week-badge {
+      padding: 6px 10px;
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+      border-radius: 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--primary-green);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .week-badge.current {
+      background: var(--primary-green);
+      color: var(--bg-primary);
+      box-shadow: 0 0 12px rgba(0, 255, 148, 0.5);
+    }
+
+    /* Team Structure Detail */
+    .team-structure {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .team-side {
+      padding: 10px;
+      background: rgba(0, 245, 255, 0.05);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+    }
+
+    .team-side-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+
+    .team-side-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 12px;
+    }
+
+    .team-side-stats .stat-line {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .team-side-stats .stat-label {
+      color: var(--text-secondary);
+    }
+
+    .team-side-stats .stat-value {
+      color: var(--text-white);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Activation Status */
+    .activation-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--primary-green);
+    }
+
+    .activation-status.warning {
+      background: rgba(255, 215, 0, 0.1);
+      border-color: rgba(255, 215, 0, 0.3);
+      color: var(--secondary-gold);
+    }
+
+    .activation-status.danger {
+      background: rgba(255, 68, 68, 0.1);
+      border-color: rgba(255, 68, 68, 0.3);
+      color: var(--secondary-red);
+    }
+
+    /* Responsive adjustments for payout banner */
+    @media (max-width: 900px) {
+      .payout-banner { 
+        flex-direction: column; 
+        align-items: flex-start; 
+      }
+      .payout-tags { 
+        justify-content: flex-start; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <!-- Logo -->
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+
+      <!-- Quick Status -->
+      <div class="quick-status">
+        <div class="status-title">Estado Rápido</div>
+        <div class="status-grid">
+          <div class="status-item">
+            <span class="status-label">Bankroll</span>
+            <span class="status-value positive">$2,340</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Riesgo día</span>
+            <span class="status-value warning">5.2%</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Modo activo</span>
+            <span class="status-value">Semi-Auto</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">PnL día</span>
+            <span class="status-value positive">+$234</span>
+          </div>
+          <div class="status-item">
+            <span class="status-label">Alertas activas</span>
+            <span class="status-value danger">3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Navigation -->
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item active">
+            <span class="nav-icon">📊</span>
+            <span class="nav-label">Dashboard</span>
+            <span class="nav-badge success">+$234</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Agents Hub</span>
+            <span class="nav-badge">12</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Señales</span>
+            <span class="nav-badge danger">3</span>
+          </a>
+          <!-- 
+          NOTA IMPORTANTE (BOCETO UI): 
+          
+          Estas rutas con ?tab=PRE y ?tab=LIVE existen SOLO para navegación visual 
+          en el prototipo HTML estático. 
+          
+          En desarrollo real (router frontend + backend) estas rutas deben 
+          reemplazarse por: 
+          
+          /signals/pre 
+          /signals/live 
+          
+          NO cambiar ahora en el boceto porque rompería la navegación visual. 
+          -->
+          <a href="/signals/pre" class="nav-item sub-item">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Señales PRE</span>
+          </a>
+          <a href="/signals/live" class="nav-item sub-item">
+            <span class="nav-icon">🧾</span>
+            <span class="nav-label">Señales LIVE</span>
+          </a>
+          <a href="/portfolio" class="nav-item">
+            <span class="nav-icon">🔥</span>
+            <span class="nav-label">Smart Portfolio</span>
+            <span class="nav-badge gold">⭐</span>
+          </a>
+          <a href="/trader-master" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Trader Master</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span class="nav-label">Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Watchlist</span>
+            <span class="nav-badge">5</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span class="nav-label">Alertas de Riesgo</span>
+            <span class="nav-badge danger">2</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <div class="nav-dropdown" id="premiumHubDropdown">
+            <a href="#" class="nav-item nav-dropdown-toggle" onclick="toggleDropdown('premiumHubDropdown'); return false;">
+              <span class="nav-icon">🛒</span>
+              <span class="nav-label">Premium Hub</span>
+              <span class="dropdown-arrow">▼</span>
+            </a>
+            <div class="nav-dropdown-menu">
+              <a href="/premium/plans" class="nav-item">
+                <span class="nav-icon">💎</span>
+                <span class="nav-label">Planes</span>
+                <span class="nav-badge gold">Upgrade!</span>
+              </a>
+              <a href="/premium/credits" class="nav-item">
+                <span class="nav-icon">🪙</span>
+                <span class="nav-label">Créditos</span>
+                <span class="nav-badge">120</span>
+              </a>
+              <a href="/premium/promotions" class="nav-item">
+                <span class="nav-icon">🎁</span>
+                <span class="nav-label">Promociones</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <div class="nav-dropdown" id="communityDropdown">
+            <a href="#" class="nav-item nav-dropdown-toggle" onclick="toggleDropdown('communityDropdown'); return false;">
+              <span class="nav-icon">👥</span>
+              <span class="nav-label">Comunidad</span>
+              <span class="dropdown-arrow">▼</span>
+            </a>
+            <div class="nav-dropdown-menu">
+              <a href="/community/leaderboard" class="nav-item">
+                <span class="nav-icon">🏆</span>
+                <span class="nav-label">Leaderboard</span>
+              </a>
+              <a href="/community/discussions" class="nav-item">
+                <span class="nav-icon">💬</span>
+                <span class="nav-label">Discusiones</span>
+              </a>
+              <a href="/community/following" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Siguiendo</span>
+                <span class="nav-badge">11</span>
+              </a>
+            </div>
+          </div>
+          <a href="/support" class="nav-item">
+            <span class="nav-icon">🎧</span>
+            <span class="nav-label">Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">IA & Mejora</div>
+          <a href="/coach" class="nav-item">
+            <span class="nav-icon">🤖</span>
+            <span class="nav-label">Tu Entrenador de Trading</span>
+            <span class="nav-badge gold">NEW</span>
+          </a>
+          <a href="/stats" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Mis Estadísticas</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Referidos</div>
+          <div class="nav-dropdown" id="referidosDropdown">
+            <a href="#" class="nav-item nav-dropdown-toggle" onclick="toggleDropdown('referidosDropdown'); return false;">
+              <span class="nav-icon">🔗</span>
+              <span class="nav-label">Referidos</span>
+              <span class="dropdown-arrow">▼</span>
+            </a>
+            <div class="nav-dropdown-menu">
+              <a href="/referrals" class="nav-item">
+                <span class="nav-icon">🔗</span>
+                <span class="nav-label">Resumen</span>
+              </a>
+              <a href="/referrals#directs" class="nav-item">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Directos (10%)</span>
+                <span class="nav-badge success">$127</span>
+              </a>
+              <a href="/referrals#team-binary" class="nav-item">
+                <span class="nav-icon">🏦</span>
+                <span class="nav-label">Equipo Binario (A/B)</span>
+              </a>
+              <a href="/referrals#payments" class="nav-item">
+                <span class="nav-icon">💰</span>
+                <span class="nav-label">Pagos</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Otros</div>
+          <a href="/settings" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span class="nav-label">Configuración</span>
+          </a>
+        </div>
+      </nav>
+
+      <!-- User Profile -->
+      <div class="sidebar-user">
+        <div class="user-avatar">JD</div>
+        <div class="user-info">
+          <div class="user-name">Juan Pérez</div>
+          <div class="user-tier">Pro Member</div>
+        </div>
+      </div>
+
+      <!-- Toggle -->
+      <button class="sidebar-toggle" id="sidebarToggle">⟨</button>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Top Bar -->
+      <div class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Dashboard</h1>
+          <div class="breadcrumbs">
+            <span>Home</span>
+            <span>›</span>
+            <span>Dashboard</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="bank-total-kpi">
+            <span class="kpi-label">Bank Total</span>
+            <span class="kpi-value">$57,000</span>
+          </div>
+          <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" placeholder="Buscar... (Cmd+K)">
+          </div>
+          <button class="action-btn" title="Notificaciones">
+            🔔
+            <span class="badge">2</span>
+          </button>
+          <button class="action-btn" title="Configuración">⚙️</button>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="content-area">
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <!-- Próximo pago -->
+          <div class="stat-card area-proximo proximo-card">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Próximo pago</div>
+                <div class="stat-value" style="color: var(--primary-cyan);"><span class="week-prefix">Semana</span> #<span id="next-week-key">48</span></div>
+                <div class="stat-meta">Elegible: <span style="color: var(--primary-green); font-weight:700;" id="eligible-flag">Sí</span></div>
+                <div class="stat-meta">Corte: <span class="gold" id="cutoff-date">Jue 23:59</span></div>
+              </div>
+              <div class="stat-icon">🗓️</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" title="Ver historial" style="height:36px; width:auto; padding:0 14px;">Historial</button>
+            </div>
+          </div>
+
+          <!-- Saldo disponible -->
+          <div class="stat-card area-saldo">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Saldo disponible</div>
+                <div class="stat-value">$1,240.50</div>
+                <div class="stat-meta">Wallet balance</div>
+                <div class="stat-change positive" style="margin-top: 8px;">
+                  <span>↑</span>
+                  <span>+12.5% vs mes anterior</span>
+                </div>
+              </div>
+              <div class="stat-icon">💼</div>
+            </div>
+          </div>
+
+          <!-- Créditos -->
+          <div class="stat-card area-creditos">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Créditos</div>
+                <div class="stat-value">$200.00</div>
+                <div class="stat-meta">Credit wallet</div>
+              </div>
+              <div class="stat-icon">💳</div>
+            </div>
+          </div>
+
+          <!-- Plan con Countdown -->
+          <div class="stat-card area-plan">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Plan actual</div>
+                <div class="stat-value" style="color: var(--secondary-gold);">Pro</div>
+                <div class="stat-meta" id="subscription-countdown">Calculando tiempo restante...</div>
+                <div class="stat-meta" style="margin-top: 6px;">
+                  Activación: <span style="color: var(--primary-green); font-weight: 700;">12 días restantes</span> de 30
+                </div>
+                <div class="stat-meta" style="margin-top: 6px;">
+                  Estado: <span id="plan-status" class="gold">Por vencer</span> · Próximo pago: <span id="plan-next-pay-flag" style="color: var(--primary-green); font-weight:600;">Sí</span>
+                </div>
+              </div>
+              <div class="stat-icon">🛒</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" title="Renovar plan" style="height:36px; width:auto; padding:0 14px; background: var(--bg-tertiary); border-color: var(--secondary-gold); color: var(--secondary-gold);">Renovar</button>
+            </div>
+          </div>
+
+          <!-- Alertas de Señales -->
+          <div class="stat-card area-alertas">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Alertas de Señales</div>
+                <div class="stat-value" style="color: var(--primary-green);">5 Activas</div>
+                <div class="stat-meta">Última: <span style="color: var(--primary-green);">AI Signals</span> hace 15 min</div>
+              </div>
+              <div class="stat-icon">🔔</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" title="Ver alertas" style="height:36px; width:auto; padding:0 14px;">Ver alertas</button>
+            </div>
+          </div>
+
+          <!-- Equipo Binario (Bank A/B/Total) -->
+          <div class="stat-card area-equipo">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">
+                  Equipo Binario
+                  <span class="tooltip-wrapper">
+                    <span class="tooltip-icon">ℹ️</span>
+                    <div class="tooltip-content">
+                      <div class="tooltip-title">Progreso a R5</div>
+                      <div class="tooltip-text">
+                        <strong>Lado A:</strong> $30,000 / $25,000 (supera $5,000)<br>
+                        <strong>Lado B:</strong> $27,000 / $25,000 (supera $2,000)
+                      </div>
+                      <div class="tooltip-text">
+                        <em>Ambos lados deben alcanzar $25,000 para R5</em>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+                <div class="stat-value" style="font-size:18px;">Bank A: $30,000 · Bank B: $27,000</div>
+                <div class="stat-meta">Bank Total: <span style="color: var(--primary-green);">$57,000</span> · Progreso a R5: 1.6%</div>
+                <div class="stat-meta" style="margin-top:6px; font-size:12px;">
+                  <strong>Resumen:</strong> A: $30,000 | B: $27,000 | Total: <span style="color: var(--primary-green);">$57,000</span>
+                </div>
+                <div class="stat-change positive" style="margin-top: 8px;">
+                  <span>↗</span>
+                  <span>Mejorando desde máximo</span>
+                </div>
+                <div class="stat-meta" style="margin-top: 6px; font-size: 12px;">
+                  Equipo A: <span style="color: var(--primary-cyan);">2 directos</span> · 8 indirectos | 
+                  Equipo B: <span style="color: var(--primary-cyan);">1 directo</span> · 12 indirectos
+                </div>
+              </div>
+              <div class="stat-icon">🏦</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:1.6%;"></div>
+            </div>
+          </div>
+
+          <!-- Referidos Directos -->
+          <div class="stat-card area-directos">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">Directos</div>
+                <div class="stat-value">3</div>
+                <div class="stat-meta">Comisiones: <span style="color: var(--primary-green);">+$127</span> disponibles · <span class="purple">$45</span> pendientes</div>
+              </div>
+              <div class="stat-icon">👥</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" title="Invitar ahora" style="height:36px; width:auto; padding:0 14px;">Invitar ahora</button>
+            </div>
+          </div>
+
+          <!-- Rango (Base vs Pagable) -->
+          <div class="stat-card area-rango">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">
+                  Rango
+                  <span class="tooltip-wrapper">
+                    <span class="tooltip-icon">ℹ️</span>
+                    <div class="tooltip-content">
+                      <div class="tooltip-title">¿Qué es Rango Pagable?</div>
+                      <div class="tooltip-text">
+                        <strong>Básica:</strong> Máximo pagable R3<br>
+                        <strong>Pro/Premium:</strong> Cobras hasta tu rango base
+                      </div>
+                      <div class="tooltip-text">
+                        <em>Sube a Pro para desbloquear R4-R7 y aumentar tus ganancias del pool semanal</em>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+                <div style="display: flex; gap: 16px; align-items: center; margin: 12px 0;">
+                  <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--secondary-gold);">R4</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Base</div>
+                  </div>
+                  <div style="font-size: 20px; color: var(--text-muted);">→</div>
+                  <div style="text-align: center;">
+                    <div style="font-size: 24px; font-weight: 700; color: var(--primary-cyan);">R3</div>
+                    <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Pagable</div>
+                  </div>
+                </div>
+                <div class="stat-meta">Plan requerido: <span class="gold">Pro</span> para cobrar R4+</div>
+                <div style="margin-top: 12px; padding: 8px 12px; background: rgba(255, 215, 0, 0.1); border: 1px solid var(--secondary-gold); border-radius: 8px; font-size: 12px;">
+                  <span style="color: var(--secondary-gold); font-weight: 600;">💡 Sugerencia:</span> Actualiza a Pro para desbloquear R4-R7
+                </div>
+              </div>
+              <div class="stat-icon">🏅</div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 16px;">
+              <div style="font-size: 12px; color: var(--text-muted);">
+                <span style="color: var(--text-primary);">Próximo:</span> R4 requiere $25,000 en equipo
+              </div>
+              <button class="action-btn" title="Sube a Pro" style="height:36px; width:auto; padding:0 14px; background: var(--bg-tertiary); border-color: var(--secondary-gold); color: var(--secondary-gold); font-size: 10px;">Sube a Pro</button>
+            </div>
+          </div>
+
+          <!-- Pool Semanal Estimado -->
+          <div class="stat-card area-pool">
+            <div class="stat-header">
+              <div>
+                <div class="stat-label">
+                  Pool Semanal Estimado
+                  <span class="tooltip-wrapper">
+                    <span class="tooltip-icon">ℹ️</span>
+                    <div class="tooltip-content">
+                      <div class="tooltip-title">¿Cómo se calcula?</div>
+                      <div class="tooltip-text">
+                        Tu rango <strong>R3</strong> cobra solo la Bolsa R3.<br>
+                        Si fueras R4+, cobrarías bolsas acumulables.
+                      </div>
+                      <div class="tooltip-text">
+                        <strong>R4:</strong> Bolsa R4<br>
+                        <strong>R5:</strong> Bolsas R4 + R5<br>
+                        <strong>R6:</strong> Bolsas R4 + R5 + R6<br>
+                        <strong>R7:</strong> Bolsas R4 + R5 + R6 + R7
+                      </div>
+                      <div class="tooltip-text">
+                        <em>Sube a Pro para desbloquear R4-R7</em>
+                      </div>
+                    </div>
+                  </span>
+                </div>
+                <div class="stat-value" style="color: var(--primary-green);">~$85</div>
+                <div class="stat-meta">Basado en beneficio semanal de $10,000 · Bolsa R3: 7%</div>
+                <div class="stat-change positive" style="margin-top: 8px;">
+                  <span>↑</span>
+                  <span>+18.9% ROI mensual</span>
+                </div>
+                <div class="stat-meta" style="margin-top: 6px; font-size: 12px;">
+                  Compartido con: <span style="color: var(--text-muted);">~8 usuarios R3</span>
+                </div>
+              </div>
+              <div class="stat-icon">💰</div>
+            </div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="action-btn" onclick="openPoolBreakdown()" title="Ver desglose" style="height:36px; width:auto; padding:0 14px; background: var(--bg-tertiary); border-color: var(--primary-cyan); color: var(--primary-cyan);">Ver desglose</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximo Pago Semanal Card -->
+        <div class="payment-card">
+          <div class="payment-header">
+            <h3 class="payment-title">Próximo Pago Semanal</h3>
+            <span class="payment-status eligible">Elegible: Sí</span>
+          </div>
+          <div class="payment-details">
+            <div class="payment-item">
+              <span class="payment-label">Fecha:</span>
+              <span class="payment-value">Mié 2026-W05</span>
+            </div>
+            <div class="payment-item">
+              <span class="payment-label">Rango Pagable:</span>
+              <span class="payment-value" style="color: var(--secondary-gold);">R3</span>
+            </div>
+            <div class="payment-item">
+              <span class="payment-label">Pool Última Semana:</span>
+              <span class="payment-value positive">+$1,500</span>
+            </div>
+          </div>
+          <div class="cutoff-alert">
+            <span class="cutoff-icon">⏰</span>
+            <span>Compra/renueva antes del cutoff para entrar al próximo pago</span>
+          </div>
+        </div>
+
+        <!-- Próximo pago semanal -->
+        <div class="payout-banner" id="next-payout">
+          <div class="payout-left">
+            <div class="payout-icon">📆</div>
+            <div style="flex: 1;">
+              <div class="payout-title">Próximo pago semanal · <span style="color: var(--secondary-gold);">2026-W05</span></div>
+              <div class="payout-meta">Pago: Miércoles · Fuente de verdad UTC (UI en America/Bogota). Cutoff: Miércoles 00:00 UTC semana anterior.</div>
+              <div class="eligible-weeks-grid">
+                <div class="week-badge current">W05 ✓</div>
+                <div class="week-badge">W06</div>
+                <div class="week-badge">W07</div>
+                <div class="week-badge">W08</div>
+              </div>
+            </div>
+          </div>
+          <div class="payout-tags">
+            <span class="mini-tag good">Elegible: Sí</span>
+            <span class="mini-tag">Rango pagable: R3</span>
+            <span class="mini-tag warn">Renovar antes del cutoff</span>
+            <button class="action-btn" onclick="openPaymentHistory()" style="width:auto; padding:0 14px; height:36px;">Ver historial</button>
+          </div>
+        </div>
+
+        <!-- Info Banner: Aportes al Bank por Plan -->
+        <div class="info-banner">
+          <div class="info-banner-icon">💎</div>
+          <div class="info-banner-content">
+            <div class="info-banner-title">Aportes al Bank por Plan</div>
+            <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+              Cada compra aporta al Bank Total histórico que determina tu rango base
+            </div>
+            <div class="info-banner-grid">
+              <div class="info-banner-item">
+                <div class="info-banner-item-label">Básica $29.99</div>
+                <div class="info-banner-item-value basic">+$20</div>
+              </div>
+              <div class="info-banner-item">
+                <div class="info-banner-item-label">Pro $129.99</div>
+                <div class="info-banner-item-value pro">+$80</div>
+              </div>
+              <div class="info-banner-item">
+                <div class="info-banner-item-label">Premium $799.99</div>
+                <div class="info-banner-item-value premium">+$500</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="chart-container">
+          <div class="chart-header">
+            <h3 class="chart-title">Performance Overview</h3>
+            <div class="chart-tabs">
+              <button class="chart-tab active">7D</button>
+              <button class="chart-tab">30D</button>
+              <button class="chart-tab">3M</button>
+              <button class="chart-tab">1Y</button>
+            </div>
+          </div>
+          <div class="chart-placeholder">
+            📈 Chart: Bankroll Evolution (Integrar Chart.js o similar)
+          </div>
+        </div>
+
+        <!-- Señales recomendadas ahora -->
+        <section class="signals-section" id="recommended-signals">
+          <div class="signals-header">
+            <div class="signals-header-left">
+              <h3 class="signals-title">Señales Recomendadas Ahora</h3>
+              <a href="#" class="view-all-link">Ver todas →</a>
+            </div>
+            <div class="signals-toggle">
+              <button class="signals-toggle-btn active">Todas</button>
+              <button class="signals-toggle-btn">PRE</button>
+              <button class="signals-toggle-btn">LIVE</button>
+              <button class="signals-toggle-btn">Mis Ligas</button>
+            </div>
+          </div>
+          <div class="recommend-grid">
+            <!-- Card 1: LIVE -->
+            <div class="recommend-card live">
+              <div class="recommend-header">
+                <span class="badge-pill live">LIVE</span>
+                <span class="ev-badge">95% EV+</span>
+              </div>
+              <div class="recommend-body">
+                <div class="recommend-title">Real Madrid vs Barcelona</div>
+                <div class="recommend-subtitle">Over 2.5 Goles</div>
+                
+                <div class="odds-section">
+                  <div class="odds-item">
+                    <span class="odds-label">MIN. ODDS</span>
+                    <span class="odds-value">1.85</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">CURRENT</span>
+                    <span class="odds-value highlight">2.10</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">EV</span>
+                    <span class="odds-value positive">+13.5%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="recommend-actions">
+                <button class="action-btn btn-primary">Actuar Ahora</button>
+              </div>
+            </div>
+
+            <!-- Card 2: PRE -->
+            <div class="recommend-card pre">
+              <div class="recommend-header">
+                <span class="badge-pill pre">PRE</span>
+                <span class="ev-badge">82% EV+</span>
+              </div>
+              <div class="recommend-body">
+                <div class="recommend-title">Manchester City vs Liverpool</div>
+                <div class="recommend-subtitle">BTTS - Sí</div>
+                
+                <div class="odds-section">
+                  <div class="odds-item">
+                    <span class="odds-label">MIN. ODDS</span>
+                    <span class="odds-value">1.65</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">CURRENT</span>
+                    <span class="odds-value highlight">1.95</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">EV</span>
+                    <span class="odds-value positive">+18.2%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="recommend-actions">
+                <button class="action-btn btn-secondary">Ver Detalles</button>
+              </div>
+            </div>
+
+            <!-- Card 3: EV+ -->
+            <div class="recommend-card ev-plus">
+              <div class="recommend-header">
+                <span class="badge-pill ev-plus">EV+</span>
+                <span class="ev-badge">76% EV+</span>
+              </div>
+              <div class="recommend-body">
+                <div class="recommend-title">Bayern vs Dortmund</div>
+                <div class="recommend-subtitle">Bayern -1 Handicap</div>
+                
+                <div class="odds-section">
+                  <div class="odds-item">
+                    <span class="odds-label">MIN. ODDS</span>
+                    <span class="odds-value">1.70</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">CURRENT</span>
+                    <span class="odds-value highlight">2.05</span>
+                  </div>
+                  <div class="odds-item">
+                    <span class="odds-label">EV</span>
+                    <span class="odds-value positive">+20.6%</span>
+                  </div>
+                </div>
+              </div>
+              <div class="recommend-actions">
+                <button class="action-btn btn-tertiary">Analizar</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Table -->
+        <div class="table-container">
+          <div class="table-header">
+            <h3 class="chart-title">Señales Recientes</h3>
+            <button class="action-btn" style="width: auto; padding: 0 16px; height: 36px; font-size: 14px;">
+              Ver todas →
+            </button>
+          </div>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Agente</th>
+                <th>Mercado</th>
+                <th>Cuota</th>
+                <th>EV</th>
+                <th>Stake</th>
+                <th>Estado</th>
+                <th>Resultado</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600; color: var(--text-primary);">Agent-EPL-01</td>
+                <td>Over 2.5</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">2.10</td>
+                <td style="color: var(--primary-green); font-weight: 700;">+5.2%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">$25.00</td>
+                <td><span class="badge-pill active">Activa</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--text-primary);">Tipster-PRO-05</td>
+                <td>BTTS Yes</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">1.85</td>
+                <td style="color: var(--primary-green); font-weight: 700;">+3.8%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">$30.00</td>
+                <td><span class="badge-pill pending">Pendiente</span></td>
+                <td>—</td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600; color: var(--text-primary);">Agent-LaLiga-03</td>
+                <td>1X2 Home</td>
+                <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">2.45</td>
+                <td style="color: var(--primary-green); font-weight: 700;">+7.1%</td>
+                <td style="font-family: 'JetBrains Mono', monospace;">$20.00</td>
+                <td><span class="badge-pill closed">Cerrada</span></td>
+                <td style="color: var(--primary-green); font-weight: 700;">+$29.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Sidebar Toggle
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+
+    sidebarToggle.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+      sidebarToggle.textContent = sidebar.classList.contains('collapsed') ? '⟩' : '⟨';
+    });
+
+    // Search shortcut (Cmd+K / Ctrl+K)
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        document.querySelector('.search-input').focus();
+      }
+    });
+
+    // Chart Tabs
+    const chartTabs = document.querySelectorAll('.chart-tab');
+    chartTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        chartTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        console.log('Chart period changed to:', tab.textContent);
+      });
+    });
+
+    // Signals Toggle
+    const signalsToggles = document.querySelectorAll('.signals-toggle-btn');
+    signalsToggles.forEach(btn => {
+      btn.addEventListener('click', () => {
+        signalsToggles.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        console.log('Signals filter changed to:', btn.textContent);
+        // Here you would filter the signals grid dynamically
+      });
+    });
+
+    // Simulate real-time updates
+    setInterval(() => {
+      // Update random stat
+      const pnlValue = document.querySelector('.quick-status .status-grid .status-item:nth-child(3) .status-value');
+      const currentValue = parseFloat(pnlValue.textContent.replace(/[+$]/g, ''));
+      const change = (Math.random() - 0.5) * 10;
+      const newValue = currentValue + change;
+      pnlValue.textContent = (newValue >= 0 ? '+' : '') + '$' + Math.abs(newValue).toFixed(0);
+      pnlValue.className = 'status-value ' + (newValue >= 0 ? 'positive' : 'danger');
+    }, 5000);
+
+    // Nav item click logging
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        console.log('Navigated to:', item.querySelector('.nav-label').textContent);
+      });
+    });
+
+    // Dropdown toggle function
+    function toggleDropdown(dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      const allDropdowns = document.querySelectorAll('.nav-dropdown');
+      
+      // Close all other dropdowns
+      allDropdowns.forEach(d => {
+        if (d.id !== dropdownId) {
+          d.classList.remove('open');
+        }
+      });
+      
+      // Toggle current dropdown
+      dropdown.classList.toggle('open');
+    }
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.nav-dropdown')) {
+        document.querySelectorAll('.nav-dropdown').forEach(d => {
+          d.classList.remove('open');
+        });
+      }
+    });
+
+    // Subscription countdown function
+    function updateSubscriptionCountdown() {
+      // Simulated subscription expiration date (UTC)
+      const subscriptionExpiresAt = '2026-01-15T23:59:59Z'; // This should come from your backend
+      
+      const now = new Date();
+      const expires = new Date(subscriptionExpiresAt);
+      const diff = expires - now;
+      
+      if (diff <= 0) {
+        document.getElementById('subscription-countdown').textContent = 'Suscripción expirada';
+        return;
+      }
+      
+      // Convert to Bogota timezone (UTC-5)
+      const bogotaTime = new Date(expires.toLocaleString("en-US", {timeZone: "America/Bogota"}));
+      const nowBogota = new Date(now.toLocaleString("en-US", {timeZone: "America/Bogota"}));
+      const diffBogota = bogotaTime - nowBogota;
+      
+      const days = Math.floor(diffBogota / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diffBogota % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diffBogota % (1000 * 60 * 60)) / (1000 * 60));
+      
+      let countdownText = 'vence en ';
+      if (days > 0) countdownText += `${days}d `;
+      if (hours > 0 || days > 0) countdownText += `${hours}h `;
+      countdownText += `${minutes}m`;
+      
+      document.getElementById('subscription-countdown').textContent = countdownText;
+    }
+
+    // Initialize countdown and update every 60 seconds
+    updateSubscriptionCountdown();
+    setInterval(updateSubscriptionCountdown, 60000);
+  </script>
+
+  <!-- Modal: Desglose del Pool Semanal -->
+  <div class="modal-overlay" id="poolBreakdownModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Desglose del Pool Semanal</h2>
+        <button class="modal-close" onclick="closePoolBreakdown()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Info Section -->
+        <div style="padding: 16px; background: rgba(0, 245, 255, 0.05); border: 1px solid var(--border-primary); border-radius: 12px; margin-bottom: 20px;">
+          <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">
+            <strong style="color: var(--text-white);">Beneficio Semanal:</strong> $10,000 
+            <span style="margin-left: 12px; color: var(--text-muted);">→</span>
+            <strong style="color: var(--primary-cyan); margin-left: 12px;">60% a repartir:</strong> $6,000
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted);">
+            El 60% del beneficio se distribuye en bolsas por rango. Tu pago depende de tu rango y cuántos usuarios comparten tu bolsa.
+          </div>
+        </div>
+
+        <!-- Breakdown Grid -->
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- R1 -->
+          <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 16px; font-weight: 800; color: var(--text-white);">Rango 1</span>
+                <span style="margin-left: 8px; font-size: 12px; color: var(--text-muted);">Solo R1</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">
+                12% → $1,200
+              </div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);">
+              Usuarios elegibles: <strong style="color: var(--text-white);">10</strong> → 
+              <span style="color: var(--primary-green);">$120 por usuario</span>
+            </div>
+          </div>
+
+          <!-- R2 -->
+          <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 16px; font-weight: 800; color: var(--text-white);">Rango 2</span>
+                <span style="margin-left: 8px; font-size: 12px; color: var(--text-muted);">Solo R2</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--primary-cyan); font-family: 'JetBrains Mono', monospace;">
+                10% → $1,000
+              </div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);">
+              Usuarios elegibles: <strong style="color: var(--text-white);">12</strong> → 
+              <span style="color: var(--primary-green);">$83.33 por usuario</span>
+            </div>
+          </div>
+
+          <!-- R3 -->
+          <div style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 255, 148, 0.05)); border: 2px solid var(--primary-cyan); border-radius: 12px; padding: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 16px; font-weight: 800; color: var(--text-white);">Rango 3</span>
+                <span style="margin-left: 8px; font-size: 12px; color: var(--text-muted);">Solo R3</span>
+                <span style="margin-left: 8px; padding: 2px 8px; background: var(--primary-cyan); color: var(--bg-primary); border-radius: 4px; font-size: 10px; font-weight: 700;">TU RANGO</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--primary-green); font-family: 'JetBrains Mono', monospace;">
+                7% → $700
+              </div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);">
+              Usuarios elegibles: <strong style="color: var(--text-white);">8</strong> → 
+              <span style="color: var(--primary-green); font-weight: 700; font-size: 14px;">$87.50 por usuario</span>
+            </div>
+          </div>
+
+          <!-- R4 -->
+          <div style="background: var(--bg-tertiary); border: 1px solid var(--border-primary); border-radius: 12px; padding: 16px; opacity: 0.6;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <div>
+                <span style="font-size: 16px; font-weight: 800; color: var(--text-white);">Rango 4</span>
+                <span style="margin-left: 8px; font-size: 12px; color: var(--text-muted);">R4, R5, R6, R7</span>
+                <span style="margin-left: 8px; padding: 2px 8px; background: rgba(255, 68, 68, 0.2); color: var(--secondary-red); border-radius: 4px; font-size: 10px; font-weight: 700;">🔒 BLOQUEADO</span>
+              </div>
+              <div style="font-size: 18px; font-weight: 800; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">
+                7% → $700
+              </div>
+            </div>
+            <div style="font-size: 12px; color: var(--text-muted);">
+              Requiere plan Pro/Premium para desbloquear
+            </div>
+          </div>
+
+          <!-- R5, R6, R7 similar pero colapsados -->
+          <div style="text-align: center; padding: 12px; color: var(--text-muted); font-size: 12px;">
+            <span style="color: var(--secondary-red);">🔒</span> Rangos R5, R6, R7 bloqueados con plan Básica
+          </div>
+        </div>
+
+        <!-- CTA Upgrade -->
+        <div style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(176, 38, 255, 0.08)); border: 1px solid var(--primary-cyan); border-radius: 12px; text-align: center;">
+          <div style="font-size: 16px; font-weight: 700; color: var(--text-white); margin-bottom: 8px;">
+            Desbloquea Rangos R4-R7
+          </div>
+          <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px;">
+            Con Pro/Premium puedes cobrar bolsas acumulables y aumentar tus ganancias hasta 5x
+          </div>
+          <button class="action-btn" style="width: 100%; padding: 14px; background: var(--primary-cyan); border: none;">
+            Actualizar a Pro $129.99/mes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Historial de Pagos -->
+  <div class="modal-overlay" id="paymentHistoryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Historial de Pagos del Pool Semanal</h2>
+        <button class="modal-close" onclick="closePaymentHistory()">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Payment History Items -->
+        <div class="payment-history-item">
+          <div class="payment-week">2026-W04</div>
+          <div class="payment-details">
+            <div class="payment-rank">Rango: <span class="rank-badge">R3</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">Bolsa R3 compartida con 8 usuarios</div>
+          </div>
+          <div class="payment-amount">+$85.50</div>
+          <div class="payment-status paid">Pagado</div>
+        </div>
+
+        <div class="payment-history-item">
+          <div class="payment-week">2026-W03</div>
+          <div class="payment-details">
+            <div class="payment-rank">Rango: <span class="rank-badge">R3</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">Bolsa R3 compartida con 7 usuarios</div>
+          </div>
+          <div class="payment-amount">+$92.30</div>
+          <div class="payment-status paid">Pagado</div>
+        </div>
+
+        <div class="payment-history-item">
+          <div class="payment-week">2026-W02</div>
+          <div class="payment-details">
+            <div class="payment-rank">Rango: <span class="rank-badge">R2</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">Bolsa R2 compartida con 12 usuarios</div>
+          </div>
+          <div class="payment-amount">+$68.20</div>
+          <div class="payment-status paid">Pagado</div>
+        </div>
+
+        <div class="payment-history-item">
+          <div class="payment-week">2026-W01</div>
+          <div class="payment-details">
+            <div class="payment-rank">Rango: <span class="rank-badge">R2</span></div>
+            <div style="font-size: 12px; color: var(--text-muted);">Bolsa R2 compartida con 10 usuarios</div>
+          </div>
+          <div class="payment-amount">+$75.80</div>
+          <div class="payment-status paid">Pagado</div>
+        </div>
+
+        <!-- Empty State (comentado, mostrar cuando no hay historial) -->
+        <!--
+        <div class="payment-history-empty">
+          <div class="payment-history-empty-icon">💰</div>
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">Sin pagos anteriores</div>
+          <div style="font-size: 14px;">Tus pagos del pool semanal aparecerán aquí</div>
+        </div>
+        -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Funciones para el modal de desglose del pool
+    function openPoolBreakdown() {
+      document.getElementById('poolBreakdownModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePoolBreakdown() {
+      document.getElementById('poolBreakdownModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Funciones para el modal de historial de pagos
+    function openPaymentHistory() {
+      document.getElementById('paymentHistoryModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closePaymentHistory() {
+      document.getElementById('paymentHistoryModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Cerrar modal al hacer clic fuera
+    document.getElementById('paymentHistoryModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePaymentHistory();
+      }
+    });
+
+    document.getElementById('poolBreakdownModal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closePoolBreakdown();
+      }
+    });
+
+    // Cerrar modal con tecla ESC
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closePaymentHistory();
+        closePoolBreakdown();
+      }
+    });
+
+    // --- Datos dinámicos para Próximo pago y Plan actual ---
+    (function(){
+      const elWeekKey = document.getElementById('next-week-key');
+      const elEligible = document.getElementById('eligible-flag');
+      const elCutoff = document.getElementById('cutoff-date');
+      const elSubCountdown = document.getElementById('subscription-countdown');
+      const elPlanStatus = document.getElementById('plan-status');
+      const elPlanNextFlag = document.getElementById('plan-next-pay-flag');
+
+      // Labels centralizados para UI
+      const UI_LABELS = {
+        eligibility: { yes: 'Sí', no: 'No' },
+        plan_status: { inactivo: 'Inactivo', por_vencer: 'Por vencer', activo: 'Activo' },
+        general: { subscription_expired: 'Suscripción vencida', time_remaining_prefix: 'Tiempo restante:' },
+        pool_status: {
+          pending_wednesday: 'Pendiente de miércoles',
+          paid_week: (weekKey) => `Pagado semana ${weekKey}`
+        }
+      };
+
+      function formatCutoffBogota(iso){
+        if(!iso) return '';
+        const d = new Date(iso);
+        const dow = d.toLocaleDateString('es-CO', { timeZone: 'America/Bogota', weekday: 'short' }).replace('.', '');
+        const hm = d.toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit', hour12: false });
+        const day = dow.charAt(0).toUpperCase() + dow.slice(1);
+        return `${day} ${hm}`;
+      }
+
+      function setPlanStatus(expiresIso){
+        if(!expiresIso || !elPlanStatus) return;
+        const now = new Date();
+        const exp = new Date(expiresIso);
+        const diffMs = exp - now;
+        let statusText = UI_LABELS.plan_status.inactivo;
+        let color = 'var(--danger-red)';
+        if(diffMs > 0){
+          const days = Math.floor(diffMs / (1000*60*60*24));
+          if(days <= 7){
+            statusText = UI_LABELS.plan_status.por_vencer;
+            color = 'var(--secondary-gold)';
+          } else {
+            statusText = UI_LABELS.plan_status.activo;
+            color = 'var(--primary-green)';
+          }
+        }
+        elPlanStatus.textContent = statusText;
+        elPlanStatus.style.color = color;
+      }
+
+      function updateCountdown(expiresIso){
+        if(!expiresIso || !elSubCountdown) return;
+        function render(){
+          const now = new Date();
+          const exp = new Date(expiresIso);
+          let diffMs = exp - now;
+          if(diffMs <= 0){
+            elSubCountdown.textContent = UI_LABELS.general.subscription_expired;
+            return;
+          }
+          const days = Math.floor(diffMs / 86400000);
+          diffMs -= days * 86400000;
+          const hours = Math.floor(diffMs / 3600000);
+          diffMs -= hours * 3600000;
+          const mins = Math.floor(diffMs / 60000);
+          elSubCountdown.textContent = `${UI_LABELS.general.time_remaining_prefix} ${days}d ${hours}h ${mins}m`;
+        }
+        render();
+        setPlanStatus(expiresIso);
+        setInterval(render, 60000);
+      }
+
+      function setDashboardData({weekKey, cutoff, elegible, subscription_expires_at}){
+        if(elWeekKey && typeof weekKey !== 'undefined') elWeekKey.textContent = String(weekKey);
+        if(elEligible){
+          elEligible.textContent = elegible ? UI_LABELS.eligibility.yes : UI_LABELS.eligibility.no;
+          elEligible.style.color = elegible ? 'var(--primary-green)' : 'var(--danger-red)';
+        }
+        if(elPlanNextFlag){
+          elPlanNextFlag.textContent = elegible ? UI_LABELS.eligibility.yes : UI_LABELS.eligibility.no;
+          elPlanNextFlag.style.color = elegible ? 'var(--primary-green)' : 'var(--danger-red)';
+        }
+        if(elCutoff) elCutoff.textContent = formatCutoffBogota(cutoff);
+        updateCountdown(subscription_expires_at);
+      }
+
+      // Exponer para integraciones
+      window.setDashboardData = setDashboardData;
+    })();
+  </script>
+</body>
+</html>

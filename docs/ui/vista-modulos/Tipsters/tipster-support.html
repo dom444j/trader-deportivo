@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Soporte | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{--tipster-primary:#a855f7;--tipster-secondary:#7c3aed;--tipster-accent:#c084fc;--tipster-gradient:linear-gradient(135deg,#a855f7 0%,#7c3aed 100%);--tipster-glow:0 0 20px rgba(168,85,247,.4);--bg-primary:#0A0A1A;--bg-secondary:#141428;--bg-elevated:#252545;--border:#2A2A4A;--text:#fff;--muted:#B8B8D0;--sidebar-width:280px}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg-primary);color:var(--text);font-family:'Rajdhani',sans-serif}
+    .dashboard{display:flex;min-height:100vh}
+    .sidebar{width:var(--sidebar-width);background:var(--bg-secondary);border-right:1px solid var(--border);position:fixed;top:0;bottom:0;left:0;overflow:auto}
+    .sidebar-logo{padding:16px;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:center;background:linear-gradient(135deg,rgba(168,85,247,.08),rgba(124,58,237,.08))}
+    .logo-icon{width:36px;height:36px;background:var(--tipster-gradient);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;box-shadow:var(--tipster-glow)}
+    .sidebar-nav{padding:12px}.nav-section-title{color:var(--muted);font-size:12px;margin:10px 0}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;color:var(--text);text-decoration:none}
+    .nav-item:hover{background:rgba(168,85,247,.08)}.nav-item.active{background:linear-gradient(135deg,rgba(168,85,247,.15),rgba(124,58,237,.15));color:var(--tipster-primary);border-left:3px solid var(--tipster-primary)}
+    .main{margin-left:var(--sidebar-width);flex:1}
+    .header{padding:18px;border-bottom:1px solid var(--border);background:var(--bg-secondary);display:flex;align-items:center;justify-content:space-between}
+    .header h1{font-size:22px}.subtitle{color:var(--muted);font-size:13px}
+    .content{display:grid;grid-template-columns:380px 1fr;gap:16px;padding:16px}
+    .card{background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px}
+    .card-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .card-body{padding:12px 14px}
+    .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+    .input,select{background:#1b1b34;border:1px solid var(--border);border-radius:8px;color:var(--text);padding:8px}
+    .btn{background:var(--tipster-gradient);border:none;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
+    .btn-outline{background:transparent;border:1px solid var(--border);color:#fff}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .item{padding:10px;border:1px solid var(--border);border-radius:10px;display:flex;gap:10px;justify-content:space-between;align-items:center;cursor:pointer}
+    .item:hover{border-color:#3A3A5A}.title{font-weight:600}
+    .chips{display:flex;gap:6px;align-items:center}
+    .chip{font-size:11px;padding:4px 8px;border-radius:999px;border:1px solid var(--border);color:var(--muted)}
+    .chip.green{color:#00FF94;border-color:#00FF94}.chip.yellow{color:#FFD700;border-color:#FFD700}.chip.red{color:#FF4444;border-color:#FF4444}
+    .badge{min-width:20px;text-align:center;background:#1b1b34;border:1px solid var(--border);border-radius:8px;padding:4px 6px;font-size:11px}
+    .row{display:flex;gap:10px;align-items:center}
+    .chat-header{display:flex;gap:10px;align-items:center;justify-content:space-between}
+    .chat-timeline{display:flex;flex-direction:column;gap:8px;max-height:50vh;overflow:auto;margin-top:10px}
+    .msg{padding:8px 10px;border:1px solid var(--border);border-radius:10px;max-width:70%}
+    .tipster{align-self:flex-end;background:rgba(168,85,247,.1)}.admin{align-self:flex-start;background:rgba(60,60,100,.2)}.user{align-self:flex-start;background:rgba(60,100,60,.2)}.system{align-self:center;background:transparent;border-style:dashed;color:var(--muted)}
+    .compliance{margin-top:8px;padding:8px;border:1px dashed var(--border);border-radius:10px;color:var(--muted);font-size:12px}
+    .disclaimer{margin-top:8px;padding:8px;border:1px solid #444;border-radius:10px;background:#1b1b34}
+    .chat-input{display:flex;gap:8px;margin-top:10px}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:1000;animation:fadeIn 0.2s ease-out}
+    .modal-content {background:var(--bg-elevated);border:1px solid var(--border);border-radius:12px;padding:16px;min-width:340px;box-shadow:0 8px 32px rgba(0,0,0,0.3);animation:modalSlideIn 0.3s ease-out}
+    .modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:4px;border-radius:4px}
+    .modal-close:hover{color:var(--text);background:rgba(255,255,255,0.1)}
+  .panel{padding:8px;border:1px solid var(--border);border-radius:10px}
+  .metrics{display:flex;gap:8px;flex-wrap:wrap}
+  @media(max-width:1024px){.content{grid-template-columns:1fr}}
+  
+  /* SLA Escalation Notifications */
+  .notification {position:fixed;top:20px;right:20px;background:#FF4444;color:#fff;padding:12px 16px;border-radius:6px;box-shadow:0 4px 12px rgba(0,0,0,.3);z-index:1000;animation:slideIn 0.3s ease-out;max-width:320px;}
+  .notification.escalation {background:#FF4444;}
+  .notification-content {display:flex;align-items:center;gap:8px;font-size:14px;}
+  .notification button {background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:0;margin-left:auto;}
+  @keyframes slideIn {from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+  @keyframes fadeIn {from{opacity:0;}to{opacity:1;}}
+  @keyframes modalSlideIn {from{transform:translateY(-20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+</style>
+</head>
+<body>
+  <div class="dashboard">
+    <aside class="sidebar">
+      <div class="sidebar-logo"><div class="logo-icon">TD</div><div class="logo-text">Tipster Pro</div></div>
+      <nav class="sidebar-nav">
+        <div class="nav-section"><div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item"><span>📊</span><span>Dashboard</span></a>
+          <a href="/tipster/signals" class="nav-item"><span>📡</span><span>Mis Señales</span></a>
+          <a href="/tipster/signals/new" class="nav-item"><span>➕</span><span>Crear Señal</span></a>
+          <a href="/tipster/settlements" class="nav-item"><span>✅</span><span>Liquidaciones</span></a>
+        </div>
+        <div class="nav-section"><div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item"><span>👥</span><span>Suscriptores</span></a>
+          <a href="/tipster/wallet" class="nav-item"><span>💰</span><span>Billetera</span></a>
+        </div>
+        <div class="nav-section"><div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item"><span>👤</span><span>Perfil</span></a>
+          <a href="/tipster/support" class="nav-item active"><span>💬</span><span>Soporte</span></a>
+        </div>
+        <div class="nav-section"><div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item"><span>↩️</span><span>← Volver a Usuario</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <div class="header"><div><h1>Soporte</h1><div class="subtitle">OPS / VIP Chat / Auditoría</div></div>
+        <div class="row"><button class="btn btn-outline" onclick="openTemplates()">Templates</button><button class="btn" onclick="openCreateTicket()">Crear ticket</button></div>
+      </div>
+      <div class="content">
+        <!-- Inbox -->
+        <div class="card">
+          <div class="card-header"><strong>Inbox</strong><div class="metrics"><div class="panel">Score soporte: <span id="metric-score">88</span></div><div class="panel">Resp. Prom.: <span id="metric-rt">42m</span></div><div class="panel">Reportes: <span id="metric-reports">2</span></div><div class="panel" id="qualityScore">Calidad Soporte: 85/100</div></div></div>
+          <div class="card-body">
+            <div class="filters">
+              <input id="search" class="input" placeholder="Buscar" oninput="applyFilters()"/>
+              <select id="fChannel" onchange="applyFilters()"><option value="">Channel</option><option>ops</option><option>vip_chat</option><option>system</option></select>
+              <select id="fStatus" onchange="applyFilters()"><option value="">Status</option><option>open</option><option>pending</option><option>closed</option></select>
+              <select id="fTag" onchange="applyFilters()"><option value="">Tag</option><option>payments</option><option>dispute</option><option>verification</option><option>abuse</option><option>other</option></select>
+            </div>
+            <div id="list" class="list"></div>
+          </div>
+        </div>
+        
+        <!-- Chat -->
+        <div class="card">
+          <div class="card-header">
+            <div class="chat-header">
+              <div class="row"><div class="chip" id="chip-channel">—</div><div class="chip" id="chip-tag">—</div><div class="chip" id="chip-status">—</div><div class="chip" id="chip-sla" style="display:none">SLA</div></div>
+              <div class="row"><button class="btn btn-outline" onclick="markPending()">Marcar como pendiente</button><button class="btn btn-outline" onclick="closeConversation()">Cerrar conversación</button></div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="panel compliance">No compartas datos sensibles.</div>
+            <div id="disclaimer" class="disclaimer" style="display:none">
+              <div>Los tipsters no garantizan resultados. El trading deportivo implica riesgo. Toda decisión de inversión es responsabilidad del usuario.</div>
+              <label style="display:flex;gap:8px;margin-top:6px"><input type="checkbox" id="ack" onchange="updateDisclaimerAck()">Acepto</label>
+            </div>
+            <div id="timeline" class="chat-timeline"></div>
+            <div id="disputeLink" style="display:none;margin-top:8px"><button class="btn btn-outline" onclick="openDisputeModal()">Vincular a Settlement</button></div>
+            <div class="chat-input">
+              <textarea id="text" class="input" rows="2" style="flex:1" placeholder="Escribe un mensaje..."></textarea>
+              <button id="btnAttach" class="btn btn-outline" onclick="mockAttach()">Adjuntar</button>
+              <button id="btnSend" class="btn" onclick="sendMessage()">Enviar</button>
+            </div>
+            <div id="sanction" class="panel" style="display:none;margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modales -->
+  <div id="modalCreate" class="modal" onclick="closeModalOnOverlay(event, 'modalCreate')"><div class="modal-content" onclick="event.stopPropagation()"><button class="modal-close" onclick="closeCreateTicket()">×</button><h3>Crear Ticket</h3>
+    <div class="row"><select id="ticketTag" class="input" onchange="updateTicketDisclaimerVisibility()"><option>payments</option><option>dispute</option><option>verification</option><option>abuse</option><option>other</option></select></div>
+    <div class="row"><input id="ticketSubject" class="input" placeholder="Asunto"></div>
+    <div class="row"><textarea id="ticketDesc" class="input" rows="3" placeholder="Descripción"></textarea></div>
+    <div class="row"><button class="btn btn-outline" onclick="mockAttach()">Adjuntos (max 3)</button><div class="chip">10MB png/jpg/pdf</div></div>
+    <div id="ticketDisclaimerRow" class="row" style="display:none"><label style="display:flex;gap:8px"><input type="checkbox" id="ticketAck">Acepto el disclaimer legal</label></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn btn-outline" onclick="closeCreateTicket()">Cancelar</button><button class="btn" onclick="createTicket()">Crear</button></div>
+  </div></div>
+
+  <div id="modalTemplates" class="modal" onclick="closeModalOnOverlay(event, 'modalTemplates')"><div class="modal-content" onclick="event.stopPropagation()"><button class="modal-close" onclick="closeTemplates()">×</button><h3>Templates / Macros</h3>
+    <div id="templatesList"></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn btn-outline" onclick="closeTemplates()">Cerrar</button></div>
+  </div></div>
+
+  <div id="modalDispute" class="modal" onclick="closeModalOnOverlay(event, 'modalDispute')"><div class="modal-content" onclick="event.stopPropagation()"><button class="modal-close" onclick="closeDisputeModal()">×</button><h3>Vincular a Settlement</h3>
+    <div class="row"><input id="pickId" class="input" placeholder="pick_id" onchange="validateDisputeLink()"></div>
+    <div class="row"><input id="signalId" class="input" placeholder="signal_id" onchange="validateDisputeLink()"></div>
+    <div class="row" id="disputeValidation" style="display:none"><div class="panel" style="background:#1b1b34;border-color:#444">Validando IDs...</div></div>
+    <div class="row" id="disputeSettlementInfo" style="display:none"><div class="panel"><strong>Settlement Encontrado:</strong><br><span id="settlementDetails"></span></div></div>
+    <div class="row" style="justify-content:flex-end"><button class="btn btn-outline" onclick="closeDisputeModal()">Cancelar</button><button id="btnConfirmDispute" class="btn" onclick="confirmDisputeLink()" disabled>Confirmar</button></div>
+  </div></div>
+
+  <script>
+    // SLA CONFIGURATION
+    const TIPSTER_SLA_TARGETS = {
+      PAYMENTS: {
+        priority: 'high',
+        first_response_minutes: 120,
+        resolution_hours: 48
+      },
+      DISPUTE: {
+        priority: 'critical',
+        first_response_minutes: 60,
+        resolution_hours: 24
+      },
+      VERIFICATION: {
+        priority: 'medium',
+        first_response_minutes: 240,
+        resolution_hours: 120
+      },
+      ABUSE: {
+        priority: 'critical',
+        first_response_minutes: 60,
+        resolution_hours: 72
+      },
+      OTHER: {
+        priority: 'low',
+        first_response_minutes: 480,
+        resolution_hours: 96
+      }
+    };
+
+    // MOCK DATA
+    const macros = {
+      verification_request:{label:'Solicitud de verificación',body:'Por favor comparte la documentación requerida para verificación.'},
+      dispute_review:{label:'Revisión de disputa',body:'Hemos recibido tu disputa. La estamos revisando.'},
+      settlement_adjustment:{label:'Ajuste de settlement',body:'Se aplicó un ajuste al settlement por revisión.'},
+      payments_wallet_issue:{label:'Problema de pagos / wallet',body:'Detectamos un inconveniente con tu wallet o pago.'},
+      user_report:{label:'Reporte de usuario',body:'Tu reporte ha sido recibido. Moderación evaluará la situación.'}
+    };
+    const conversations=[
+      {id:'c1',channel:'ops',status:'open',tag:'payments',title:'OPS • payments',preview:'Necesito ayuda con mi wallet',unread:2,sla:'yellow',elapsed_first_response_min:90,elapsed_resolution_hours:12},
+      {id:'c2',channel:'vip_chat',status:'open',tag:'other',title:'VIP Chat • user123',preview:'Hola, ¿cuándo envías pick?',unread:1,elapsed_first_response_min:0,elapsed_resolution_hours:0},
+      {id:'c3',channel:'ops',status:'pending',tag:'dispute',title:'OPS • dispute',preview:'Disputa sobre liquidación del pick 842',unread:0,sla:'red',elapsed_first_response_min:75,elapsed_resolution_hours:20},
+      {id:'c4',channel:'system',status:'open',tag:'verification',title:'SYSTEM • verificación',preview:'Solicitud KYC recibida',unread:0,elapsed_first_response_min:180,elapsed_resolution_hours:8}
+    ];
+    let selected=null; let disclaimerAck=false; let attachmentsCount=0; let currentSanction='none';
+
+    // SANCTION SYSTEM
+    const SANCTION_LEVELS = {
+      warning: { label: 'Advertencia', restricts: [] },
+      temporary_restriction: { label: 'Restricción temporal', restricts: ['attachments', 'rate_limit'] },
+      vip_chat_disabled: { label: 'VIP Chat deshabilitado', restricts: ['vip_chat'] },
+      profile_flagged: { label: 'Perfil marcado', restricts: [] },
+      tipster_suspended: { label: 'Cuenta suspendida', restricts: ['all_channels', 'vip_chat'] },
+      tipster_banned: { label: 'Cuenta baneada', restricts: ['all_channels', 'all_actions'] }
+    };
+
+    function evaluateSanction(flags, priorIncidents) {
+      const severityScore = (flags?.reduce((acc, f) => acc + (f.risk || 20), 0) || 0) + (priorIncidents || 0) * 10;
+      if (severityScore >= 100) return 'tipster_banned';
+      if (severityScore >= 75) return 'tipster_suspended';
+      if (severityScore >= 60) return 'vip_chat_disabled';
+      if (severityScore >= 45) return 'temporary_restriction';
+      return 'warning';
+    }
+
+    function enforceSanction(tipsterId, level) {
+      const sanction = SANCTION_LEVELS[level];
+      if (!sanction) return;
+      
+      // Update UI based on sanction
+      const sanctionPanel = document.getElementById('sanction');
+      if (sanctionPanel) {
+        sanctionPanel.style.display = 'block';
+        sanctionPanel.textContent = `Sanción activa: ${sanction.label}. Algunas acciones están restringidas.`;
+      }
+      
+      // Apply restrictions
+      enforceInputRules();
+      
+      console.log('Sanction applied:', { tipster_id: tipsterId, level, restricts: sanction.restricts });
+    }
+
+    // SUPPORT QUALITY SCORE
+    function computeSupportQualityScore(tipsterId, conversations, messages) {
+      const totalConv = conversations.length;
+      const openConv = conversations.filter(c => c.status === 'open').length;
+      const slaBreaches = conversations.filter(c => {
+        const category = c.tag?.toUpperCase() || 'OTHER';
+        const indicator = getSlaIndicator(category, c.elapsed_first_response_min || 0, c.elapsed_resolution_hours || 0);
+        return indicator.color !== 'green';
+      }).length;
+      
+      const avgResponseTime = messages.reduce((acc, msg) => acc + (msg.responseTimeMinutes || 0), 0) / messages.length;
+      const userSatisfaction = 0.85; // Mock value - would come from ratings
+      
+      // Calculate score (0-100)
+      let score = 100;
+      score -= (openConv / totalConv) * 20; // Penalty for open conversations
+      score -= (slaBreaches / totalConv) * 30; // Penalty for SLA breaches
+      score -= Math.min(avgResponseTime / 60, 2) * 10; // Penalty for slow responses
+      score += userSatisfaction * 10; // Bonus for satisfaction
+      
+      return Math.max(0, Math.round(score));
+    }
+
+    function updateQualityScoreDisplay() {
+      const mockMessages = [
+        { responseTimeMinutes: 45 },
+        { responseTimeMinutes: 120 },
+        { responseTimeMinutes: 30 },
+        { responseTimeMinutes: 90 }
+      ];
+      
+      const score = computeSupportQualityScore('tipster123', conversations, mockMessages);
+      const scoreElement = document.getElementById('qualityScore');
+      if (scoreElement) {
+        scoreElement.textContent = `Calidad Soporte: ${score}/100`;
+        scoreElement.className = 'chip ' + (score >= 80 ? 'green' : score >= 60 ? 'yellow' : 'red');
+      }
+    }
+
+    function getSlaIndicator(category, elapsedMinutes, elapsedHours) {
+      const t = TIPSTER_SLA_TARGETS[category] || TIPSTER_SLA_TARGETS.OTHER;
+      const responseRisk = elapsedMinutes > t.first_response_minutes;
+      const resolutionRisk = elapsedHours > t.resolution_hours;
+      return {
+        label: responseRisk || resolutionRisk ? 'SLA en riesgo' : 'SLA OK',
+        color: responseRisk || resolutionRisk ? (t.priority === 'critical' ? 'red' : 'yellow') : 'green'
+      };
+    }
+
+    function escalateOnSlaBreach(conversation) {
+      const cat = conversation.tags?.[0]?.toUpperCase() || 'OTHER';
+      const indicator = getSlaIndicator(cat, conversation.elapsed_first_response_min || 0, conversation.elapsed_resolution_hours || 0);
+      if (indicator.color !== 'green') {
+        console.log('SLA Escalation:', { conversation_id: conversation.id, category: cat, indicator });
+        
+        // Add escalation notification to UI
+        addEscalationNotification(conversation, cat, indicator);
+        
+        // Auto-escalate critical conversations
+        if (indicator.color === 'red' && TIPSTER_SLA_TARGETS[cat]?.priority === 'critical') {
+          autoEscalateConversation(conversation);
+        }
+        
+        // In real implementation: notifyOps('Escalación automática por SLA', { conversation_id: conversation.id, category: cat });
+      }
+    }
+
+    function addEscalationNotification(conversation, category, indicator) {
+      const notification = document.createElement('div');
+      notification.className = 'notification escalation';
+      notification.innerHTML = `
+        <div class="notification-content">
+          <strong>⚠️ SLA Alerta:</strong> Conversación ${conversation.id} (${category}) - ${indicator.label}
+          <button onclick="this.parentElement.parentElement.remove()" style="float:right">×</button>
+        </div>
+      `;
+      document.body.appendChild(notification);
+      
+      // Auto-remove after 10 seconds
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
+        }
+      }, 10000);
+    }
+
+    function autoEscalateConversation(conversation) {
+      // Update conversation status to pending for critical SLA breaches
+      conversation.status = 'pending';
+      conversation.escalated = true;
+      
+      // Add system message
+      const timeline = document.getElementById('timeline');
+      if (timeline && selected?.id === conversation.id) {
+        const systemMsg = document.createElement('div');
+        systemMsg.className = 'msg system';
+        systemMsg.textContent = 'Conversación escalada automáticamente por incumplimiento de SLA crítico';
+        timeline.appendChild(systemMsg);
+      }
+      
+      // Refresh UI
+      renderInbox(conversations);
+      if (selected?.id === conversation.id) {
+        selectConversation(conversation.id);
+      }
+      
+      console.log('Auto-escalated conversation:', conversation.id);
+    }
+
+    function slaChip(c){
+      if(c.channel!=='ops') return '';
+      const category = c.tag?.toUpperCase() || 'OTHER';
+      const indicator = getSlaIndicator(category, c.elapsed_first_response_min || 0, c.elapsed_resolution_hours || 0);
+      return `<span class="chip ${indicator.color}">${indicator.label}</span>`;
+    }
+
+    function renderInbox(list){const el=document.getElementById('list');el.innerHTML='';list.forEach(c=>{const item=document.createElement('div');item.className='item';item.onclick=()=>selectConversation(c.id);item.innerHTML=`
+      <div><div class='title'>${c.title}</div><div style='color:var(--muted);font-size:12px'>${c.preview}</div></div>
+      <div class='chips'>${slaChip(c)}<span class='chip'>${c.status}</span>${c.unread?`<span class='badge'>${c.unread}</span>`:''}${currentSanction!=='none'?`<span class='chip red'>⚠️ Sanción</span>`:''}</div>`;el.appendChild(item)});}
+
+    function applyFilters(){const q=document.getElementById('search').value.toLowerCase();const ch=document.getElementById('fChannel').value;const st=document.getElementById('fStatus').value;const tg=document.getElementById('fTag').value;const filtered=conversations.filter(c=>
+      (!ch||c.channel===ch)&&(!st||c.status===st)&&(!tg||c.tag===tg)&&(!q||c.title.toLowerCase().includes(q)||c.preview.toLowerCase().includes(q))
+    );renderInbox(filtered)}
+
+    function selectConversation(id){
+      selected=conversations.find(x=>x.id===id);
+      document.getElementById('chip-channel').textContent=selected.channel;
+      document.getElementById('chip-tag').textContent=selected.tag;
+      document.getElementById('chip-status').textContent=selected.status;
+      
+      // Update SLA indicator
+      const sla=document.getElementById('chip-sla');
+      if(selected.channel==='ops'){
+        const category = selected.tag?.toUpperCase() || 'OTHER';
+        const indicator = getSlaIndicator(category, selected.elapsed_first_response_min || 0, selected.elapsed_resolution_hours || 0);
+        sla.style.display='inline-block';
+        sla.className='chip ' + indicator.color;
+        sla.textContent=indicator.label;
+        
+        // Check for SLA breach
+        escalateOnSlaBreach(selected);
+      } else {
+        sla.style.display='none';
+      }
+      const tl=document.getElementById('timeline');tl.innerHTML='';['system','admin','user','tipster'].forEach((role,i)=>{const d=document.createElement('div');d.className='msg '+role;d.textContent=role==='system'?`Conversación ${selected.title}`:`Mensaje ${i+1} de ${role}`;tl.appendChild(d)});
+      // disclaimer para vip_chat
+      const dis=document.getElementById('disclaimer');dis.style.display=selected.channel==='vip_chat'?'block':'none';
+      // botón dispute link
+      document.getElementById('disputeLink').style.display=selected.tag==='dispute'?'block':'none';
+      // sanción visual
+      const s=document.getElementById('sanction'); if(currentSanction!=='none'){s.style.display='block'; s.textContent=`Sanción activa: ${currentSanction}. Algunas acciones están restringidas.`} else {s.style.display='none'}
+      enforceInputRules();
+    }
+
+    function enforceInputRules(){
+      const sanction = SANCTION_LEVELS[currentSanction] || { restricts: [] };
+      const baseDisabled = (selected?.status==='closed') || (selected?.channel==='system');
+      const sanctionsDisabled = sanction.restricts.includes('all_actions') || 
+                               (sanction.restricts.includes('all_channels') && selected?.channel!=='system');
+      const channelDisabled = sanction.restricts.includes('vip_chat') && selected?.channel==='vip_chat';
+      const attachmentsDisabled = sanction.restricts.includes('attachments');
+      
+      const textDisabled = baseDisabled || sanctionsDisabled || channelDisabled;
+      const attachDisabled = baseDisabled || sanctionsDisabled || attachmentsDisabled;
+      
+      document.getElementById('text').disabled = textDisabled;
+      const btnSend = document.getElementById('btnSend');
+      const btnAttach = document.getElementById('btnAttach');
+      if(btnSend) btnSend.disabled = textDisabled;
+      if(btnAttach) btnAttach.disabled = attachDisabled;
+    }
+    function sendMessage(){
+      if(!selected) return;
+      if(selected.channel==='system'){alert('Canal de solo lectura');return}
+      if(selected.channel==='vip_chat' && !disclaimerAck){alert('Debes aceptar el disclaimer');return}
+      const txt=document.getElementById('text'); if(!txt.value.trim())return;
+      const d=document.createElement('div'); d.className='msg tipster'; d.textContent=txt.value; document.getElementById('timeline').appendChild(d); txt.value=''
+    }
+    function updateDisclaimerAck(){disclaimerAck=document.getElementById('ack').checked}
+    function mockAttach(){
+      if(['vip_chat_disabled','tipster_suspended','tipster_banned','temporary_restriction'].includes(currentSanction)){
+        alert('Adjuntos deshabilitados por sanción');
+        return;
+      }
+      if(attachmentsCount>=3){alert('Máximo 3 adjuntos');return}
+      attachmentsCount++; alert('Adjunto agregado (mock)')
+    }
+
+    function openCreateTicket(){
+      document.getElementById('modalCreate').style.display='flex';
+      updateTicketDisclaimerVisibility();
+    }
+    function closeCreateTicket(){
+      document.getElementById('modalCreate').style.display='none';
+      document.getElementById('ticketTag').value='payments';
+      document.getElementById('ticketSubject').value='';
+      document.getElementById('ticketDesc').value='';
+      document.getElementById('ticketAck').checked=false;
+      document.getElementById('ticketDisclaimerRow').style.display='none';
+    }
+    function closeModalOnOverlay(event, modalId){
+      if(event.target.id === modalId){
+        if(modalId === 'modalCreate') closeCreateTicket();
+        else if(modalId === 'modalTemplates') closeTemplates();
+        else if(modalId === 'modalDispute') closeDisputeModal();
+      }
+    }
+    
+    // Keyboard support for closing modals
+    document.addEventListener('keydown', function(event) {
+      if(event.key === 'Escape'){
+        const modals = ['modalCreate', 'modalTemplates', 'modalDispute'];
+        modals.forEach(modalId => {
+          const modal = document.getElementById(modalId);
+          if(modal && modal.style.display === 'flex'){
+            if(modalId === 'modalCreate') closeCreateTicket();
+            else if(modalId === 'modalTemplates') closeTemplates();
+            else if(modalId === 'modalDispute') closeDisputeModal();
+          }
+        });
+      }
+    });
+    function updateTicketDisclaimerVisibility(){
+      const tag = document.getElementById('ticketTag').value;
+      const show = (tag==='dispute' || tag==='payments') || (selected?.channel==='vip_chat');
+      document.getElementById('ticketDisclaimerRow').style.display = show ? 'block' : 'none';
+    }
+    function createTicket(){
+      const row = document.getElementById('ticketDisclaimerRow');
+      const requiresAck = row && row.style.display !== 'none';
+      if(requiresAck && !document.getElementById('ticketAck').checked){
+        alert('Debes aceptar el disclaimer');
+        return;
+      }
+      alert('Ticket creado (mock)');
+      closeCreateTicket()
+    }
+
+    function openTemplates(){document.getElementById('modalTemplates').style.display='flex'; const list=document.getElementById('templatesList'); list.innerHTML=''; Object.keys(macros).forEach(k=>{const m=macros[k]; const row=document.createElement('div'); row.className='item'; row.innerHTML=`<div><strong>${m.label}</strong><div style='color:var(--muted);font-size:12px'>${m.body}</div></div><button class='btn btn-outline' onclick="insertMacro('${k}')">Insertar</button>`; list.appendChild(row)})}
+    function closeTemplates(){document.getElementById('modalTemplates').style.display='none'}
+    function insertMacro(key){document.getElementById('text').value=macros[key].body; closeTemplates()}
+
+    function markPending(){if(!selected)return; selected.status='pending'; document.getElementById('chip-status').textContent='pending'}
+    function closeConversation(){if(!selected)return; selected.status='closed'; document.getElementById('chip-status').textContent='closed'; enforceInputRules()}
+
+    function openDisputeModal(){document.getElementById('modalDispute').style.display='flex'}
+    function closeDisputeModal(){
+      document.getElementById('modalDispute').style.display='none';
+      document.getElementById('pickId').value='';
+      document.getElementById('signalId').value='';
+      document.getElementById('disputeValidation').style.display='none';
+      document.getElementById('disputeSettlementInfo').style.display='none';
+      document.getElementById('btnConfirmDispute').disabled=true;
+    }
+    function confirmDisputeLink(){const pick=document.getElementById('pickId').value; const sig=document.getElementById('signalId').value; const sys=document.createElement('div'); sys.className='msg system'; sys.textContent=`dispute linked (pick:${pick}, signal:${sig})`; document.getElementById('timeline').appendChild(sys); insertMacro('settlement_adjustment'); closeDisputeModal()}
+
+    function validateDisputeLink() {
+      const pickId = document.getElementById('pickId').value.trim();
+      const signalId = document.getElementById('signalId').value.trim();
+      const validationDiv = document.getElementById('disputeValidation');
+      const settlementInfo = document.getElementById('disputeSettlementInfo');
+      const settlementDetails = document.getElementById('settlementDetails');
+      const confirmBtn = document.getElementById('btnConfirmDispute');
+      
+      if (!pickId || !signalId) {
+        validationDiv.style.display = 'none';
+        settlementInfo.style.display = 'none';
+        confirmBtn.disabled = true;
+        return;
+      }
+      
+      // Show validation
+      validationDiv.style.display = 'block';
+      settlementInfo.style.display = 'none';
+      confirmBtn.disabled = true;
+      
+      // Simulate API call to validate settlement
+      setTimeout(() => {
+        validationDiv.style.display = 'none';
+        
+        // Mock settlement validation
+        const mockSettlement = {
+          pick_id: pickId,
+          signal_id: signalId,
+          status: 'settled',
+          amount: 150.00,
+          currency: 'USD',
+          date: '2024-01-15'
+        };
+        
+        if (pickId.length > 3 && signalId.length > 3) {
+          settlementDetails.innerHTML = `
+            <strong>Pick ID:</strong> ${mockSettlement.pick_id}<br>
+            <strong>Signal ID:</strong> ${mockSettlement.signal_id}<br>
+            <strong>Estado:</strong> ${mockSettlement.status}<br>
+            <strong>Monto:</strong> ${mockSettlement.currency} ${mockSettlement.amount}<br>
+            <strong>Fecha:</strong> ${mockSettlement.date}
+          `;
+          settlementInfo.style.display = 'block';
+          confirmBtn.disabled = false;
+        } else {
+          settlementDetails.innerHTML = 'No se encontró settlement con esos IDs';
+          settlementInfo.style.display = 'block';
+          settlementInfo.style.background = '#2a1b1b';
+          settlementInfo.style.borderColor = '#444';
+        }
+      }, 1000);
+    }
+
+    // INIT
+    renderInbox(conversations); applyFilters(); selectConversation('c1'); updateQualityScoreDisplay();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Señales | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Tipster Colors */
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      
+      /* Base colors */
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-header {
+      flex: 1;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== WORKFLOW TABS ========== */
+    .workflow-tabs {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      padding: 6px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn.active {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .tab-badge {
+      padding: 2px 8px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    /* ========== FILTERS ========== */
+    .filters-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      position: sticky;
+      top: calc(var(--topbar-height) + 10px);
+      z-index: 50;
+      backdrop-filter: blur(12px);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-input {
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+    .filter-select {
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    /* ========== TABLE ========== */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .signals-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .signals-table thead {
+      background: var(--bg-tertiary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .signals-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .signals-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .signals-table tbody tr {
+      transition: background 0.2s ease;
+      cursor: pointer;
+    }
+
+    .signals-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .signals-table tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Table Cells */
+    .event-cell {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .event-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .event-meta {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .selection-cell {
+      font-weight: 600;
+      color: var(--tipster-primary);
+    }
+
+    .odds-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      color: var(--secondary-gold);
+    }
+
+    .stake-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+
+    .clv-cell {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+    }
+
+    .clv-cell.positive {
+      color: var(--primary-green);
+    }
+
+    .clv-cell.negative {
+      color: var(--secondary-red);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* Status badges */
+    .badge.draft {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    .badge.published {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .badge.locked {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .badge.settled {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.canceled {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    /* Result badges */
+    .badge.pending {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .badge.win {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.loss {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .badge.void {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    /* Actions Menu */
+    .actions-cell {
+      position: relative;
+    }
+
+    .actions-btn {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .actions-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .actions-menu {
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 4px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      min-width: 180px;
+      display: none;
+      z-index: 100;
+    }
+
+    .actions-menu.active {
+      display: block;
+      animation: slideDown 0.2s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .action-item {
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .action-item:last-child {
+      border-bottom: none;
+    }
+
+    .action-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .action-item.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .action-item.disabled:hover {
+      background: transparent;
+      color: var(--text-secondary);
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+
+    .empty-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 12px;
+    }
+
+    .empty-description {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 1400px) {
+      .filters-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 1024px) {
+      .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-section {
+        position: static;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .signals-table {
+        min-width: 1200px;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+    /* Bet Structure badges and total odds */
+    .badge.bet-structure { background: rgba(168, 85, 247, 0.12); color: var(--tipster-primary); }
+    .badge.bet-structure.single { background: rgba(168, 85, 247, 0.12); color: var(--tipster-primary); }
+    .badge.bet-structure.combo { background: rgba(255, 215, 0, 0.12); color: var(--secondary-gold); }
+    .badge.bet-structure.system { background: rgba(0, 102, 255, 0.12); color: var(--primary-blue); }
+    .total-odds-cell { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--secondary-gold); }
+    .ticket-link { color: var(--text-secondary); text-decoration: none; margin-left: 6px; }
+    .ticket-link:hover { color: var(--primary-cyan); text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item active">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <div class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="page-header">
+          <h1 class="page-title">📡 Mis Señales</h1>
+          <p class="page-subtitle">Administra tus picks, monitorea su estado y controla tu historial de publicaciones.</p>
+        </div>
+
+        <div class="topbar-actions">
+          <a href="/tipster/signals/new" class="btn btn-primary">
+            <span>➕</span>
+            <span>Crear Señal</span>
+          </a>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Workflow Tabs -->
+        <div class="workflow-tabs">
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="all">
+              <span>Todas</span>
+              <span class="tab-badge">24</span>
+            </button>
+            <button class="tab-btn" data-tab="active">
+              <span>Activas</span>
+              <span class="tab-badge">8</span>
+            </button>
+            <button class="tab-btn" data-tab="pending">
+              <span>Pendientes</span>
+              <span class="tab-badge">5</span>
+            </button>
+            <button class="tab-btn" data-tab="live">
+              <span>En Juego</span>
+              <span class="tab-badge">3</span>
+            </button>
+            <button class="tab-btn" data-tab="finished">
+              <span>Finalizadas</span>
+              <span class="tab-badge">12</span>
+            </button>
+            <button class="tab-btn" data-tab="canceled">
+              <span>Canceladas</span>
+              <span class="tab-badge">2</span>
+            </button>
+            <button class="tab-btn" data-tab="drafts">
+              <span>Borradores</span>
+              <span class="tab-badge">2</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+          <div class="filters-grid">
+            <div class="filter-group">
+              <label class="filter-label">Período</label>
+              <select class="filter-select">
+                <option value="7d">Últimos 7 días</option>
+                <option value="30d" selected>Últimos 30 días</option>
+                <option value="90d">Últimos 90 días</option>
+                <option value="custom">Personalizado</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Deporte</label>
+              <select class="filter-select">
+                <option value="all">Todos los deportes</option>
+                <option value="football">⚽ Fútbol</option>
+                <option value="basketball">🏀 Baloncesto</option>
+                <option value="tennis">🎾 Tenis</option>
+                <option value="baseball">⚾ Béisbol</option>
+                <option value="hockey">🏒 Hockey</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Mercado</label>
+              <select class="filter-select">
+                <option value="all">Todos los mercados</option>
+                <option value="moneyline">Moneyline</option>
+                <option value="totals">Totals (O/U)</option>
+                <option value="handicap">Handicap</option>
+                <option value="btts">BTTS</option>
+                <option value="props">Props</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Tipo</label>
+              <select class="filter-select">
+                <option value="all">Todos</option>
+                <option value="prematch">Prematch</option>
+                <option value="live">Live</option>
+              </select>
+            </div>
+
+            <div class="filter-group">
+              <label class="filter-label">Resultado</label>
+              <select class="filter-select">
+                <option value="all">Todos los resultados</option>
+                <option value="pending">🟡 Pendiente</option>
+                <option value="win">🟢 Ganada</option>
+                <option value="loss">🔴 Perdida</option>
+                <option value="void">⚪ Anulada</option>
+              </select>
+            </div>
+          </div>
+          <div class="filters-tools">
+            <div class="filters-grid" style="margin-top: 12px;">
+              <div class="filter-group" title="Disponible en la próxima fase">
+                <label class="filter-label">Buscar</label>
+                <input type="text" class="filter-input" placeholder="Buscar evento, liga o equipo" disabled>
+              </div>
+              <div class="filter-group" title="Disponible en la próxima fase">
+                <label class="filter-label">Ordenar</label>
+                <select class="filter-select" disabled>
+                  <option value="recent">Más recientes</option>
+                  <option value="best_clv">Mejor CLV</option>
+                  <option value="highest_odds">Mayores odds</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <p class="filters-hint" style="color: var(--text-muted); font-size: 13px; margin: 8px 0 0;">
+            Nota: El precio de cada señal se define al publicar, pero no se muestra en esta vista.
+          </p>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table class="signals-table">
+            <thead>
+              <tr>
+                <th>Fecha Publicación</th>
+                <th>Evento</th>
+                <th>Selección</th>
+                <th>Mercado</th>
+                <th>Odds</th>
+                <th>Tipo</th>
+                <th>Total Odds</th>
+                <th>Stake (%)</th>
+                <th>CLV</th>
+                <th>Estado</th>
+                <th>Resultado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Signal 1 - Published, Pending -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-09<br>14:30
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Real Madrid vs Barcelona</div>
+                    <div class="event-meta">La Liga • Hoy 20:00</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Over 2.5 goles</td>
+                <td>Totales</td>
+                <td class="odds-cell">1.95</td>
+                <td class="bet-structure-cell"><span class="badge bet-structure single">SINGLE</span></td>
+                <td class="total-odds-cell" style="color: var(--text-muted);">—</td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell positive">+2.5%</td>
+                <td><span class="badge published">📤 Publicada</span></td>
+                <td><span class="badge pending">⏳ Por liquidar</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_001')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                    <div class="action-item" onclick="cancelSignal('sig_001')">
+                      <span>🚫</span>
+                      <span>Cancelar</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 2 - Locked, Live -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-09<br>10:15
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Lakers vs Celtics</div>
+                    <div class="event-meta">NBA • Live - Q3 5:32</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Lakers Moneyline</td>
+                <td>Moneyline</td>
+                <td class="odds-cell">2.10</td>
+                <td class="bet-structure-cell"><span class="badge bet-structure single">SINGLE</span></td>
+                <td class="total-odds-cell" style="color: var(--text-muted);">—</td>
+                <td class="stake-cell">3%</td>
+                <td class="clv-cell positive">+1.8%</td>
+                <td><span class="badge locked">🔒 Bloqueada</span></td>
+                <td><span class="badge pending">⏳ Por liquidar</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_002')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                    <div class="action-item disabled" title="El evento aún no ha finalizado">
+                      <span>💰</span>
+                      <span>Ir a Liquidar</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 3 - Settled, Win -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-08<br>18:20
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">PSG vs Bayern Munich</div>
+                    <div class="event-meta">Champions League • Finalizado</div>
+                  </div>
+                </td>
+                <td class="selection-cell">BTTS (Sí)</td>
+                <td>BTTS</td>
+                <td class="odds-cell">1.85</td>
+                <td class="bet-structure-cell"><span class="badge bet-structure single">SINGLE</span></td>
+                <td class="total-odds-cell" style="color: var(--text-muted);">—</td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell negative">-1.2%</td>
+                <td><span class="badge settled">✅ Liquidada</span></td>
+                <td><span class="badge win">🟢 Ganada</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_003')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 4 - Settled, Loss -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-07<br>16:45
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Juventus vs AC Milan</div>
+                    <div class="event-meta">Serie A • Finalizado</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Under 2.5 goles</td>
+                <td>Totales</td>
+                <td class="odds-cell">2.05</td>
+                <td class="bet-structure-cell"><span class="badge bet-structure single">SINGLE</span></td>
+                <td class="total-odds-cell" style="color: var(--text-muted);">—</td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell positive">+3.1%</td>
+                <td><span class="badge settled">✅ Liquidada</span></td>
+                <td><span class="badge loss">🔴 Perdida</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_004')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 5 - Draft -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-09<br>12:00
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Man United vs Man City</div>
+                    <div class="event-meta">Premier League • Mañana 15:00</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Man City -1.5 AH</td>
+                <td>Handicap</td>
+                <td class="odds-cell">1.90</td>
+                <td class="stake-cell">2.5%</td>
+                <td class="clv-cell" style="color: var(--text-muted);">-</td>
+                <td><span class="badge draft">📝 Borrador</span></td>
+                <td><span style="color: var(--text-muted)">— No aplica</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_005')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                    <div class="action-item" onclick="editSignal('sig_005')">
+                      <span>✏️</span>
+                      <span>Editar</span>
+                    </div>
+                    <div class="action-item" onclick="publishSignal('sig_005')">
+                      <span>📤</span>
+                      <span>Publicar</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 6 - Canceled -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-06<br>09:30
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Heat vs Nuggets</div>
+                    <div class="event-meta">NBA • Cancelado</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Over 215.5</td>
+                <td>Totales</td>
+                <td class="odds-cell">1.92</td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell" style="color: var(--text-muted);">-</td>
+                <td><span class="badge canceled">🚫 Cancelada</span></td>
+                <td><span class="badge void">⚪ Anulada</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_006')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- Signal 7 - Locked, Event Finished -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-05<br>19:10
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">ATP Finals - Djokovic vs Alcaraz</div>
+                    <div class="event-meta">Tenis • Finalizado</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Over 22.5 games</td>
+                <td>Totales</td>
+                <td class="odds-cell">1.88</td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell positive">+2.2%</td>
+                <td><span class="badge locked">🔒 Bloqueada</span></td>
+                <td><span class="badge pending">⏳ Por liquidar</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_007')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                    <div class="action-item" onclick="goToSettle('sig_007')">
+                      <span>💰</span>
+                      <span>Ir a Liquidar</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <!-- Signal 8 - Published, Combo (3 picks) -->
+              <tr>
+                <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted);">
+                  2026-02-09<br>13:10
+                </td>
+                <td>
+                  <div class="event-cell">
+                    <div class="event-name">Múltiples Eventos</div>
+                    <div class="event-meta">Combo (3 picks)</div>
+                  </div>
+                </td>
+                <td class="selection-cell">Ver picks (3)</td>
+                <td>—</td>
+                <td class="odds-cell" style="color: var(--text-muted);">—</td>
+                <td class="bet-structure-cell"><span class="badge bet-structure combo">COMBO</span></td>
+                <td class="total-odds-cell">3.40 <a href="#" class="ticket-link" title="Ver ticket">🔗 Ticket</a></td>
+                <td class="stake-cell">2%</td>
+                <td class="clv-cell" style="color: var(--text-muted);">-</td>
+                <td><span class="badge published">📤 Publicada</span></td>
+                <td><span class="badge pending">⏳ Por liquidar</span></td>
+                <td class="actions-cell">
+                  <button class="actions-btn" onclick="toggleActionsMenu(this)">⋮</button>
+                  <div class="actions-menu">
+                    <div class="action-item" onclick="viewSignal('sig_008')">
+                      <span>👁️</span>
+                      <span>Ver Detalle</span>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Empty State (hidden by default, shown when no signals) -->
+        <!-- <div class="empty-state" style="display: none;">
+          <div class="empty-icon">📡</div>
+          <div class="empty-title">Aún no has publicado señales</div>
+          <div class="empty-description">
+            Empieza creando tu primera señal. La consistencia es clave para construir confianza con tus seguidores.
+          </div>
+          <a href="/tipster/signals/new" class="btn btn-primary">
+            <span>➕</span>
+            <span>Crear Señal</span>
+          </a>
+        </div> -->
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const tab = btn.dataset.tab;
+        console.log('Tab changed to:', tab);
+        // Aquí iría la lógica para filtrar la tabla
+      });
+    });
+
+    // Actions menu toggle
+    function toggleActionsMenu(btn) {
+      // Close all other menus
+      document.querySelectorAll('.actions-menu').forEach(menu => {
+        if (menu !== btn.nextElementSibling) {
+          menu.classList.remove('active');
+        }
+      });
+      
+      // Toggle current menu
+      const menu = btn.nextElementSibling;
+      menu.classList.toggle('active');
+    }
+
+    // Close menus when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.actions-cell')) {
+        document.querySelectorAll('.actions-menu').forEach(menu => {
+          menu.classList.remove('active');
+        });
+      }
+    });
+
+    // Signal actions
+    function viewSignal(id) {
+      console.log('View signal:', id);
+      // window.location.href = `/tipster/signals/${id}`;
+    }
+
+    function editSignal(id) {
+      console.log('Edit signal:', id);
+      // window.location.href = `/tipster/signals/${id}/edit`;
+    }
+
+    function publishSignal(id) {
+      if (confirm('¿Publicar esta señal? Será visible para tus usuarios con acceso.')) {
+        console.log('Publish signal:', id);
+        // API call to publish
+      }
+    }
+
+    function cancelSignal(id) {
+      if (confirm('¿Cancelar esta señal? Se notificará a tus usuarios con acceso.')) {
+        console.log('Cancel signal:', id);
+        // API call to cancel
+      }
+    }
+
+    function goToSettle(id) {
+      console.log('Go to settle:', id);
+      // window.location.href = `/tipster/settlements?signal_id=${id}`;
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      const sidebar = document.querySelector('.sidebar');
+      const overlay = document.querySelector('.sidebar-overlay');
+      sidebar.classList.toggle('sidebar-open');
+      if (overlay) {
+        overlay.style.opacity = sidebar.classList.contains('sidebar-open') ? '1' : '0';
+        overlay.style.pointerEvents = sidebar.classList.contains('sidebar-open') ? 'auto' : 'none';
+      }
+    }
+
+    // Mobile menu button
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768) {
+        const btn = document.createElement('button');
+        btn.className = 'mobile-menu-btn';
+        btn.setAttribute('aria-label', 'Abrir menú');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; margin-right: 12px;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.insertBefore(btn, topbar.firstChild);
+      }
+    });
+
+    console.log('Tipster Signals loaded');
+  </script>
+</body>
+</html>
+</html>

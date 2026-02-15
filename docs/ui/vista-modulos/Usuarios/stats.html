@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mis Estadísticas | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== ALERT ========== */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border: 1px solid;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    .alert.privacy {
+      background: rgba(176, 38, 255, 0.1);
+      border-color: rgba(176, 38, 255, 0.3);
+      color: var(--secondary-purple);
+    }
+
+    /* ========== FILTERS BAR ========== */
+    .filters-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 24px;
+      position: sticky;
+      top: 90px;
+      z-index: 80;
+      backdrop-filter: blur(12px);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .filter-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:hover,
+    .filter-select:focus {
+      border-color: var(--primary-cyan);
+      outline: none;
+    }
+
+    .filter-toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .filter-toggle.active {
+      background: rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-cyan);
+      border-bottom-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.08);
+    }
+
+    /* ========== METRICS GRID ========== */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--gradient-primary);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-secondary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-card:hover::before {
+      opacity: 1;
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-trend {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .metric-trend.up {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .metric-trend.down {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .metric-trend.stable {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .metric-value {
+      font-size: 42px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .metric-value.cyan {
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .metric-value.green {
+      color: var(--primary-green);
+    }
+
+    .metric-value.gold {
+      background: var(--gradient-premium);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .metric-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ========== PANEL ========== */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ========== INSIGHTS CARDS ========== */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .insight-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .insight-card:hover {
+      border-color: var(--border-secondary);
+      transform: translateY(-2px);
+    }
+
+    .insight-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .insight-value {
+      font-size: 24px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+      margin-bottom: 8px;
+    }
+
+    .insight-meta {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .insight-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 6px;
+      color: var(--primary-cyan);
+      font-size: 13px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .insight-cta:hover {
+      background: rgba(0, 245, 255, 0.2);
+      transform: translateX(4px);
+    }
+
+    /* ========== SEGMENT TABLE ========== */
+    .segment-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+    }
+
+    .segment-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .segment-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .segment-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .rank-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .rank-badge.top {
+      background: var(--gradient-premium);
+      color: var(--bg-primary);
+      box-shadow: var(--glow-gold);
+    }
+
+    .rank-badge.bottom {
+      background: rgba(255, 68, 68, 0.2);
+      color: var(--secondary-red);
+    }
+
+    .winrate-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--bg-primary);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+
+    .winrate-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.5s ease;
+    }
+
+    .winrate-fill.high {
+      background: var(--gradient-success);
+    }
+
+    .winrate-fill.medium {
+      background: var(--gradient-premium);
+    }
+
+    .winrate-fill.low {
+      background: var(--gradient-danger);
+    }
+
+    /* ========== CHART PLACEHOLDER ========== */
+    .chart-placeholder {
+      background: var(--bg-tertiary);
+      border: 1px dashed var(--border-primary);
+      border-radius: 12px;
+      padding: 60px 20px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .chart-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      opacity: 0.5;
+    }
+
+    .chart-text {
+      font-size: 14px;
+      color: var(--text-muted);
+    }
+
+    /* ========== STAT ROW ========== */
+    .stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .stat-row:last-child {
+      border-bottom: none;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: 16px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+    }
+
+    /* ========== BTN ========== */
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.open {
+        transform: translateX(0);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-bar {
+        position: relative;
+        top: 0;
+      }
+    }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Análisis</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/stats" class="nav-item active">
+            <span class="nav-icon">📈</span>
+            <span>Mis Estadísticas</span>
+          </a>
+          <a href="/coach" class="nav-item">
+            <span class="nav-icon">🎓</span>
+            <span>Trading Coach</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px;">
+          <div>
+            <h1 class="page-title">📈 Mis Estadísticas</h1>
+            <div class="breadcrumbs">
+              <span>Inicio</span>
+              <span>›</span>
+              <span>Análisis</span>
+              <span>›</span>
+              <span>Mis Estadísticas</span>
+            </div>
+          </div>
+          <!-- Mobile Hamburger (hidden on desktop) -->
+          <button id="hamburger-toggle" class="btn btn-outline" style="display:none; align-items:center; gap:8px;" aria-label="Abrir menú">
+            <span style="font-size:18px; line-height:1;">☰</span>
+            <span style="font-size:13px;">Menú</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Privacy Alert -->
+        <div class="alert privacy">
+          <span class="alert-icon">🔒</span>
+          <div>
+            <strong>Privacidad Total</strong><br>
+            Los datos mostrados pertenecen SOLO a tu cuenta. No se comparten con otros usuarios sin tu consentimiento.
+          </div>
+        </div>
+
+        <!-- Filters Bar (Sticky) -->
+        <div class="filters-bar">
+          <div class="filters-grid">
+            <!-- Period -->
+            <div class="filter-group">
+              <label class="filter-label">Periodo</label>
+              <select class="filter-select">
+                <option value="30d" selected>30 días</option>
+                <option value="7d">7 días</option>
+                <option value="90d">90 días</option>
+                <option value="all">Todo el tiempo</option>
+              </select>
+            </div>
+
+            <!-- Timing -->
+            <div class="filter-group">
+              <label class="filter-label">Tipo</label>
+              <select class="filter-select">
+                <option value="all" selected>Todos</option>
+                <option value="pre">Solo Pre-match</option>
+                <option value="live">Solo Live</option>
+              </select>
+            </div>
+
+            <!-- League -->
+            <div class="filter-group">
+              <label class="filter-label">Liga</label>
+              <select class="filter-select">
+                <option value="all" selected>Todas las ligas</option>
+                <option value="premier">Premier League</option>
+                <option value="laliga">La Liga</option>
+                <option value="seriea">Serie A</option>
+              </select>
+            </div>
+
+            <!-- Source -->
+            <div class="filter-group">
+              <label class="filter-label">Fuente</label>
+              <select class="filter-select">
+                <option value="all" selected>Todas</option>
+                <option value="manual">Manual</option>
+                <option value="signal">Señales</option>
+                <option value="ticket">Tickets</option>
+              </select>
+            </div>
+
+            <!-- Reasoning Toggle -->
+            <div class="filter-group">
+              <label class="filter-label">Filtros</label>
+              <div class="filter-toggle" onclick="this.classList.toggle('active')">
+                <span>✓</span>
+                <span>Solo con razonamiento completo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Disclaimer -->
+        <div class="alert info">
+          <span class="alert-icon">⚠️</span>
+          <div>
+            Estas estadísticas reflejan tu historial. <strong>NO garantizan resultados futuros</strong> ni recomiendan apuestas específicas.
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" data-tab="overview">
+            <span>📊</span>
+            <span>Overview</span>
+          </button>
+          <button class="tab" data-tab="performance">
+            <span>📈</span>
+            <span>Performance</span>
+          </button>
+          <button class="tab" data-tab="discipline">
+            <span>💪</span>
+            <span>Disciplina</span>
+          </button>
+          <button class="tab" data-tab="segmentation">
+            <span>🎯</span>
+            <span>Segmentación</span>
+          </button>
+          <button class="tab" data-tab="risk">
+            <span>🚨</span>
+            <span>Riesgo</span>
+          </button>
+        </div>
+
+        <!-- Tab Content: Overview -->
+        <div id="tab-overview" class="tab-content">
+          <!-- KPI Metrics -->
+          <div class="metrics-grid">
+            <!-- Winrate -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Winrate</span>
+                <span class="metric-trend up">↑ +3.2%</span>
+              </div>
+              <div class="metric-value cyan">58.2%</div>
+              <div class="metric-description">
+                43 picks • 25 ganados • 18 perdidos<br>
+                vs 30d anterior: 55.0%
+              </div>
+            </div>
+
+            <!-- Consistency -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Consistency</span>
+                <span class="metric-trend stable">→</span>
+              </div>
+              <div class="metric-value gold">76</div>
+              <div class="metric-description">
+                Estabilidad de resultados buena<br>
+                Desviación estándar: 0.18
+              </div>
+            </div>
+
+            <!-- Discipline -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Discipline</span>
+                <span class="metric-trend up">↑ +5%</span>
+              </div>
+              <div class="metric-value cyan">82</div>
+              <div class="metric-description">
+                Adherencia al plan: Buena<br>
+                Stake deviation: 12% promedio
+              </div>
+            </div>
+
+            <!-- Risk -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Riesgo</span>
+                <span class="metric-trend up" style="background: rgba(0, 255, 148, 0.15); color: var(--primary-green);">✓ SAFE</span>
+              </div>
+              <div class="metric-value green">0</div>
+              <div class="metric-description">
+                Sin alertas recientes<br>
+                Max drawdown: 8.2%
+              </div>
+            </div>
+
+            <!-- Quality -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Quality Score</span>
+                <span class="metric-trend up">↑ +8%</span>
+              </div>
+              <div class="metric-value gold">78</div>
+              <div class="metric-description">
+                Razonamiento completo: 89%<br>
+                Evidencias: 3.2 promedio/pick
+              </div>
+            </div>
+          </div>
+
+          <!-- Mini Insights -->
+          <div class="insights-grid">
+            <!-- Best Segment -->
+            <div class="insight-card">
+              <div class="insight-title">🎯 Tu Mejor Segmento</div>
+              <div class="insight-value">Premier League - Over/Under</div>
+              <div class="insight-meta">
+                62% WR • 21 picks • PRE-match
+              </div>
+              <a href="#" class="insight-cta" onclick="switchTab('segmentation')">
+                <span>Ver Segmentación</span>
+                <span>→</span>
+              </a>
+            </div>
+
+            <!-- Biggest Leak -->
+            <div class="insight-card">
+              <div class="insight-title">⚠️ Tu Mayor Fuga</div>
+              <div class="insight-value">Live Betting</div>
+              <div class="insight-meta">
+                42% WR en Live vs 58% en Pre<br>
+                Recomendación: Reducir live betting
+              </div>
+              <a href="/coach" class="insight-cta">
+                <span>Ver Recomendación Coach</span>
+                <span>→</span>
+              </a>
+            </div>
+
+            <!-- Last Alert -->
+            <div class="insight-card">
+              <div class="insight-title">🚨 Última Alerta Risk Guard</div>
+              <div class="insight-value">Todo bien ✓</div>
+              <div class="insight-meta">
+                Sin alertas en los últimos 30 días<br>
+                Estado: SAFE
+              </div>
+              <a href="#" class="insight-cta" onclick="switchTab('risk')">
+                <span>Ver Historial</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Coach CTA -->
+          <div class="panel" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08)); border-color: rgba(0, 245, 255, 0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                  🎓 Trading Coach tiene recomendaciones para ti
+                </div>
+                <div style="font-size: 14px; color: var(--text-secondary);">
+                  Basado en tu performance, el Coach ha generado insights accionables y un plan semanal personalizado.
+                </div>
+              </div>
+              <a href="/coach" class="btn btn-primary">
+                <span>Ver Recomendaciones</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Performance -->
+        <div id="tab-performance" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📈</span>
+                <span>Resultados Acumulados</span>
+              </div>
+            </div>
+
+            <!-- Chart Placeholder -->
+            <div class="chart-placeholder">
+              <div class="chart-icon">📊</div>
+              <div class="chart-text">
+                Gráfico de resultados acumulados (en unidades)<br>
+                <small style="opacity: 0.7;">Implementación: Chart.js / Recharts</small>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pre vs Live -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⏱️</span>
+                <span>Pre-match vs Live</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+              <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">PRE-MATCH</div>
+                <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-green); margin-bottom: 8px;">58.3%</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  36 picks • 21 ganados<br>
+                  Reasoning quality: 82
+                </div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 20px; border-radius: 10px;">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">LIVE</div>
+                <div style="font-size: 32px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--secondary-red); margin-bottom: 8px;">42.9%</div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  7 picks • 3 ganados<br>
+                  Reasoning quality: 54
+                </div>
+              </div>
+
+              <div style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 102, 255, 0.1)); padding: 20px; border-radius: 10px; border: 1px solid rgba(0, 245, 255, 0.3);">
+                <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 8px;">RECOMENDACIÓN</div>
+                <div style="font-size: 16px; font-weight: 600; color: var(--primary-cyan); margin-bottom: 8px;">
+                  Enfócate en Pre-match
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  Tu WR en pre es 15.4% mayor que en live. Reduce live betting.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Streaks -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🔥</span>
+                <span>Rachas</span>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px;">
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Max Racha Ganadora</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--primary-green);">7 picks</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Max Racha Perdedora</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--secondary-red);">4 picks</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Racha Actual</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--primary-green);">+3</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Disciplina -->
+        <div id="tab-discipline" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>💰</span>
+                <span>Stake Deviation</span>
+              </div>
+            </div>
+
+            <!-- Chart Placeholder -->
+            <div class="chart-placeholder">
+              <div class="chart-icon">📊</div>
+              <div class="chart-text">
+                Gráfico scatter: Plan vs Real stake<br>
+                <small style="opacity: 0.7;">Muestra desviación por pick</small>
+              </div>
+            </div>
+
+            <!-- Stats -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 20px;">
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Desviación Promedio</div>
+                <div style="font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--secondary-orange);">+12%</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Desviación Máxima</div>
+                <div style="font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--secondary-red);">+42%</div>
+              </div>
+
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px;">
+                <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px;">Veces Sobre Máx</div>
+                <div style="font-size: 24px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">3</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reasoning Completion -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📝</span>
+                <span>Calidad de Razonamiento</span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <!-- Reasoning -->
+              <div class="stat-row">
+                <div class="stat-label">Picks con Razonamiento Completo</div>
+                <div class="stat-value">89%</div>
+              </div>
+
+              <!-- Evidence -->
+              <div class="stat-row">
+                <div class="stat-label">Picks con Evidencias (min 3)</div>
+                <div class="stat-value">76%</div>
+              </div>
+
+              <!-- Invalidation -->
+              <div class="stat-row">
+                <div class="stat-label">Picks con Invalidation Triggers</div>
+                <div class="stat-value">68%</div>
+              </div>
+
+              <!-- Reflection -->
+              <div class="stat-row">
+                <div class="stat-label">Picks con Post-Reflection</div>
+                <div class="stat-value">45%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Overtrading -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⚠️</span>
+                <span>Overtrading</span>
+              </div>
+            </div>
+
+            <div class="chart-placeholder">
+              <div class="chart-icon">📊</div>
+              <div class="chart-text">
+                Gráfico bar: Picks por día<br>
+                <small style="opacity: 0.7;">Línea en 8 picks/día marca overtrading</small>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 20px;">
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Promedio Picks/Día</div>
+                <div class="stat-value">2.8</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Máximo en 1 Día</div>
+                <div class="stat-value" style="color: var(--secondary-orange);">6</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Días >8 Picks</div>
+                <div class="stat-value" style="color: var(--primary-green);">0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Segmentación -->
+        <div id="tab-segmentation" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🎯</span>
+                <span>Top 5 Segmentos</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-muted);">
+                Mejores combinaciones liga + mercado
+              </div>
+            </div>
+
+            <table class="segment-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Liga</th>
+                  <th>Mercado</th>
+                  <th>Timing</th>
+                  <th>Picks</th>
+                  <th>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="rank-badge top">1</span></td>
+                  <td>⚽ Premier League</td>
+                  <td>Over/Under</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">21</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary-green); margin-bottom: 4px;">62.0%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill high" style="width: 62%;"></div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="rank-badge top">2</span></td>
+                  <td>⚽ La Liga</td>
+                  <td>BTTS</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">14</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary-green); margin-bottom: 4px;">57.1%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill high" style="width: 57%;"></div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="rank-badge top">3</span></td>
+                  <td>⚽ Premier League</td>
+                  <td>Handicap</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">12</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--secondary-orange); margin-bottom: 4px;">58.3%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill medium" style="width: 58%;"></div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="rank-badge top">4</span></td>
+                  <td>🏀 NBA</td>
+                  <td>Over/Under</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">8</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--primary-green); margin-bottom: 4px;">62.5%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill high" style="width: 62.5%;"></div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="rank-badge top">5</span></td>
+                  <td>⚽ Bundesliga</td>
+                  <td>Over/Under</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">6</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--secondary-orange); margin-bottom: 4px;">50.0%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill medium" style="width: 50%;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Bottom 5 -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>⚠️</span>
+                <span>Bottom 5 Segmentos</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-muted);">
+                Evitar estos segmentos
+              </div>
+            </div>
+
+            <table class="segment-table">
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Liga</th>
+                  <th>Mercado</th>
+                  <th>Timing</th>
+                  <th>Picks</th>
+                  <th>Winrate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="rank-badge bottom">1</span></td>
+                  <td>⚽ Serie A</td>
+                  <td>Moneyline</td>
+                  <td><span style="color: var(--secondary-red);">LIVE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">5</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--secondary-red); margin-bottom: 4px;">20.0%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill low" style="width: 20%;"></div>
+                    </div>
+                  </td>
+                </tr>
+
+                <tr>
+                  <td><span class="rank-badge bottom">2</span></td>
+                  <td>⚽ Ligue 1</td>
+                  <td>BTTS</td>
+                  <td><span style="color: var(--primary-cyan);">PRE</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">8</td>
+                  <td>
+                    <div style="font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--secondary-red); margin-bottom: 4px;">37.5%</div>
+                    <div class="winrate-bar">
+                      <div class="winrate-fill low" style="width: 37.5%;"></div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- CTA -->
+          <div class="panel" style="background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08)); border-color: rgba(0, 245, 255, 0.3);">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+              <div>
+                <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px;">
+                  🎯 Configura tu Enfoque
+                </div>
+                <div style="font-size: 14px; color: var(--text-secondary);">
+                  Limita tus picks a tus mejores segmentos para mejorar consistencia.
+                </div>
+              </div>
+              <a href="/coach/settings" class="btn btn-primary">
+                <span>Ir a Coach Settings</span>
+                <span>→</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Riesgo -->
+        <div id="tab-risk" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📉</span>
+                <span>Drawdown</span>
+              </div>
+            </div>
+
+            <!-- Chart Placeholder -->
+            <div class="chart-placeholder">
+              <div class="chart-icon">📊</div>
+              <div class="chart-text">
+                Gráfico area: Drawdown % en el tiempo<br>
+                <small style="opacity: 0.7;">Muestra picos y recuperaciones</small>
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-top: 20px;">
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Max Drawdown</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--secondary-orange);">8.2%</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Drawdown Actual</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--primary-green);">0%</div>
+              </div>
+
+              <div class="stat-row" style="flex-direction: column; align-items: flex-start; border: none;">
+                <div class="stat-label">Peak to Current</div>
+                <div class="stat-value" style="font-size: 28px; color: var(--primary-cyan);">+4.2%</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Risk Guard Events -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🚨</span>
+                <span>Historial Risk Guard</span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <!-- Event 1 -->
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary-green);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <div style="font-size: 14px; font-weight: 600; color: var(--primary-green);">✓ Estado Normal</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Hace 1 día</div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  Sin alertas. Operando dentro de parámetros seguros.
+                </div>
+              </div>
+
+              <!-- Event 2 -->
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 4px solid var(--secondary-orange);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <div style="font-size: 14px; font-weight: 600; color: var(--secondary-orange);">⚠️ Stake Deviation</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Hace 15 días</div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  Desviación de stake detectada: +35% sobre plan. Revisa disciplina.
+                </div>
+              </div>
+
+              <!-- Event 3 -->
+              <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 10px; border-left: 4px solid var(--primary-cyan);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                  <div style="font-size: 14px; font-weight: 600; color: var(--primary-cyan);">ℹ️ Cooldown Activado</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">Hace 22 días</div>
+                </div>
+                <div style="font-size: 13px; color: var(--text-secondary);">
+                  Cooldown de 2h activado por patrón de tilt. Duración: 2 horas.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📊</span>
+                <span>Resumen de Alertas (30d)</span>
+              </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div class="stat-row">
+                <div class="stat-label">Total Cooldowns</div>
+                <div class="stat-value">1</div>
+              </div>
+
+              <div class="stat-row">
+                <div class="stat-label">Total Warnings</div>
+                <div class="stat-value">1</div>
+              </div>
+
+              <div class="stat-row">
+                <div class="stat-label">Locks Recibidos</div>
+                <div class="stat-value" style="color: var(--primary-green);">0</div>
+              </div>
+
+              <div class="stat-row">
+                <div class="stat-label">Tilt Risk Score Actual</div>
+                <div class="stat-value" style="color: var(--primary-green);">12</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Utility: download file
+    function downloadFile(filename, content) {
+      const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Tab switching
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        content.style.display = 'none';
+      });
+      
+      const activeContent = document.getElementById(`tab-${tabName}`);
+      if (activeContent) {
+        activeContent.style.display = 'block';
+      }
+    }
+
+    // Initialize enhancements
+    (function initStats() {
+      // Guard clicks on disabled tabs
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+          if (this.classList.contains('disabled')) return;
+          switchTab(this.dataset.tab);
+        });
+      });
+
+      const tabsContainer = document.querySelector('.tabs');
+      const contentArea = document.querySelector('.content-area');
+
+      // Parse total picks from Winrate card
+      let totalPicks = 0;
+      const winrateCard = document.querySelector('#tab-overview .metric-card .metric-description');
+      if (winrateCard) {
+        const match = winrateCard.textContent.match(/(\d+)\s+picks/i);
+        if (match) totalPicks = parseInt(match[1], 10);
+      }
+      // First visit via localStorage flag
+      const firstVisitKey = 'stats_first_visit_seen';
+      const isFirstVisit = !localStorage.getItem(firstVisitKey);
+
+      // Data sufficiency banner
+      const disclaimer = document.querySelector('.alert.info');
+      if (disclaimer) {
+        const banner = document.createElement('div');
+        banner.id = 'data-sufficiency';
+        banner.className = 'alert info';
+        banner.style.display = 'none';
+        banner.innerHTML = '<span class="alert-icon">ℹ️</span><div>Para análisis confiable registra al menos 20 picks. Algunas métricas avanzadas estarán ocultas hasta entonces.</div>';
+        disclaimer.insertAdjacentElement('afterend', banner);
+      }
+
+      // Mercado filter (multi-select)
+      const filtersGrid = document.querySelector('.filters-grid');
+      if (filtersGrid) {
+        const sourceGroup = Array.from(filtersGrid.querySelectorAll('.filter-group')).find(g => g.querySelector('.filter-label')?.textContent?.trim() === 'Fuente');
+        const marketGroup = document.createElement('div');
+        marketGroup.className = 'filter-group';
+        marketGroup.innerHTML = '<label class="filter-label">Mercado</label><select class="filter-select" multiple size="4"><option value="ou">Over/Under</option><option value="btts">BTTS</option><option value="handicap">Handicap</option><option value="1x2">1X2</option></select>';
+        if (sourceGroup) {
+          sourceGroup.insertAdjacentElement('afterend', marketGroup);
+        } else {
+          filtersGrid.appendChild(marketGroup);
+        }
+      }
+
+      // Onboarding panel
+      const overview = document.getElementById('tab-overview');
+      if (overview) {
+        const onboarding = document.createElement('div');
+        onboarding.id = 'onboarding-panel';
+        onboarding.className = 'panel';
+        onboarding.style.display = 'none';
+        onboarding.innerHTML = '<div class="panel-header"><div class="panel-title"><span>🎓</span><span>Tu panel profesional</span></div></div><div style="display:flex; flex-direction:column; gap:12px;"><ul style="margin:0 0 8px 16px; color: var(--text-secondary);"><li>No mostramos dinero: medimos cómo operas.</li><li>Enfocamos consistencia, disciplina y mercados.</li><li>Las métricas no recomiendan apuestas.</li></ul><div style="display:flex; gap:8px; flex-wrap:wrap;"><a href="docs/ui/vista-modulos/Usuarios/watchlist.html" class="btn btn-primary">Ir a Watchlist</a><button class="btn btn-outline" id="ver-demo">Ver demo</button></div></div>';
+        overview.insertAdjacentElement('afterbegin', onboarding);
+      }
+
+      // Stability KPI card
+      const metricsGrid = document.querySelector('#tab-overview .metrics-grid');
+      if (metricsGrid && !document.getElementById('stability-score')) {
+        const card = document.createElement('div');
+        card.className = 'metric-card';
+        card.innerHTML = '<div class="metric-header"><span class="metric-label">Stability</span><span class="metric-trend stable">→</span></div><div class="metric-value cyan" id="stability-score">72</div><div class="metric-description">Caótico / Impulsivo / En desarrollo / Disciplinado<br>Combina stake deviation + overtrading + tilt events</div>';
+        metricsGrid.appendChild(card);
+      }
+
+      // Export tab + content
+      const riskTabContent = document.getElementById('tab-risk');
+      if (tabsContainer && contentArea && !document.querySelector('.tab[data-tab="export"]')) {
+        const exportBtn = document.createElement('button');
+        exportBtn.className = 'tab';
+        exportBtn.dataset.tab = 'export';
+        exportBtn.innerHTML = '<span>📤</span><span>Export</span>';
+        tabsContainer.appendChild(exportBtn);
+
+        const exportContent = document.createElement('div');
+        exportContent.id = 'tab-export';
+        exportContent.className = 'tab-content';
+        exportContent.style.display = 'none';
+        exportContent.innerHTML = '<div class="panel"><div class="panel-header"><div class="panel-title"><span>📤</span><span>Export</span></div><div style="font-size: 13px; color: var(--text-muted);">Export no ejecuta apuestas.</div></div><div style="display:flex; gap:12px; flex-wrap:wrap;"><button class="btn btn-primary" id="export-csv">Exportar CSV (picks filtrados)</button><button class="btn btn-outline" id="export-json">Exportar JSON (resumen)</button></div></div>';
+        if (riskTabContent) {
+          riskTabContent.insertAdjacentElement('afterend', exportContent);
+        } else {
+          contentArea.appendChild(exportContent);
+        }
+
+        exportBtn.addEventListener('click', function() {
+          if (this.classList.contains('disabled')) return;
+          switchTab('export');
+        });
+      }
+
+      // Data sufficiency logic
+      const bannerEl = document.getElementById('data-sufficiency');
+      const segmentationTab = document.querySelector('.tab[data-tab="segmentation"]');
+      const segmentationContent = document.getElementById('tab-segmentation');
+      const isSufficient = totalPicks >= 20;
+      if (bannerEl) bannerEl.style.display = isSufficient ? 'none' : 'flex';
+      if (!isSufficient) {
+        segmentationTab?.classList.add('disabled');
+        segmentationTab?.setAttribute('aria-disabled', 'true');
+        segmentationContent?.setAttribute('data-state', 'blocked');
+      }
+
+      // Show onboarding if first visit or zero picks
+      const onboardingPanel = document.getElementById('onboarding-panel');
+      if (onboardingPanel && (isFirstVisit || totalPicks === 0)) {
+        onboardingPanel.style.display = 'block';
+        const demoBtn = document.getElementById('ver-demo');
+        demoBtn?.addEventListener('click', () => {
+          localStorage.setItem(firstVisitKey, 'true');
+          onboardingPanel.style.display = 'none';
+        });
+      } else {
+        localStorage.setItem(firstVisitKey, 'true');
+      }
+
+      // Mobile hamburger sidebar toggle
+      const hamburger = document.getElementById('hamburger-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      if (hamburger && sidebar) {
+        hamburger.addEventListener('click', () => {
+          sidebar.classList.toggle('open');
+        });
+      }
+
+      // Export: CSV picks filtrados (desde tabla de segmentación)
+      const exportCsvBtn = document.getElementById('export-csv');
+      if (exportCsvBtn) {
+        exportCsvBtn.addEventListener('click', () => {
+          const rows = Array.from(document.querySelectorAll('#tab-segmentation .segment-table tbody tr'));
+          const csvLines = ['Liga,Mercado,Timing,Picks,Winrate'];
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length >= 6) {
+              const liga = cells[1].innerText.replace(/^⚽\s*/,'').trim();
+              const mercado = cells[2].innerText.trim();
+              const timing = cells[3].innerText.trim();
+              const picks = cells[4].innerText.trim();
+              const winrate = cells[5].innerText.replace(/\n.*/,'').trim();
+              csvLines.push([liga, mercado, timing, picks, winrate].join(','));
+            }
+          });
+          downloadFile('picks_filtrados.csv', csvLines.join('\n'));
+        });
+      }
+
+      // Export: JSON resumen
+      const exportJsonBtn = document.getElementById('export-json');
+      if (exportJsonBtn) {
+        exportJsonBtn.addEventListener('click', () => {
+          const winrateText = document.querySelector('#tab-overview .metric-card .metric-value')?.textContent || '0%';
+          const winrate = parseFloat(winrateText.replace('%','')) / 100;
+          const stability = parseInt(document.getElementById('stability-score')?.textContent || '0', 10);
+          const summary = {
+            totalPicks,
+            winrate,
+            stabilityScore: stability,
+          };
+          downloadFile('resumen.json', JSON.stringify(summary, null, 2));
+        });
+      }
+
+      console.log('Mis Estadísticas initialized', { totalPicks });
+    })();
+  </script>
+</body>
+</html>

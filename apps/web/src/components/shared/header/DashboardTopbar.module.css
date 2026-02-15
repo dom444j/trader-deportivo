@@ -1,0 +1,240 @@
+.appTopbar {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width, 280px);
+  right: 0;
+  height: var(--topbar-height, 70px);
+  background: var(--bg-elevated, #0f1222);
+  border-bottom: 1px solid var(--border-color, #2A2A4A);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  transition: left 0.3s ease;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.topbarLeft { display: flex; align-items: center; gap: 12px; }
+
+.topbarCenter {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: center;
+}
+
+.searchBox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color, #2A2A4A);
+  min-width: 260px;
+}
+.searchIcon { color: var(--text-muted, #8888A8); }
+.searchInput { background: transparent; border: none; outline: none; color: var(--text-primary, #FFFFFF); width: 220px; }
+
+.kpiPill {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color, #2A2A4A);
+  background: linear-gradient(135deg, rgba(0,245,255,0.08), rgba(0,102,255,0.08));
+}
+.kpiLabel { font-size: 12px; color: var(--text-secondary, #B8B8D0); }
+.kpiValue { font-weight: 800; color: #00F5FF; }
+
+.sidebarToggleMobile {
+  display: none;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-color, #2A2A4A);
+  font-size: 18px;
+  color: var(--text-secondary, #B8B8D0);
+  cursor: pointer;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+.sidebarToggleMobile:hover { background: rgba(255,255,255,0.07); color: var(--text-primary, #FFFFFF); }
+
+.breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary, #B8B8D0); }
+.breadcrumbItem { font-weight: 600; }
+.breadcrumbItem:last-child { color: var(--text-primary, #FFFFFF); }
+.breadcrumbSeparator { color: var(--text-muted, #8888A8); }
+
+.topbarRight { display: flex; align-items: center; gap: 12px; }
+
+.iconBtn {
+  position: relative;
+  display: grid; place-items: center;
+  width: 36px; height: 36px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color, #2A2A4A);
+  border-radius: 10px;
+  color: var(--text-secondary, #B8B8D0);
+  text-decoration: none;
+}
+.iconBtn:hover { background: rgba(255,255,255,0.07); color: var(--text-primary, #FFFFFF); }
+
+/* New: SVG icons sizing */
+.iconSvg { width: 18px; height: 18px; display: block; }
+
+/* Removed onlyDesktop/onlyMobile helpers: now handled in React with matchMedia */
+
+.badge {
+  position: absolute;
+  top: -4px; right: -4px;
+  min-width: 18px; height: 18px;
+  padding: 0 4px;
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 800;
+  color: #00131a;
+  background: var(--gradient-success, linear-gradient(135deg, #00FF94, #00D970));
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.userMenuContainer { position: relative; }
+
+.userMenuTrigger {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color, #2A2A4A);
+  border-radius: 12px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.userAvatar { font-size: 18px; }
+.userName { color: var(--text-secondary, #B8B8D0); font-size: 13px; font-weight: 700; }
+.userArrow { color: var(--text-muted, #8888A8); font-size: 11px; }
+
+.userMenuDropdown {
+  position: absolute; right: 0; top: calc(100% + 8px);
+  width: 200px; background: var(--bg-elevated, #0f1222);
+  border: 1px solid var(--border-color, #2A2A4A);
+  border-radius: 12px; padding: 8px;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.38);
+  z-index: 10;
+}
+.menuItem { display: block; padding: 8px 10px; color: var(--text-secondary); text-decoration: none; border-radius: 8px; }
+.menuItem:hover { background: rgba(255,255,255,0.04); color: var(--text-primary); }
+.menuDivider { border: none; border-top: 1px solid var(--border-color); margin: 6px 0; }
+.logout { color: #f87171; font-weight: 700; }
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .topbarCenter { display: none; }
+}
+
+@media (max-width: 768px) {
+  .sidebarToggleMobile { display: inline-grid; }
+}
+.userMenuTrigger:hover { background: rgba(255,255,255,0.06); }
+
+.userAvatar {
+  width: 28px; height: 28px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: var(--gradient-primary, linear-gradient(135deg, #00F5FF, #0066FF));
+  color: #00131a; font-size: 14px; font-weight: 700;
+}
+
+.userName { font-size: 13px; font-weight: 700; color: var(--text-primary, #FFFFFF); text-transform: capitalize; }
+.userArrow { font-size: 10px; color: var(--text-secondary, #B8B8D0); }
+
+.userMenuDropdown {
+  position: absolute; top: calc(100% + 8px); right: 0;
+  background: var(--bg-tertiary, #12152a);
+  border: 1px solid var(--border-color, #2A2A4A);
+  border-radius: 12px;
+  min-width: 220px; overflow: hidden; z-index: 1000;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  transform-origin: top right;
+  animation: dropdownFade 120ms ease-out;
+}
+
+.menuHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 6px 12px;
+}
+
+.menuAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: var(--gradient-primary, linear-gradient(135deg, #00F5FF, #0066FF));
+  color: #00131a;
+  font-weight: 800;
+}
+
+.menuName { font-size: 13px; font-weight: 700; color: var(--text-primary, #FFFFFF); }
+.menuRole { font-size: 12px; color: var(--text-secondary, #B8B8D0); }
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.menuItem {
+  display: block; padding: 10px 12px; color: var(--text-secondary, #B8B8D0);
+  text-decoration: none; font-size: 13px; transition: all 0.2s ease;
+  border: none; background: none; width: 100%; text-align: left; cursor: pointer;
+}
+.menuItem:hover { background: rgba(255,255,255,0.06); color: var(--text-primary, #FFFFFF); }
+.menuItem.logout { color: #ff6b6b; }
+.menuItem.logout:hover { background: rgba(255, 107, 107, 0.1); }
+
+.menuDivider { margin: 6px 0; border: none; border-top: 1px solid var(--border-color, #2A2A4A); }
+
+/* Role accents override for the topbar */
+.admin { --accent-color: #dc2626; }
+.tipster { --accent-color: #7c3aed; }
+.user { --accent-color: #00D4E6; }
+
+@media (max-width: 768px) {
+  .appTopbar { left: 0; }
+  .sidebarToggleMobile { display: inline-flex; }
+}
+
+/* ==== Mobile refinements for better UX on small screens ==== */
+@media (max-width: 768px) {
+  .appTopbar {
+    height: 60px; /* a juego con variable móvil */
+    padding: 0 10px;
+  }
+  .topbarLeft { gap: 8px; }
+  .breadcrumb { font-size: 12px; gap: 6px; }
+  /* Oculta el primer segmento (rol) y el separador para compactar */
+  .breadcrumbItem:first-child { display: none; }
+  .breadcrumbSeparator { display: none; }
+
+  .topbarRight { gap: 8px; }
+
+  /* Botón de usuario compacto: solo avatar en móvil */
+  .userMenuTrigger {
+    padding: 0;
+    border-radius: 999px;
+    width: 36px; height: 36px;
+    display: grid; place-items: center;
+  }
+  .userName, .userArrow { display: none; }
+
+  /* Asegura tamaño de toque cómodo para iconos */
+  .iconBtn { width: 36px; height: 36px; }
+  .iconSvg {
+    width: 18px;
+    height: 18px;
+    display: block;
+  }
+  
+  @media (max-width: 768px) {
+    .iconSvg { width: 18px; height: 18px; }
+  }
+}

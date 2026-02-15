@@ -1,0 +1,144 @@
+<svg viewBox="0 0 800 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradientes premium -->
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00F5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF94;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D970;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    
+    <!-- Filtros -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <!-- ICONO (diseñado para favicon) -->
+  <g id="icon" transform="translate(125, 125)">
+    <!-- Círculo base -->
+    <circle r="95" fill="url(#primary)" opacity="0.1"/>
+    
+    <!-- Forma principal: TD fusionado con gráfico -->
+    <g filter="url(#shadow)">
+      <!-- T estilizada con gráfico ascendente integrado -->
+      <path d="M -50 -40 L 50 -40 L 50 -25 L 10 -25 L 10 50 L -10 50 L -10 -25 L -50 -25 Z" 
+            fill="url(#primary)"/>
+      
+      <!-- D con curva de trading -->
+      <path d="M 15 -10 L 35 -10 Q 60 -10 60 20 Q 60 50 35 50 L 15 50 Z M 30 5 L 35 5 Q 45 5 45 20 Q 45 35 35 35 L 30 35 Z" 
+            fill="url(#accent)"/>
+      
+      <!-- Gráfico de velas integrado -->
+      <g opacity="0.9">
+        <!-- Vela bajista -->
+        <rect x="-45" y="-15" width="6" height="20" fill="#FF4444" opacity="0.7"/>
+        <line x1="-42" y1="-20" x2="-42" y2="10" stroke="#FF4444" stroke-width="1.5"/>
+        
+        <!-- Vela alcista -->
+        <rect x="-30" y="-25" width="6" height="30" fill="url(#accent)"/>
+        <line x1="-27" y1="-30" x2="-27" y2="12" stroke="#00FF94" stroke-width="1.5"/>
+        
+        <!-- Vela alcista mayor -->
+        <rect x="-15" y="-35" width="6" height="40" fill="url(#accent)"/>
+        <line x1="-12" y1="-40" x2="-12" y2="15" stroke="#00FF94" stroke-width="1.5"/>
+      </g>
+
+      <!-- Estrella de análisis AI -->
+      <g transform="translate(45, -30)" filter="url(#glow)">
+        <path d="M 0 -8 L 2 -2 L 8 -2 L 3 2 L 5 8 L 0 4 L -5 8 L -3 2 L -8 -2 L -2 -2 Z" 
+              fill="url(#gold)">
+          <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+        </path>
+      </g>
+
+      <!-- Puntos de datos orbitales -->
+      <circle cx="50" cy="30" r="3" fill="#00F5FF">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+      </circle>
+      <circle cx="-55" cy="35" r="2.5" fill="#00FF94">
+        <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
+      </circle>
+    </g>
+
+    <!-- Anillo orbital externo -->
+    <circle r="90" fill="none" stroke="url(#primary)" stroke-width="2" opacity="0.15" stroke-dasharray="5 10">
+      <animateTransform attributeName="transform" type="rotate" from="0 125 125" to="360 125 125" dur="30s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- TEXTO -->
+  <g transform="translate(280, 125)">
+    <!-- TRADING -->
+    <text x="0" y="-10" 
+          font-family="'Rajdhani', 'Orbitron', sans-serif" 
+          font-size="56" 
+          font-weight="800"
+          fill="url(#primary)"
+          letter-spacing="4">
+      TRADER
+    </text>
+    
+    <!-- DEPORTIVO -->
+    <text x="0" y="45" 
+          font-family="'Rajdhani', 'Orbitron', sans-serif" 
+          font-size="52" 
+          font-weight="700"
+          fill="url(#accent)"
+          letter-spacing="5">
+      DEPORTIVO
+    </text>
+
+    <!-- Línea separadora con animación -->
+    <line x1="0" y1="60" x2="0" y2="60" stroke="url(#gold)" stroke-width="3" stroke-linecap="round">
+      <animate attributeName="x2" from="0" to="420" dur="1.5s" fill="freeze"/>
+    </line>
+
+    <!-- Tagline -->
+    <text x="0" y="85" 
+          font-family="'Inter', 'Arial', sans-serif" 
+          font-size="16" 
+          font-weight="600"
+          fill="#0099FF"
+          letter-spacing="4"
+          opacity="0.95">
+      PROFESIONALES EN DEPORTIVAS
+    </text>
+
+    <!-- Insignia PRO -->
+    <g transform="translate(430, -15)">
+      <rect x="0" y="0" width="60" height="28" rx="14" fill="url(#gold)" opacity="0.2"/>
+      <rect x="1" y="1" width="58" height="26" rx="13" fill="none" stroke="url(#gold)" stroke-width="1.5"/>
+      <text x="30" y="19" 
+            font-family="'Inter', sans-serif" 
+            font-size="14" 
+            font-weight="800"
+            fill="url(#gold)"
+            text-anchor="middle">
+        PRO
+      </text>
+    </g>
+  </g>
+
+  <!-- Elementos decorativos de fondo -->
+  <g opacity="0.06">
+    <path d="M 50 50 L 750 50" stroke="url(#primary)" stroke-width="1" stroke-dasharray="5 5"/>
+    <path d="M 50 200 L 750 200" stroke="url(#accent)" stroke-width="1" stroke-dasharray="5 5"/>
+  </g>
+</svg>

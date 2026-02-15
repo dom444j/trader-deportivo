@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscribers | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* OVERVIEW CARDS */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--tipster-primary);
+    }
+
+    /* TABS */
+    .tabs-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      padding: 6px;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    /* FILTERS */
+    .filters-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+    }
+
+    .filter-select {
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .subscribers-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .subscribers-table thead {
+      background: var(--bg-tertiary);
+    }
+
+    .subscribers-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .subscribers-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .subscribers-table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.active {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.expired {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .badge.revoked {
+      background: rgba(255, 68, 68, 0.1);
+      color: rgba(255, 100, 100, 0.7);
+      border: 1px solid rgba(255, 68, 68, 0.2);
+    }
+
+    .badge.free {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    .badge.converted {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--tipster-primary);
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-sm:hover {
+      background: var(--bg-elevated);
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .btn-sm.danger:hover {
+      border-color: var(--secondary-red);
+      color: var(--secondary-red);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-muted);
+    }
+
+    .modal-close:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--primary-cyan);
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .history-item {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-date {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-bar {
+        flex-direction: column;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .subscribers-table {
+        min-width: 800px;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item active">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">Control de Permisos de Contenido</h1>
+          <p class="page-subtitle">Gestiona quién puede ver tus señales en tiempo real.</p>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Overview Cards -->
+        <div class="overview-grid">
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-label">Followers</div>
+            <div class="stat-value">1,250</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔄</div>
+            <div class="stat-label">Subscribers</div>
+            <div class="stat-value">150</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-label">VIP</div>
+            <div class="stat-value">12</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Credit Buyers</div>
+            <div class="stat-value">35</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Conversion Rate</div>
+            <div class="stat-value">12%</div>
+          </div>
+        </div>
+
+        <!-- Privacy Notice -->
+        <div class="alert alert-info">
+          <span class="alert-icon">ℹ️</span>
+          <div class="alert-content">
+            <div class="alert-title">Nota de Privacidad</div>
+            <div class="alert-text">
+              Este módulo NO muestra dinero, solo acceso. La validación final ocurre al abrir la señal (anti-leaks). El ticket_link nunca se expone aquí.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-section">
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="followers">Followers (Audiencia)</button>
+            <button class="tab-btn" data-tab="subscribers">Subscribers (Suscripción)</button>
+            <button class="tab-btn" data-tab="vip">VIP (Entitlement)</button>
+            <button class="tab-btn" data-tab="credits">Credit Buyers (Compra Individual)</button>
+          </div>
+        </div>
+
+        <!-- Filters Bar -->
+        <div class="filters-bar">
+          <input type="text" class="search-input" placeholder="Buscar por username...">
+          <select class="filter-select" id="filter-status">
+            <option value="all">Todos los estados</option>
+            <option value="active">Activos</option>
+            <option value="expired">Expirados</option>
+          </select>
+          <button class="btn-sm" style="margin-left: auto;" onclick="exportCsv()">Exportar CSV</button>
+        </div>
+        <div style="text-align: right; margin-top: -18px; margin-bottom: 24px;">
+          <p style="font-size: 11px; color: var(--text-muted);">La exportación no incluye links sensibles.</p>
+        </div>
+
+        <!-- Table (Followers Tab) -->
+        <div class="table-container" id="table-followers">
+          <table class="subscribers-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Fecha Follow</th>
+                <th>País</th>
+                <th>Última Actividad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600;">@juanperez</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-01-15</td>
+                <td>🇪🇸 España</td>
+                <td style="font-size: 13px; color: var(--text-muted);">Hace 2 horas</td>
+                <td><span class="badge free">Free</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="viewProfile('juanperez')">Ver perfil</button>
+                    <button class="btn-sm" onclick="openModal('invite-modal')">Invitar</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">@maria_garcia</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2025-12-20</td>
+                <td>🇲🇽 México</td>
+                <td style="font-size: 13px; color: var(--text-muted);">Hace 1 día</td>
+                <td><span class="badge converted">Converted</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="viewProfile('maria_garcia')">Ver perfil</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">@alex_trader</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-01</td>
+                <td>🇺🇸 USA</td>
+                <td style="font-size: 13px; color: var(--text-muted);">Hace 5 minutos</td>
+                <td><span class="badge free">Free</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="viewProfile('alex_trader')">Ver perfil</button>
+                    <button class="btn-sm" onclick="openModal('invite-modal')">Invitar</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table (Subscribers Tab) -->
+        <div class="table-container" id="table-subscribers" style="display: none;">
+          <table class="subscribers-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th style="text-align: center;">Plan</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Expiración</th>
+                <th style="text-align: center;">Auto-Renew</th>
+                <th style="text-align: center;">Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600;">@carlos_bet</td>
+                <td style="text-align: center;">Pro</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-01-10</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-10</td>
+                <td style="text-align: center;">✅ On</td>
+                <td style="text-align: center;"><span class="badge active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="openModal('extend-modal')">Extender</button>
+                    <button class="btn-sm danger" onclick="openModal('cancel-modal')">Cancelar</button>
+                    <button class="btn-sm" onclick="openModal('history-modal')">Historial</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">@sofia_picks</td>
+                <td style="text-align: center;">Basic</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2025-12-01</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-01-01</td>
+                <td style="text-align: center;">❌ Off</td>
+                <td style="text-align: center;"><span class="badge expired">Expired</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="openModal('extend-modal')">Extender</button>
+                    <button class="btn-sm" onclick="openModal('history-modal')">Historial</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table (VIP Tab) -->
+        <div class="table-container" id="table-vip" style="display: none;">
+          <table class="subscribers-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Scope</th>
+                <th>Fecha Asignación</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600;">@trader_pro</td>
+                <td>Por Tipster</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2025-01-01</td>
+                <td><span class="badge active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm danger" onclick="openModal('revoke-modal')">Revocar</button>
+                    <button class="btn-sm" onclick="openModal('history-modal')">Historial</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">@ana_bet</td>
+                <td>Personal</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2024-11-15</td>
+                <td><span class="badge revoked">Revoked</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="openModal('history-modal')">Historial</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table (Credit Buyers Tab) -->
+        <div class="table-container" id="table-credits" style="display: none;">
+          <table class="subscribers-table">
+            <thead>
+              <tr>
+                <th>Username</th>
+                <th>Señal Comprada</th>
+                <th>Créditos Pagados</th>
+                <th>Fecha Compra</th>
+                <th>Estado Acceso</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-weight: 600;">@buyer_123</td>
+                <td style="font-size: 13px;">Real Madrid vs Barcelona</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold);">5</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-09</td>
+                <td><span class="badge active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="viewSignal('sig_001')">Ver señal</button>
+                    <button class="btn-sm" onclick="viewPurchase('purch_001')">Ver compra</button>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td style="font-weight: 600;">@sports_fan</td>
+                <td style="font-size: 13px;">Lakers vs Celtics</td>
+                <td style="font-family: 'JetBrains Mono', monospace; color: var(--secondary-gold);">10</td>
+                <td style="font-size: 13px; color: var(--text-muted);">2026-02-08</td>
+                <td><span class="badge active">Active</span></td>
+                <td>
+                  <div class="action-btns">
+                    <button class="btn-sm" onclick="viewSignal('sig_002')">Ver señal</button>
+                    <button class="btn-sm" onclick="viewPurchase('purch_002')">Ver compra</button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Invite to Subscription -->
+  <div class="modal-overlay" id="invite-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Invitar a Suscripción</h2>
+        <button class="modal-close" onclick="closeModal('invite-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <input type="text" class="form-input" value="@juanperez" readonly>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Mensaje personalizado</label>
+          <input type="text" class="form-input" placeholder="Te invito a suscribirte a mi plan Pro...">
+        </div>
+        <button class="btn btn-primary" onclick="sendInvite()">Enviar Invitación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Extend Access -->
+  <div class="modal-overlay" id="extend-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Extender Acceso</h2>
+        <button class="modal-close" onclick="closeModal('extend-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Días a agregar</label>
+          <input type="number" class="form-input" value="30" min="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">O establecer fecha final</label>
+          <input type="date" class="form-input">
+        </div>
+        <button class="btn btn-primary" onclick="extendAccess()">Confirmar Extensión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Revoke Access -->
+  <div class="modal-overlay" id="revoke-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Revocar Acceso VIP</h2>
+        <button class="modal-close" onclick="closeModal('revoke-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Confirmación</div>
+            <div class="alert-text">¿Estás seguro de revocar el acceso VIP? Esta acción no se puede deshacer.</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="revokeAccess()">Confirmar Revocación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cancel Subscription -->
+  <div class="modal-overlay" id="cancel-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Cancelar Suscripción</h2>
+        <button class="modal-close" onclick="closeModal('cancel-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Confirmación</div>
+            <div class="alert-text">¿Cancelar la suscripción de este usuario? Perderá acceso al finalizar el período actual.</div>
+          </div>
+        </div>
+        <button class="btn btn-primary" onclick="cancelSubscription()">Confirmar Cancelación</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: View History -->
+  <div class="modal-overlay" id="history-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">Historial de Suscripciones</h2>
+        <button class="modal-close" onclick="closeModal('history-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="history-list">
+          <div class="history-item">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">Suscripción Pro</div>
+              <div class="history-date">2026-01-10 - 2026-02-10</div>
+            </div>
+            <span class="badge active">Active</span>
+          </div>
+          <div class="history-item">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">Suscripción Basic</div>
+              <div class="history-date">2025-12-10 - 2026-01-10</div>
+            </div>
+            <span class="badge expired">Expired</span>
+          </div>
+          <div class="history-item">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">Suscripción Basic</div>
+              <div class="history-date">2025-11-10 - 2025-12-10</div>
+            </div>
+            <span class="badge expired">Expired</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const tab = btn.dataset.tab;
+        
+        // Hide all tables
+        document.getElementById('table-followers').style.display = 'none';
+        document.getElementById('table-subscribers').style.display = 'none';
+        document.getElementById('table-vip').style.display = 'none';
+        document.getElementById('table-credits').style.display = 'none';
+        
+        // Show selected table
+        document.getElementById(`table-${tab}`).style.display = 'block';
+        
+        console.log('Tab changed to:', tab);
+      });
+    });
+
+    // Modal functions
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Action functions (mock)
+    function viewProfile(username) {
+      console.log('View profile:', username);
+      alert(`Ver perfil de ${username}`);
+    }
+
+    function sendInvite() {
+      console.log('Send invite');
+      alert('Invitación enviada');
+      closeModal('invite-modal');
+    }
+
+    function extendAccess() {
+      console.log('Extend access');
+      alert('Acceso extendido');
+      closeModal('extend-modal');
+    }
+
+    function revokeAccess() {
+      console.log('Revoke access');
+      alert('Acceso revocado');
+      closeModal('revoke-modal');
+    }
+
+    function cancelSubscription() {
+      console.log('Cancel subscription');
+      alert('Suscripción cancelada');
+      closeModal('cancel-modal');
+    }
+
+    function viewSignal(signalId) {
+      console.log('View signal:', signalId);
+      alert(`Ver señal ${signalId}`);
+    }
+
+    function viewPurchase(purchaseId) {
+      console.log('View purchase:', purchaseId);
+      alert(`Ver compra ${purchaseId}`);
+    }
+
+    function exportCsv() {
+      console.log('Export CSV');
+      alert('Exportando CSV...');
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768) {
+        const btn = document.createElement('button');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; margin-right: 12px;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.insertBefore(btn, topbar.firstChild);
+      }
+    });
+
+    console.log('Subscribers loaded');
+  </script>
+</body>
+</html>

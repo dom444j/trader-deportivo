@@ -1,0 +1,2297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Apuestas | Admin Panel</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --admin-primary: #f59e0b;
+      --admin-secondary: #d97706;
+      --admin-accent: #fbbf24;
+      --admin-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      --admin-glow: 0 0 20px rgba(245, 158, 11, 0.4);
+      --status-healthy: #00FF94;
+      --status-warn: #FFD700;
+      --status-degraded: #FF8C00;
+      --status-down: #FF4444;
+      --status-critical: #CC0000;
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --risk-low: #00FF94;
+      --risk-med: #FFD700;
+      --risk-high: #FF8C00;
+      --risk-critical: #FF4444;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+
+    .sidebar.sidebar-open {
+      transform: translateX(0);
+    }
+
+    @media (min-width: 769px) {
+      .sidebar {
+        transform: translateX(0) !important;
+      }
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(217, 119, 6, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--admin-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--admin-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15));
+      color: var(--admin-primary);
+      border-left: 3px solid var(--admin-primary);
+      box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    @media (min-width: 769px) {
+      .main-content {
+        margin-left: var(--sidebar-width);
+      }
+    }
+
+    /* CONTAINER SYSTEM */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* HEADER */
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      padding: 0 24px;
+    }
+
+    @media (max-width: 768px) {
+      .header-top {
+        padding: 0 16px;
+      }
+    }
+
+    .header-title-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text-primary);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: background 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      background: var(--bg-tertiary);
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+    }
+
+    .header-title {
+      font-size: 28px;
+      font-weight: 700;
+      background: var(--admin-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .header-subtitle {
+      font-size: 14px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--admin-gradient);
+      color: white;
+      box-shadow: var(--admin-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(245, 158, 11, 0.6);
+    }
+
+    .btn-secondary {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-color: var(--admin-primary);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--admin-primary);
+      border: 1px solid var(--admin-primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--admin-primary);
+      color: white;
+      box-shadow: var(--admin-glow);
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+    }
+
+    /* SELECTED BETS LIST */
+    .selected-bets-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+    }
+
+    .selected-bet-item {
+      padding: 8px 12px;
+      margin-bottom: 6px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: 'Rajdhani', monospace;
+      color: var(--text-primary);
+      border: 1px solid var(--border-secondary);
+    }
+
+    .selected-bet-item:last-child {
+      margin-bottom: 0;
+    }
+
+    /* CONTENT */
+    .content {
+      flex: 1;
+      padding: 24px 0;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        padding: 16px 0;
+      }
+    }
+
+    /* FILTERS PANEL - From Tipsters Pattern */
+    .filters-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .filters-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .filters-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .filters-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+    }
+
+    @media (max-width: 1200px) {
+      .filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      padding-bottom: 0;
+      padding: 0 24px;
+    }
+
+    @media (max-width: 768px) {
+      .tabs {
+        padding: 0 16px;
+      }
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .tab:hover {
+      color: var(--text-secondary);
+    }
+
+    .tab.active {
+      color: var(--admin-primary);
+      border-bottom-color: var(--admin-primary);
+    }
+
+    .tab.active::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--admin-gradient);
+      box-shadow: 0 0 10px var(--admin-primary);
+    }
+
+    /* FILTERS */
+    .filters {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 160px;
+    }
+
+    .filter-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .filter-input {
+      padding: 10px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s ease;
+    }
+
+    .filter-input:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 12px 10px 40px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    /* BULK ACTIONS */
+    .bulk-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding: 16px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border-primary);
+    }
+
+    .bulk-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .bulk-count {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .bulk-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border-primary);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th {
+      background: var(--bg-tertiary);
+      padding: 16px 12px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .table tbody tr {
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .table tbody tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .table tbody tr.selected {
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    /* STATES */
+    .loading-state, .empty-state, .error-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--text-muted);
+    }
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--border-primary);
+      border-top: 3px solid var(--admin-primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-elevated) 50%, var(--bg-tertiary) 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+      border-radius: 4px;
+    }
+
+    @keyframes loading {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* BADGES */
+    .badge {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .badge-status {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+    }
+
+    .badge-status.placed { background: rgba(0, 245, 255, 0.1); color: var(--primary-cyan); border-color: var(--primary-cyan); }
+    .badge-status.accepted { background: rgba(0, 255, 148, 0.1); color: var(--primary-green); border-color: var(--primary-green); }
+    .badge-status.rejected { background: rgba(255, 68, 68, 0.1); color: var(--secondary-red); border-color: var(--secondary-red); }
+    .badge-status.settled { background: rgba(136, 136, 168, 0.1); color: var(--text-muted); border-color: var(--text-muted); }
+    .badge-status.void { background: rgba(255, 140, 0, 0.1); color: var(--secondary-orange); border-color: var(--secondary-orange); }
+    .badge-status.cashout { background: rgba(255, 215, 0, 0.1); color: var(--secondary-gold); border-color: var(--secondary-gold); }
+
+    .badge-risk {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+
+    .badge-risk.low { background: rgba(0, 255, 148, 0.1); color: var(--risk-low); }
+    .badge-risk.med { background: rgba(255, 215, 0, 0.1); color: var(--risk-med); }
+    .badge-risk.high { background: rgba(255, 140, 0, 0.1); color: var(--risk-high); }
+    .badge-risk.critical { background: rgba(255, 68, 68, 0.1); color: var(--risk-critical); }
+
+    /* ACTIONS */
+    .action-btn {
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-primary);
+    }
+
+    .action-btn:hover {
+      background: var(--admin-primary);
+      color: white;
+      border-color: var(--admin-primary);
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* DRAWER */
+    .drawer {
+      position: fixed;
+      right: -600px;
+      top: 0;
+      width: 600px;
+      height: 100vh;
+      background: var(--bg-secondary);
+      border-left: 1px solid var(--border-primary);
+      z-index: 1000;
+      transition: right 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.open {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .drawer-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .drawer-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .drawer-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+
+    .drawer-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .drawer-tab {
+      padding: 8px 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .drawer-tab:hover {
+      color: var(--text-secondary);
+    }
+
+    .drawer-tab.active {
+      color: var(--admin-primary);
+      border-bottom-color: var(--admin-primary);
+    }
+
+    .drawer-panel {
+      display: none;
+    }
+
+    .drawer-panel.active {
+      display: block;
+    }
+
+    /* MODAL */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      border: 1px solid var(--border-primary);
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .modal-close:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .modal-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-primary);
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--admin-primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    /* PAGINATION */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+    }
+
+    .page-btn {
+      padding: 8px 12px;
+      border: 1px solid var(--border-primary);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 13px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .page-btn:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+      border-color: var(--admin-primary);
+    }
+
+    .page-btn.active {
+      background: var(--admin-primary);
+      color: white;
+      border-color: var(--admin-primary);
+    }
+
+    .page-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* OVERLAY */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+      display: none;
+    }
+
+    .overlay.open {
+      display: block;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .content {
+        padding: 16px;
+      }
+
+      .header {
+        padding: 16px;
+      }
+
+      .header-title {
+        font-size: 20px;
+      }
+
+      .filters {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-group {
+        min-width: auto;
+      }
+
+      .search-box {
+        min-width: auto;
+      }
+
+      .bulk-actions {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .bulk-buttons {
+        justify-content: center;
+      }
+
+      .table {
+        font-size: 12px;
+      }
+
+      .table th, .table td {
+        padding: 8px 6px;
+      }
+
+      .drawer {
+        width: 100%;
+        right: -100%;
+      }
+
+      .modal-content {
+        width: 95%;
+        margin: 20px;
+      }
+    }
+
+    /* UTILS */
+    .hidden {
+      display: none !important;
+    }
+
+    .text-center {
+      text-align: center;
+    }
+
+    .text-right {
+      text-align: right;
+    }
+
+    .text-muted {
+      color: var(--text-muted);
+    }
+
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .text-success {
+      color: var(--primary-green);
+    }
+
+    .text-danger {
+      color: var(--secondary-red);
+    }
+
+    .text-warning {
+      color: var(--secondary-gold);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Panel de Control</div>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Gestión</div>
+          <a href="#" class="nav-item active">
+            <span class="nav-icon">🎯</span>
+            <span>Apuestas</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Usuarios</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">⭐</span>
+            <span>Tipsters</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">📈</span>
+            <span>Señales</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Sistema</div>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Configuración</span>
+          </a>
+          <a href="#" class="nav-item">
+            <span class="nav-icon">🚪</span>
+            <span>Salir</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-top container">
+          <div class="header-title-section">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+            <div>
+              <h1 class="header-title">🎯 Apuestas (Admin)</h1>
+              <p class="header-subtitle">Ejecuciones, fallos, riesgo y auditoría</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-secondary" id="exportBtn">
+              <span>📥</span>
+              <span>Exportar</span>
+            </button>
+            <button class="btn btn-primary" id="refreshBtn">
+              <span>🔄</span>
+              <span>Refrescar</span>
+            </button>
+          </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="tabs container" id="mainTabs">
+          <button class="tab active" data-tab="overview">Overview</button>
+          <button class="tab" data-tab="executions">Executions</button>
+          <button class="tab" data-tab="failures">Failures</button>
+          <button class="tab" data-tab="risk">Risk</button>
+          <button class="tab" data-tab="providers">Providers</button>
+          <button class="tab" data-tab="disputes">Disputes</button>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <div class="content">
+        <!-- Filters Panel -->
+        <div class="container">
+          <div class="filters-panel" id="filters">
+            <div class="filters-header">
+              <h3 class="filters-title">Filtros de Apuestas</h3>
+            </div>
+            <div class="filters-grid">
+              <div class="filter-group">
+                <label class="filter-label">Buscar</label>
+                <input type="text" class="filter-input" id="searchInput" placeholder="ID, usuario, evento...">
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Estado</label>
+                <select class="filter-select" id="statusFilter">
+                  <option value="">Todos</option>
+                  <option value="placed">Placed</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="settled">Settled</option>
+                  <option value="void">Void</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Origen</label>
+                <select class="filter-select" id="sourceFilter">
+                  <option value="">Todos</option>
+                  <option value="agent">Agent</option>
+                  <option value="manual">Manual</option>
+                  <option value="api">API</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Deporte</label>
+                <select class="filter-select" id="sportFilter">
+                  <option value="">Todos</option>
+                  <option value="soccer">Fútbol</option>
+                  <option value="basketball">Baloncesto</option>
+                  <option value="tennis">Tenis</option>
+                </select>
+              </div>
+              <div class="filter-group">
+                <label class="filter-label">Nivel de Riesgo</label>
+                <select class="filter-select" id="riskFilter">
+                  <option value="">Todos</option>
+                  <option value="low">INFO</option>
+                  <option value="med">WARNING</option>
+                  <option value="high">RESTRICT</option>
+                  <option value="critical">LOCK</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bulk Actions -->
+        <div class="container">
+          <div class="bulk-actions" id="bulkActions" style="display: none;">
+            <div class="bulk-info">
+              <span class="bulk-count" id="bulkCount">0 seleccionados</span>
+            </div>
+            <div class="bulk-buttons">
+              <button class="btn btn-outline" id="bulkExportBtn">Exportar Seleccionados</button>
+              <button class="btn btn-secondary" id="bulkVoidBtn">Void Masivo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table Panel -->
+        <div class="container">
+          <div class="filters-panel">
+            <div class="filters-header">
+              <h3 class="filters-title">Todas las Apuestas</h3>
+            </div>
+            <div class="table-container">
+              <div id="tableState">
+                <!-- Loading State -->
+                <div class="loading-state" id="loadingState">
+                  <div class="loading-spinner"></div>
+                  <p>Cargando apuestas...</p>
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state hidden" id="emptyState">
+                  <p>📭 No se encontraron apuestas</p>
+                  <p class="text-muted">Intenta ajustar tus filtros</p>
+                </div>
+                
+                <!-- Error State -->
+                <div class="error-state hidden" id="errorState">
+                  <p>❌ Error al cargar apuestas</p>
+                  <p class="text-muted" id="errorMessage">Error desconocido</p>
+                  <button class="btn btn-primary" id="retryBtn">Reintentar</button>
+                </div>
+                
+                <!-- Table -->
+                <div id="tableContent" class="hidden">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th width="40">
+                          <input type="checkbox" id="selectAll">
+                        </th>
+                        <th>ID</th>
+                        <th>Usuario</th>
+                        <th>Evento</th>
+                        <th>Stake</th>
+                        <th>Cuota</th>
+                        <th>Estado</th>
+                        <th>Origen</th>
+                        <th>Riesgo</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                      <!-- Dynamic content -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="container">
+          <div class="pagination" id="pagination">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h2 class="drawer-title">Detalle de Apuesta</h2>
+      <button class="drawer-close" id="drawerClose">✕</button>
+    </div>
+    <div class="drawer-content">
+      <div class="drawer-tabs">
+        <button class="drawer-tab active" data-drawer-tab="overview">Overview</button>
+        <button class="drawer-tab" data-drawer-tab="traceability">Traceability</button>
+        <button class="drawer-tab" data-drawer-tab="risk">Risk & Bankroll</button>
+        <button class="drawer-tab" data-drawer-tab="providers">Provider Logs</button>
+        <button class="drawer-tab" data-drawer-tab="audit">Audit</button>
+      </div>
+      
+      <div class="drawer-panel active" id="overviewPanel">
+        <div id="overviewContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+      
+      <div class="drawer-panel" id="traceabilityPanel">
+        <div id="traceabilityContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+      
+      <div class="drawer-panel" id="riskPanel">
+        <div id="riskContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+      
+      <div class="drawer-panel" id="providersPanel">
+        <div id="providersContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+      
+      <div class="drawer-panel" id="auditPanel">
+        <div id="auditContent">
+          <!-- Dynamic content -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sidebar Overlay -->
+  <div class="overlay" id="sidebarOverlay"></div>
+  
+  <!-- Modal Overlay -->
+  <div class="overlay" id="modalOverlay"></div>
+
+  <!-- Retry Modal -->
+  <div class="modal" id="retryModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Reintentar Apuesta</h3>
+        <button class="modal-close" id="retryModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Motivo del Reintento</label>
+          <textarea class="form-textarea" id="retryReason" placeholder="Describe el motivo del reintento..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmación</label>
+          <p class="text-muted">Esta acción intentará procesar nuevamente la apuesta. ¿Estás seguro?</p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="retryCancel">Cancelar</button>
+        <button class="btn btn-primary" id="retryConfirm">Confirmar Reintento</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Void Modal -->
+  <div class="modal" id="voidModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Anular Apuesta</h3>
+        <button class="modal-close" id="voidModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Motivo de Anulación</label>
+          <textarea class="form-textarea" id="voidReason" placeholder="Describe el motivo de la anulación..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmación</label>
+          <input type="text" class="form-input" id="voidConfirmInput" placeholder="Escribe ANULAR para confirmar">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="voidCancel">Cancelar</button>
+        <button class="btn btn-danger" id="voidConfirmBtn" disabled>Anular Apuesta</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bulk Void Modal -->
+  <div class="modal" id="bulkVoidModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Anulación Masiva</h3>
+        <button class="modal-close" id="bulkVoidModalClose">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Apuestas Seleccionadas</label>
+          <div id="selectedBetsList" class="font-mono text-sm text-muted" style="max-height: 120px; overflow-y: auto;">
+            <!-- Dynamic content -->
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Motivo de Anulación</label>
+          <textarea class="form-textarea" id="bulkVoidReason" placeholder="Describe el motivo de la anulación masiva..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Confirmación</label>
+          <input type="text" class="form-input" id="bulkVoidConfirm" placeholder="Escribe ANULAR MASIVO para confirmar">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="bulkVoidCancel">Cancelar</button>
+        <button class="btn btn-danger" id="bulkVoidConfirmBtn" disabled>Anular Seleccionadas</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // API Configuration
+    const API_BASE_URL = '/api/admin/bets';
+    
+    // State Management
+    let currentState = {
+      page: 1,
+      limit: 20,
+      tab: 'overview',
+      filters: {
+        q: '',
+        status: '',
+        source: '',
+        sport: '',
+        risk: ''
+      },
+      selectedBets: new Set(),
+      currentBet: null,
+      isLoading: false
+    };
+
+    // Risk Level Mapping
+    const RISK_MAPPING = {
+      'INFO': 'low',
+      'WARNING': 'med', 
+      'RESTRICT': 'high',
+      'LOCK': 'critical'
+    };
+
+    // DOM Elements
+    const elements = {
+      sidebar: document.getElementById('sidebar'),
+      mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+      sidebarOverlay: document.getElementById('sidebarOverlay'),
+      modalOverlay: document.getElementById('modalOverlay'),
+      
+      // Main elements
+      mainTabs: document.getElementById('mainTabs'),
+      searchInput: document.getElementById('searchInput'),
+      statusFilter: document.getElementById('statusFilter'),
+      sourceFilter: document.getElementById('sourceFilter'),
+      sportFilter: document.getElementById('sportFilter'),
+      riskFilter: document.getElementById('riskFilter'),
+      
+      // Table elements
+      tableState: document.getElementById('tableState'),
+      loadingState: document.getElementById('loadingState'),
+      emptyState: document.getElementById('emptyState'),
+      errorState: document.getElementById('errorState'),
+      errorMessage: document.getElementById('errorMessage'),
+      retryBtn: document.getElementById('retryBtn'),
+      tableContent: document.getElementById('tableContent'),
+      tableBody: document.getElementById('tableBody'),
+      selectAll: document.getElementById('selectAll'),
+      
+      // Bulk actions
+      bulkActions: document.getElementById('bulkActions'),
+      bulkCount: document.getElementById('bulkCount'),
+      bulkExportBtn: document.getElementById('bulkExportBtn'),
+      bulkVoidBtn: document.getElementById('bulkVoidBtn'),
+      
+      // Pagination
+      pagination: document.getElementById('pagination'),
+      
+      // Drawer
+      drawer: document.getElementById('drawer'),
+      drawerClose: document.getElementById('drawerClose'),
+      drawerTabs: document.querySelectorAll('[data-drawer-tab]'),
+      
+      // Modals
+      retryModal: document.getElementById('retryModal'),
+      voidModal: document.getElementById('voidModal'),
+      bulkVoidModal: document.getElementById('bulkVoidModal'),
+      
+      // Action buttons
+      exportBtn: document.getElementById('exportBtn'),
+      refreshBtn: document.getElementById('refreshBtn')
+    };
+
+    // API Functions
+    async function fetchBets(params = {}) {
+      try {
+        const queryParams = new URLSearchParams({
+          page: currentState.page,
+          limit: currentState.limit,
+          tab: currentState.tab,
+          ...currentState.filters,
+          ...params
+        });
+        
+        // Simulate API call with timeout
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Mock data - Replace with real API call
+        const mockData = generateMockData(queryParams);
+        return mockData;
+      } catch (error) {
+        console.error('Error fetching bets:', error);
+        throw new Error('Failed to fetch bets');
+      }
+    }
+
+    function generateMockData(params) {
+      const page = parseInt(params.get('page') || '1');
+      const limit = parseInt(params.get('limit') || '20');
+      const tab = params.get('tab') || 'overview';
+      const status = params.get('status');
+      const risk = params.get('risk');
+      
+      const statuses = ['placed', 'accepted', 'rejected', 'settled', 'void', 'cashout'];
+      const sources = ['agent', 'manual', 'api'];
+      const sports = ['soccer', 'basketball', 'tennis'];
+      const risks = ['low', 'med', 'high', 'critical'];
+      
+      let filteredStatuses = statuses;
+      if (tab === 'executions') filteredStatuses = ['accepted', 'settled'];
+      if (tab === 'failures') filteredStatuses = ['rejected'];
+      if (tab === 'risk') filteredStatuses = ['placed', 'accepted'];
+      if (status) filteredStatuses = [status];
+      
+      if (risk) filteredStatuses = filteredStatuses.filter(s => 
+        (risk === 'low' && Math.random() > 0.7) ||
+        (risk === 'med' && Math.random() > 0.5) ||
+        (risk === 'high' && Math.random() > 0.3) ||
+        (risk === 'critical' && Math.random() > 0.1)
+      );
+      
+      const total = 150;
+      const totalPages = Math.ceil(total / limit);
+      
+      const bets = Array.from({ length: Math.min(limit, total - (page - 1) * limit) }, (_, i) => {
+        const id = (page - 1) * limit + i + 1;
+        const betStatus = filteredStatuses[Math.floor(Math.random() * filteredStatuses.length)];
+        const betRisk = risks[Math.floor(Math.random() * risks.length)];
+        
+        return {
+          id: `BET-${String(id).padStart(6, '0')}`,
+          user: `user${Math.floor(Math.random() * 100) + 1}`,
+          event: `Event ${Math.floor(Math.random() * 1000) + 1}`,
+          stake: (Math.random() * 1000 + 10).toFixed(2),
+          odds: (Math.random() * 5 + 1.1).toFixed(2),
+          status: betStatus,
+          source: sources[Math.floor(Math.random() * sources.length)],
+          sport: sports[Math.floor(Math.random() * sports.length)],
+          risk: betRisk,
+          created_at: new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000).toISOString(),
+          provider_bet_id: Math.random() > 0.3 ? `PB-${Math.floor(Math.random() * 100000)}` : null,
+          error_code: betStatus === 'rejected' ? ['PROVIDER_TIMEOUT', 'ODDS_CHANGED', 'INSUFFICIENT_FUNDS'][Math.floor(Math.random() * 3)] : null,
+          retry_count: betStatus === 'rejected' ? Math.floor(Math.random() * 3) : 0
+        };
+      });
+      
+      return {
+        data: bets,
+        meta: {
+          total,
+          page,
+          limit,
+          totalPages,
+          hasNext: page < totalPages,
+          hasPrev: page > 1
+        }
+      };
+    }
+
+    // Render Functions
+    function updateTableHeaders(type) {
+      const thead = document.querySelector('#tableContent thead tr');
+      if (!thead) return;
+      
+      if (type === 'providers') {
+        thead.innerHTML = `
+          <th width="40">
+            <input type="checkbox" id="selectAll">
+          </th>
+          <th>Proveedor</th>
+          <th>Estado</th>
+          <th>Latencia P95</th>
+          <th>Tasa Error</th>
+          <th>Límite Rate</th>
+          <th>Última Verificación</th>
+          <th>Acciones</th>
+        `;
+      } else {
+        thead.innerHTML = `
+          <th width="40">
+            <input type="checkbox" id="selectAll">
+          </th>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Evento</th>
+          <th>Stake</th>
+          <th>Cuota</th>
+          <th>Estado</th>
+          <th>Origen</th>
+          <th>Riesgo</th>
+          <th>Fecha</th>
+          <th>Acciones</th>
+        `;
+      }
+    }
+    
+    function renderTable(bets) {
+      if (!bets || bets.length === 0) {
+        showEmptyState();
+        return;
+      }
+      
+      // Handle providers tab differently
+      if (currentState.tab === 'providers') {
+        renderProvidersTable();
+        return;
+      }
+      
+      // Update table headers for regular bets
+      updateTableHeaders('bets');
+      
+      const html = bets.map(bet => `
+        <tr data-bet-id="${bet.id}">
+          <td>
+            <input type="checkbox" class="bet-checkbox" data-bet-id="${bet.id}">
+          </td>
+          <td class="font-mono">${bet.id}</td>
+          <td>${bet.user}</td>
+          <td>${bet.event}</td>
+          <td class="font-mono">$${bet.stake}</td>
+          <td class="font-mono">${bet.odds}</td>
+          <td>
+            <span class="badge badge-status ${bet.status}">${bet.status}</span>
+          </td>
+          <td>
+            <span class="badge badge-status">${bet.source}</span>
+          </td>
+          <td>
+            <span class="badge badge-risk ${bet.risk}">${bet.risk}</span>
+          </td>
+          <td class="font-mono">${new Date(bet.created_at).toLocaleDateString()}</td>
+          <td>
+            <div style="display: flex; gap: 4px;">
+              <button class="action-btn" onclick="openBetDrawer('${bet.id}')">Ver</button>
+              ${bet.status === 'rejected' && bet.retry_count < 3 ? 
+                `<button class="action-btn" onclick="openRetryModal('${bet.id}')">Reintentar</button>` : ''}
+              ${bet.status !== 'void' ? 
+                `<button class="action-btn" onclick="openVoidModal('${bet.id}')">Void</button>` : ''}
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      
+      elements.tableBody.innerHTML = html;
+      showTableContent();
+      
+      // Add row click handlers
+      document.querySelectorAll('[data-bet-id]').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (!e.target.closest('.action-btn') && !e.target.closest('input[type="checkbox"]')) {
+            const betId = row.dataset.betId;
+            openBetDrawer(betId);
+          }
+        });
+      });
+    }
+    
+    function renderProvidersTable() {
+      // Update table headers for providers
+      updateTableHeaders('providers');
+      
+      const providers = [
+        { name: 'Bet365', status: 'healthy', latency: 145, error_rate: 0.2, rate_limit: 1000, last_check: '2 min ago' },
+        { name: 'Pinnacle', status: 'healthy', latency: 98, error_rate: 0.1, rate_limit: 2000, last_check: '1 min ago' },
+        { name: 'BetFair', status: 'warning', latency: 234, error_rate: 1.2, rate_limit: 800, last_check: '3 min ago' },
+        { name: 'William Hill', status: 'healthy', latency: 167, error_rate: 0.3, rate_limit: 1200, last_check: '1 min ago' },
+        { name: '888Sport', status: 'error', latency: 512, error_rate: 5.8, rate_limit: 500, last_check: '5 min ago' }
+      ];
+      
+      const html = providers.map(provider => `
+        <tr data-provider="${provider.name}">
+          <td><strong>${provider.name}</strong></td>
+          <td>
+            <span class="badge badge-status ${provider.status}">${provider.status}</span>
+          </td>
+          <td class="font-mono">${provider.latency}ms</td>
+          <td class="font-mono">${provider.error_rate}%</td>
+          <td class="font-mono">${provider.rate_limit}/min</td>
+          <td>${provider.last_check}</td>
+          <td>
+            <div style="display: flex; gap: 4px;">
+              <button class="action-btn" onclick="alert('Ver detalles de ${provider.name}')">Ver</button>
+              <button class="action-btn" onclick="alert('Revisar conexión de ${provider.name}')">Revisar</button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+      
+      elements.tableBody.innerHTML = html;
+      showTableContent();
+      
+      // Add row click handlers for providers
+      document.querySelectorAll('[data-provider]').forEach(row => {
+        row.addEventListener('click', (e) => {
+          if (!e.target.closest('.action-btn')) {
+            const providerName = row.dataset.provider;
+            alert(`Ver detalles completos de ${providerName}`);
+          }
+        });
+      });
+    }
+
+    function renderPagination(meta) {
+      const { page, totalPages, hasNext, hasPrev } = meta;
+      
+      let html = '';
+      
+      // Previous button
+      html += `<button class="page-btn" ${!hasPrev ? 'disabled' : ''} onclick="changePage(${page - 1})">‹</button>`;
+      
+      // Page numbers
+      const startPage = Math.max(1, page - 2);
+      const endPage = Math.min(totalPages, page + 2);
+      
+      if (startPage > 1) {
+        html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+        if (startPage > 2) html += `<span class="page-btn disabled">...</span>`;
+      }
+      
+      for (let i = startPage; i <= endPage; i++) {
+        html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+      }
+      
+      if (endPage < totalPages) {
+        if (endPage < totalPages - 1) html += `<span class="page-btn disabled">...</span>`;
+        html += `<button class="page-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+      }
+      
+      // Next button
+      html += `<button class="page-btn" ${!hasNext ? 'disabled' : ''} onclick="changePage(${page + 1})">›</button>`;
+      
+      elements.pagination.innerHTML = html;
+    }
+
+    function updateBulkActions() {
+      const count = currentState.selectedBets.size;
+      
+      if (count > 0) {
+        elements.bulkActions.style.display = 'flex';
+        elements.bulkCount.textContent = `${count} seleccionado${count > 1 ? 's' : ''}`;
+      } else {
+        elements.bulkActions.style.display = 'none';
+      }
+      
+      // Update checkboxes
+      document.querySelectorAll('.bet-checkbox').forEach(checkbox => {
+        const betId = checkbox.dataset.betId;
+        checkbox.checked = currentState.selectedBets.has(betId);
+      });
+      
+      elements.selectAll.checked = count > 0 && count === document.querySelectorAll('.bet-checkbox').length;
+    }
+
+    // State Management Functions
+    function showLoadingState() {
+      elements.loadingState.classList.remove('hidden');
+      elements.emptyState.classList.add('hidden');
+      elements.errorState.classList.add('hidden');
+      elements.tableContent.classList.add('hidden');
+    }
+
+    function showEmptyState() {
+      elements.loadingState.classList.add('hidden');
+      elements.emptyState.classList.remove('hidden');
+      elements.errorState.classList.add('hidden');
+      elements.tableContent.classList.add('hidden');
+    }
+
+    function showErrorState(message) {
+      elements.loadingState.classList.add('hidden');
+      elements.emptyState.classList.add('hidden');
+      elements.errorState.classList.remove('hidden');
+      elements.tableContent.classList.add('hidden');
+      elements.errorMessage.textContent = message;
+    }
+
+    function showTableContent() {
+      elements.loadingState.classList.add('hidden');
+      elements.emptyState.classList.add('hidden');
+      elements.errorState.classList.add('hidden');
+      elements.tableContent.classList.remove('hidden');
+    }
+
+    // Load Data
+    async function loadData() {
+      if (currentState.isLoading) return;
+      
+      currentState.isLoading = true;
+      showLoadingState();
+      
+      try {
+        const response = await fetchBets();
+        currentState.lastData = response.data; // Store current data for export
+        renderTable(response.data);
+        renderPagination(response.meta);
+      } catch (error) {
+        showErrorState(error.message);
+      } finally {
+        currentState.isLoading = false;
+      }
+    }
+
+    // Event Handlers
+    function setupEventListeners() {
+      // Mobile menu
+      elements.mobileMenuBtn.addEventListener('click', () => {
+        elements.sidebar.classList.toggle('sidebar-open');
+        elements.sidebarOverlay.classList.toggle('open');
+      });
+      
+      // Sidebar overlay
+      elements.sidebarOverlay.addEventListener('click', () => {
+        elements.sidebar.classList.remove('sidebar-open');
+        elements.sidebarOverlay.classList.remove('open');
+      });
+      
+      // Modal overlay
+      elements.modalOverlay.addEventListener('click', closeAllModals);
+      
+      // Main tabs
+      elements.mainTabs.addEventListener('click', (e) => {
+        if (e.target.classList.contains('tab')) {
+          document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+          e.target.classList.add('active');
+          currentState.tab = e.target.dataset.tab;
+          currentState.page = 1;
+          loadData();
+        }
+      });
+      
+      // Filters
+      const filterElements = [elements.searchInput, elements.statusFilter, elements.sourceFilter, elements.sportFilter, elements.riskFilter];
+      filterElements.forEach(element => {
+        element.addEventListener('change', () => {
+          currentState.filters = {
+            q: elements.searchInput.value,
+            status: elements.statusFilter.value,
+            source: elements.sourceFilter.value,
+            sport: elements.sportFilter.value,
+            risk: elements.riskFilter.value
+          };
+          currentState.page = 1;
+          loadData();
+        });
+      });
+      
+      // Search input with debounce
+      let searchTimeout;
+      elements.searchInput.addEventListener('input', () => {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+          currentState.filters.q = elements.searchInput.value;
+          currentState.page = 1;
+          loadData();
+        }, 300);
+      });
+      
+      // Bulk actions
+      elements.selectAll.addEventListener('change', (e) => {
+        const checkboxes = document.querySelectorAll('.bet-checkbox');
+        checkboxes.forEach(checkbox => {
+          checkbox.checked = e.target.checked;
+          const betId = checkbox.dataset.betId;
+          if (e.target.checked) {
+            currentState.selectedBets.add(betId);
+          } else {
+            currentState.selectedBets.delete(betId);
+          }
+        });
+        updateBulkActions();
+      });
+      
+      // Individual checkboxes
+      elements.tableBody.addEventListener('change', (e) => {
+        if (e.target.classList.contains('bet-checkbox')) {
+          const betId = e.target.dataset.betId;
+          if (e.target.checked) {
+            currentState.selectedBets.add(betId);
+          } else {
+            currentState.selectedBets.delete(betId);
+          }
+          updateBulkActions();
+        }
+      });
+      
+      // Bulk buttons
+      elements.bulkExportBtn.addEventListener('click', exportSelectedBets);
+      elements.bulkVoidBtn.addEventListener('click', openBulkVoidModal);
+      
+      // Action buttons
+      elements.exportBtn.addEventListener('click', exportAllBets);
+      elements.refreshBtn.addEventListener('click', () => {
+        currentState.page = 1;
+        loadData();
+      });
+      
+      elements.retryBtn.addEventListener('click', loadData);
+      
+      // Drawer
+      elements.drawerClose.addEventListener('click', closeDrawer);
+      
+      // Drawer tabs
+      elements.drawerTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          document.querySelectorAll('.drawer-tab').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          
+          document.querySelectorAll('.drawer-panel').forEach(panel => {
+            panel.classList.remove('active');
+          });
+          
+          const panelId = tab.dataset.drawerTab + 'Panel';
+          document.getElementById(panelId).classList.add('active');
+        });
+      });
+      
+      // Modal handlers
+      document.getElementById('retryModalClose').addEventListener('click', () => closeModal('retryModal'));
+      document.getElementById('retryCancel').addEventListener('click', () => closeModal('retryModal'));
+      document.getElementById('retryConfirm').addEventListener('click', confirmRetry);
+      
+      document.getElementById('voidModalClose').addEventListener('click', () => closeModal('voidModal'));
+      document.getElementById('voidCancel').addEventListener('click', () => closeModal('voidModal'));
+      document.getElementById('voidConfirmBtn').addEventListener('click', confirmVoid);
+      
+      document.getElementById('bulkVoidModalClose').addEventListener('click', () => closeModal('bulkVoidModal'));
+      document.getElementById('bulkVoidCancel').addEventListener('click', () => closeModal('bulkVoidModal'));
+      document.getElementById('bulkVoidConfirmBtn').addEventListener('click', confirmBulkVoid);
+      
+      // Form validation
+      document.getElementById('voidConfirmInput').addEventListener('input', (e) => {
+        const confirmBtn = document.getElementById('voidConfirmBtn');
+        confirmBtn.disabled = e.target.value !== 'ANULAR';
+      });
+      
+      document.getElementById('bulkVoidConfirm').addEventListener('input', (e) => {
+        const confirmBtn = document.getElementById('bulkVoidConfirmBtn');
+        confirmBtn.disabled = e.target.value !== 'ANULAR MASIVO';
+      });
+      
+      // Keyboard shortcuts
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDrawer();
+          closeAllModals();
+          // Also close mobile sidebar
+          elements.sidebar.classList.remove('sidebar-open');
+          elements.sidebarOverlay.classList.remove('open');
+        }
+      });
+    }
+
+    // Modal Functions
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('open');
+      elements.modalOverlay.classList.add('open');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('open');
+      if (!document.querySelector('.modal.open')) {
+        elements.modalOverlay.classList.remove('open');
+      }
+      
+      // Reset forms
+      if (modalId === 'retryModal') {
+        document.getElementById('retryReason').value = '';
+      } else if (modalId === 'voidModal') {
+        document.getElementById('voidReason').value = '';
+        document.getElementById('voidConfirmInput').value = '';
+        document.getElementById('voidConfirmBtn').disabled = true;
+      } else if (modalId === 'bulkVoidModal') {
+        document.getElementById('bulkVoidReason').value = '';
+        document.getElementById('bulkVoidConfirm').value = '';
+        document.getElementById('bulkVoidConfirmBtn').disabled = true;
+      }
+    }
+
+    function closeDrawer() {
+      elements.drawer.classList.remove('open');
+      elements.sidebarOverlay.classList.remove('open');
+      currentState.currentBet = null;
+    }
+
+    function closeAllModals() {
+      document.querySelectorAll('.modal').forEach(modal => {
+        modal.classList.remove('open');
+      });
+      elements.modalOverlay.classList.remove('open');
+    }
+
+    // Drawer Functions
+    function openBetDrawer(betId) {
+      currentState.currentBet = betId;
+      
+      // Reset to first tab
+      document.querySelectorAll('.drawer-tab').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.drawer-panel').forEach(panel => panel.classList.remove('active'));
+      document.querySelector('[data-drawer-tab="overview"]').classList.add('active');
+      document.getElementById('overviewPanel').classList.add('active');
+      
+      // Load bet data
+      loadBetData(betId);
+      
+      elements.drawer.classList.add('open');
+    }
+
+    function closeDrawer() {
+      elements.drawer.classList.remove('open');
+      currentState.currentBet = null;
+    }
+
+    function loadBetData(betId) {
+      // Mock bet data
+      const betData = {
+        id: betId,
+        user: 'user123',
+        event: 'Real Madrid vs Barcelona',
+        stake: '100.00',
+        odds: '2.50',
+        status: 'accepted',
+        source: 'agent',
+        sport: 'soccer',
+        risk: 'low',
+        created_at: '2024-01-15T10:30:00Z',
+        provider_bet_id: 'PB-12345',
+        error_code: null,
+        retry_count: 0
+      };
+      
+      // Render overview
+      document.getElementById('overviewContent').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">ID de Apuesta</label>
+          <p class="font-mono">${betData.id}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Usuario</label>
+          <p>${betData.user}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Evento</label>
+          <p>${betData.event}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Stake</label>
+          <p class="font-mono">$${betData.stake}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cuota</label>
+          <p class="font-mono">${betData.odds}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Estado</label>
+          <span class="badge badge-status ${betData.status}">${betData.status}</span>
+        </div>
+      `;
+      
+      // Render other tabs
+      document.getElementById('traceabilityContent').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Provider Bet ID</label>
+          <p class="font-mono">${betData.provider_bet_id}</p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Retry Count</label>
+          <p>${betData.retry_count}</p>
+        </div>
+      `;
+      
+      document.getElementById('riskContent').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Risk Level</label>
+          <span class="badge badge-risk ${betData.risk}">${betData.risk}</span>
+        </div>
+      `;
+      
+      document.getElementById('providersContent').innerHTML = `
+        <div class="provider-logs">
+          <h4>Provider Logs</h4>
+          <div class="log-entry">
+            <div class="log-time">${new Date().toLocaleTimeString()}</div>
+            <div class="log-level info">INFO</div>
+            <div class="log-message">Provider responded with odds update</div>
+          </div>
+          <div class="log-entry">
+            <div class="log-time">${new Date(Date.now() - 5000).toLocaleTimeString()}</div>
+            <div class="log-level warning">WARN</div>
+            <div class="log-message">Latency spike detected: ${Math.floor(Math.random() * 200 + 50)}ms</div>
+          </div>
+        </div>
+      `;
+      
+      document.getElementById('auditContent').innerHTML = `
+        <div class="form-group">
+          <label class="form-label">Created At</label>
+          <p>${betData.created_at}</p>
+        </div>
+      `;
+    }
+
+    // Action Functions
+    function openRetryModal(betId) {
+      currentState.currentBet = betId;
+      openModal('retryModal');
+    }
+
+    function openVoidModal(betId) {
+      currentState.currentBet = betId;
+      openModal('voidModal');
+    }
+
+    function openBulkVoidModal() {
+      if (currentState.selectedBets.size === 0) {
+        alert('Por favor selecciona al menos una apuesta');
+        return;
+      }
+      
+      // Update modal content with selected bet IDs
+      const selectedBetsList = document.getElementById('selectedBetsList');
+      selectedBetsList.innerHTML = Array.from(currentState.selectedBets).map(id => 
+        `<div class="selected-bet-item">Apuesta #${id}</div>`
+      ).join('');
+      
+      openModal('bulkVoidModal');
+    }
+
+    function confirmRetry() {
+      const reason = document.getElementById('retryReason').value;
+      if (!reason.trim()) {
+        alert('Por favor ingresa un motivo');
+        return;
+      }
+      
+      console.log('Retry bet:', currentState.currentBet, 'Reason:', reason);
+      closeModal('retryModal');
+      alert('Reintento iniciado');
+      loadData();
+    }
+
+    function confirmVoid() {
+      const reason = document.getElementById('voidReason').value;
+      const confirm = document.getElementById('voidConfirmInput').value;
+      
+      if (!reason.trim()) {
+        alert('Por favor ingresa un motivo');
+        return;
+      }
+      
+      if (confirm !== 'ANULAR') {
+        alert('Por favor escribe ANULAR para confirmar');
+        return;
+      }
+      
+      console.log('Void bet:', currentState.currentBet, 'Reason:', reason);
+      closeModal('voidModal');
+      alert('Apuesta anulada');
+      loadData();
+    }
+
+    function confirmBulkVoid() {
+      const reason = document.getElementById('bulkVoidReason').value;
+      const confirm = document.getElementById('bulkVoidConfirm').value;
+      
+      if (!reason.trim()) {
+        alert('Por favor ingresa un motivo');
+        return;
+      }
+      
+      if (confirm !== 'ANULAR MASIVO') {
+        alert('Por favor escribe ANULAR MASIVO para confirmar');
+        return;
+      }
+      
+      console.log('Bulk void:', Array.from(currentState.selectedBets), 'Reason:', reason);
+      closeModal('bulkVoidModal');
+      alert(`${currentState.selectedBets.size} apuestas anuladas`);
+      currentState.selectedBets.clear();
+      loadData();
+    }
+
+    function exportAllBets() {
+      if (!currentState.lastData || currentState.lastData.length === 0) {
+        alert('No hay datos para exportar');
+        return;
+      }
+      
+      const csv = convertToCSV(currentState.lastData);
+      downloadCSV(csv, 'bets-export.csv');
+    }
+
+    function exportSelectedBets() {
+      if (currentState.selectedBets.size === 0) {
+        alert('Por favor selecciona al menos una apuesta');
+        return;
+      }
+      
+      const selectedBets = currentState.lastData.filter(bet => 
+        currentState.selectedBets.has(bet.id)
+      );
+      
+      const csv = convertToCSV(selectedBets);
+      downloadCSV(csv, 'bets-selected-export.csv');
+    }
+
+    function convertToCSV(bets) {
+      const headers = ['ID', 'Usuario', 'Evento', 'Stake', 'Cuota', 'Estado', 'Riesgo', 'Creado'];
+      const rows = bets.map(bet => [
+        bet.id,
+        bet.user,
+        bet.event,
+        bet.stake,
+        bet.odds,
+        bet.status,
+        bet.risk,
+        bet.created_at
+      ]);
+      
+      return [headers, ...rows].map(row => row.join(',')).join('\n');
+    }
+
+    function downloadCSV(csv, filename) {
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    }
+
+    function changePage(page) {
+      currentState.page = page;
+      loadData();
+    }
+
+    // Initialize App
+    function initializeApp() {
+      // Load initial data
+      loadData();
+      
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Initialize UI state
+      updateBulkActions();
+      
+      console.log('Admin Bets Panel initialized');
+    }
+
+    // Initialize
+    initializeApp();
+  </script>
+</body>
+</html>
+    

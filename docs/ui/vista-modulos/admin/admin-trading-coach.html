@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trading Coach AI - Panel de Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles/admin.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-chart-line"></i> Admin Panel</h4>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="/admin/users"><i class="fas fa-users"></i> Usuarios</a></li>
+            <li><a href="/admin/tipsters"><i class="fas fa-user-tie"></i> Tipsters</a></li>
+            <li><a href="/admin/signals"><i class="fas fa-signal"></i> Señales</a></li>
+            <li><a href="/admin/bets"><i class="fas fa-coins"></i> Apuestas</a></li>
+            <li><a href="/admin/subscriptions"><i class="fas fa-credit-card"></i> Suscripciones</a></li>
+            <li><a href="/admin/credits"><i class="fas fa-coins"></i> Créditos</a></li>
+            <li><a href="/admin/referrals"><i class="fas fa-share-alt"></i> Referidos</a></li>
+            <li><a href="/admin/community"><i class="fas fa-comments"></i> Comunidad</a></li>
+            <li><a href="/admin/support"><i class="fas fa-headset"></i> Soporte</a></li>
+            <li><a href="/admin/alerts"><i class="fas fa-bell"></i> Alertas</a></li>
+            <li><a href="/admin/compliance"><i class="fas fa-shield-alt"></i> Compliance</a></li>
+            <li><a href="/admin/finance"><i class="fas fa-dollar-sign"></i> Finanzas</a></li>
+            <li><a href="/admin/audit"><i class="fas fa-search"></i> Auditoría</a></li>
+            <li><a href="/admin/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+            <li class="active"><a href="/admin/trading-coach"><i class="fas fa-robot"></i> Trading Coach</a></li>
+            <li><a href="/admin/risk-guard"><i class="fas fa-shield-alt"></i> Risk Guard</a></li>
+            <li><a href="/admin/agents-hub"><i class="fas fa-network-wired"></i> Agents Hub</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-robot"></i> Trading Coach AI</h2>
+                <div class="user-info">
+                    <span class="me-3">Admin User</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="container-fluid">
+            <!-- Quick Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-robot fa-2x text-primary mb-2"></i>
+                            <h5>Coach Activo</h5>
+                            <h3 class="text-primary">1,247</h3>
+                            <small class="text-success">Usuarios activos</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-comments fa-2x text-info mb-2"></i>
+                            <h5>Interacciones Hoy</h5>
+                            <h3 class="text-info">3,892</h3>
+                            <small class="text-success">+15.2% vs ayer</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-lightbulb fa-2x text-warning mb-2"></i>
+                            <h5>Consejos Dados</h5>
+                            <h3 class="text-warning">847</h3>
+                            <small class="text-success">Tasa: 21.8%</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shield-alt fa-2x text-success mb-2"></i>
+                            <h5>Alertas Preventivas</h5>
+                            <h3 class="text-success">156</h3>
+                            <small class="text-danger">-8.3% vs ayer</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" id="coachTabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#dashboard">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#users">
+                                        <i class="fas fa-users"></i> Usuarios
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#coaching">
+                                        <i class="fas fa-chalkboard-teacher"></i> Coaching
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#alerts">
+                                        <i class="fas fa-bell"></i> Alertas
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#config">
+                                        <i class="fas fa-cog"></i> Configuración
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="dashboard">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Efectividad del Coach</h6>
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>Mejora en Win Rate</span>
+                                                        <strong class="text-success">+18.3%</strong>
+                                                    </div>
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar bg-success" style="width: 73%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span>Reducción de Pérdidas</span>
+                                                        <strong class="text-success">-24.7%</strong>
+                                                    </div>
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar bg-info" style="width: 82%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span>Satisfacción del Usuario</span>
+                                                        <strong class="text-warning">4.2/5</strong>
+                                                    </div>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-warning" style="width: 84%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Tipos de Coaching Más Usados</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Tipo</th>
+                                                            <th>Usos</th>
+                                                            <th>Efectividad</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td><i class="fas fa-brain text-primary"></i> Análisis Psicológico</td>
+                                                            <td>847</td>
+                                                            <td><span class="badge bg-success">78%</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-chart-line text-info"></i> Gestión de Riesgo</td>
+                                                            <td>623</td>
+                                                            <td><span class="badge bg-success">82%</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-target text-warning"></i> Estrategia Personal</td>
+                                                            <td>534</td>
+                                                            <td><span class="badge bg-warning">65%</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><i class="fas fa-clock text-danger"></i> Timing de Entrada</td>
+                                                            <td>392</td>
+                                                            <td><span class="badge bg-success">71%</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="users">
+                                    <h6>Usuarios con Coach Activo</h6>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Usuario</th>
+                                                    <th>Nivel</th>
+                                                    <th>Tipo Coach</th>
+                                                    <th>Interacciones</th>
+                                                    <th>Progreso</th>
+                                                    <th>Estado</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>trader_pro_2024</td>
+                                                    <td><span class="badge bg-success">Avanzado</span></td>
+                                                    <td><i class="fas fa-robot text-primary"></i> AI Avanzado</td>
+                                                    <td>47</td>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar bg-success" style="width: 85%">85%</div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-success">Activo</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>newbie_bet</td>
+                                                    <td><span class="badge bg-warning">Principiante</span></td>
+                                                    <td><i class="fas fa-user text-info"></i> Humano</td>
+                                                    <td>23</td>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar bg-info" style="width: 45%">45%</div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-warning">En Pausa</span></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>crypto_master</td>
+                                                    <td><span class="badge bg-primary">Intermedio</span></td>
+                                                    <td><i class="fas fa-robot text-primary"></i> AI Híbrido</td>
+                                                    <td>67</td>
+                                                    <td>
+                                                        <div class="progress" style="height: 20px;">
+                                                            <div class="progress-bar bg-primary" style="width: 72%">72%</div>
+                                                        </div>
+                                                    </td>
+                                                    <td><span class="badge bg-success">Activo</span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="coaching">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <h6>Sesiones de Coaching Activas</h6>
+                                            <div class="card mb-3">
+                                                <div class="card-header bg-primary text-white">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-robot"></i> Sesión AI - Gestión Emocional</span>
+                                                        <span class="badge bg-light text-dark">En Progreso</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><strong>Usuario:</strong> trader_emotional</p>
+                                                    <p><strong>Problema:</strong> Tendencia a aumentar stakes después de pérdidas</p>
+                                                    <p><strong>Recomendación AI:</strong> Implementar límite diario de pérdidas del 5% del bankroll</p>
+                                                    <div class="mt-3">
+                                                        <button class="btn btn-sm btn-success me-2">Aprobar</button>
+                                                        <button class="btn btn-sm btn-warning me-2">Modificar</button>
+                                                        <button class="btn btn-sm btn-danger">Rechazar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card">
+                                                <div class="card-header bg-info text-white">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span><i class="fas fa-user"></i> Sesión Humana - Estrategia de Entrada</span>
+                                                        <span class="badge bg-light text-dark">Esperando Revisión</span>
+                                                    </div>
+                                                </div>
+                                                <div class="card-body">
+                                                    <p><strong>Usuario:</strong> strategic_better</p>
+                                                    <p><strong>Objetivo:</strong> Mejorar timing de entradas en live betting</p>
+                                                    <p><strong>Coach Asignado:</strong> Carlos Rodriguez</p>
+                                                    <p><strong>Notas:</strong> El usuario muestra buena comprensión pero necesita práctica en timing</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <h6>Plantillas de Coaching</h6>
+                                            <div class="list-group">
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <i class="fas fa-brain text-primary"></i> Control Emocional
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <i class="fas fa-chart-line text-info"></i> Gestión de Bankroll
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <i class="fas fa-target text-warning"></i> Análisis de Partidos
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <i class="fas fa-clock text-danger"></i> Timing de Entradas
+                                                </a>
+                                                <a href="#" class="list-group-item list-group-item-action">
+                                                    <i class="fas fa-graduation-cap text-success"></i> Desarrollo de Estrategia
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="alerts">
+                                    <h6>Alertas del Sistema</h6>
+                                    <div class="alert alert-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                        <strong>Comportamiento de Riesgo Detectado:</strong> 3 usuarios muestran patrones de apuesta compulsiva
+                                    </div>
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i>
+                                        <strong>Recomendación Pendiente:</strong> 12 usuarios necesitan revisión de estrategia
+                                    </div>
+                                    <div class="alert alert-success">
+                                        <i class="fas fa-check-circle"></i>
+                                        <strong>Éxito del Coach:</strong> 5 usuarios mejoraron su win rate >15% este mes
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="config">
+                                    <h6>Configuración del Coach AI</h6>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Parámetros de Intervención</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label>Umbral de Pérdidas Diarias (%)</label>
+                                                        <input type="range" class="form-range" min="1" max="20" value="5">
+                                                        <small class="text-muted">Actual: 5%</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Máximo Stake Incremento (%)</label>
+                                                        <input type="range" class="form-range" min="10" max="100" value="25">
+                                                        <small class="text-muted">Actual: 25%</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Frecuencia de Revisión (días)</label>
+                                                        <select class="form-select">
+                                                            <option>Diario</option>
+                                                            <option selected>Semanal</option>
+                                                            <option>Quincenal</option>
+                                                            <option>Mensual</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Preferencias de Usuario</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <label class="form-check-label">Activar Coach Automático</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <label class="form-check-label">Alertas de Riesgo</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox">
+                                                        <label class="form-check-label">Coach Humano Preferido</label>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Nivel de Intervención</label>
+                                                        <select class="form-select">
+                                                            <option>Bajo</option>
+                                                            <option selected>Medio</option>
+                                                            <option>Alto</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

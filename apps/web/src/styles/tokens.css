@@ -1,0 +1,55 @@
+/* CSS Variables - Design Tokens */
+
+:root {
+  /* Primary */
+  --primary-cyan: #00F5FF;
+  --primary-cyan-light: #33F7FF;
+  --primary-cyan-dark: #00C4D4;
+  --primary-green: #00FF94;
+  --primary-green-light: #33FFB0;
+  --primary-green-dark: #00D970;
+  --primary-blue: #0066FF;
+  --primary-blue-light: #3385FF;
+  --primary-blue-dark: #0052CC;
+
+  /* Secondary */
+  --secondary-gold: #FFD700;
+  --secondary-gold-light: #FFED4E;
+  --secondary-gold-dark: #FFA500;
+  --secondary-purple: #B026FF;
+  --secondary-purple-light: #C44FFF;
+  --secondary-purple-dark: #7000CC;
+  --secondary-red: #FF4444;
+  --secondary-red-light: #FF6B6B;
+  --secondary-red-dark: #CC0000;
+
+  /* Backgrounds Dark */
+  --bg-primary: #0A0A1A;
+  --bg-secondary: #141428;
+  --bg-tertiary: #1E1E38;
+  --bg-elevated: #252545;
+
+  /* Borders */
+  --border-primary: #2A2A4A;
+  --border-secondary: #3A3A5A;
+  --border-hover: #4A4A6A;
+
+  /* Text Dark */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B8B8D0;
+  --text-tertiary: #8888A8;
+  --text-muted: #5A5A78;
+
+  /* Effects */
+  --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+  --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+  --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --gradient-ai: linear-gradient(135deg, #B026FF 0%, #7000CC 100%);
+  --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
+  --glow-green: 0 0 20px rgba(0, 255, 148, 0.4), 0 0 40px rgba(0, 255, 148, 0.2);
+  --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+
+  /* Additional tokens for auth */
+  --bg-surface: rgba(20, 20, 40, 0.8);
+  --radius-lg: 16px;
+}

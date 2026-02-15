@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notificaciones | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+      
+      /* Notification colors */
+      --notif-trading: #10b981;
+      --notif-account: #f59e0b;
+      --notif-finance: #fbbf24;
+      --notif-system: #3b82f6;
+      --notif-discipline: #a855f7;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Notification Bell in Topbar */
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .bell-container {
+      position: relative;
+    }
+
+    .bell-button {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .bell-button:hover {
+      background: var(--bg-elevated);
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .bell-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      min-width: 20px;
+      height: 20px;
+      background: var(--secondary-red);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 0 6px;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* Notification Panel Dropdown */
+    .notification-panel {
+      position: absolute;
+      top: 60px;
+      right: 0;
+      width: 420px;
+      max-height: 600px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      display: none;
+      flex-direction: column;
+      z-index: 1000;
+      animation: slideDown 0.3s ease;
+    }
+
+    .notification-panel.active {
+      display: flex;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .panel-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .panel-title {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .mark-read-btn {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .mark-read-btn:hover {
+      background: var(--bg-elevated);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .panel-filters {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .panel-notifications {
+      flex: 1;
+      overflow-y: auto;
+      max-height: 400px;
+    }
+
+    .notification-item {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    .notification-item:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .notification-item.unread {
+      background: rgba(0, 245, 255, 0.05);
+      border-left: 3px solid var(--primary-cyan);
+    }
+
+    .notif-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .notif-icon.trading {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--notif-trading);
+    }
+
+    .notif-icon.account {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--notif-account);
+    }
+
+    .notif-icon.finance {
+      background: rgba(251, 191, 36, 0.15);
+      color: var(--notif-finance);
+    }
+
+    .notif-icon.system {
+      background: rgba(59, 130, 246, 0.15);
+      color: var(--notif-system);
+    }
+
+    .notif-icon.discipline {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--notif-discipline);
+    }
+
+    .notif-content {
+      flex: 1;
+    }
+
+    .notif-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .notif-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+
+    .notif-time {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .notif-arrow {
+      font-size: 16px;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .unread-indicator {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 8px;
+      height: 8px;
+      background: var(--primary-cyan);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(0, 245, 255, 0.5);
+    }
+
+    .panel-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .footer-link {
+      padding: 10px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: block;
+    }
+
+    .footer-link:hover {
+      background: var(--bg-elevated);
+      color: var(--primary-cyan);
+    }
+
+    /* Empty State */
+    .empty-state {
+      padding: 60px 20px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    .empty-text {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .empty-description {
+      font-size: 13px;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    .notifications-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Notification List (Full Page) */
+    .notification-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .notification-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .notification-card:hover {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .notification-card.unread {
+      background: rgba(0, 245, 255, 0.03);
+      border-left: 4px solid var(--primary-cyan);
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding: 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .filter-tab {
+      padding: 10px 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-tab.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .filter-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .notification-panel {
+        width: 100%;
+        max-width: 100vw;
+        right: 0;
+        left: 0;
+        border-radius: 0;
+        top: 70px;
+        max-height: calc(100vh - 70px);
+      }
+
+      .notification-card {
+        flex-direction: column;
+      }
+
+      .filter-bar {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+      }
+
+      .filter-tabs {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+      }
+
+      .filter-tab {
+        white-space: nowrap;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/referidos" class="nav-item">
+            <span class="nav-icon">🔗</span>
+            <span>Referidos</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/coach" class="nav-item">
+            <span class="nav-icon">🎓</span>
+            <span>Trading Coach</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Usuario</div>
+          <a href="/notifications" class="nav-item active">
+            <span class="nav-icon">🔔</span>
+            <span>Notificaciones</span>
+          </a>
+          <a href="/settings" class="nav-item">
+            <span class="nav-icon">⚙️</span>
+            <span>Configurar</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">🔔 Notificaciones</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Notificaciones</span>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <!-- Bell Notification -->
+          <div class="bell-container">
+            <div class="bell-button" onclick="toggleNotificationPanel()">
+              🔔
+              <span class="bell-badge">5</span>
+            </div>
+
+            <!-- Notification Panel Dropdown -->
+            <div class="notification-panel" id="notification-panel">
+              <div class="panel-header">
+                <div class="panel-title">
+                  <span>🔔</span>
+                  <span>Notificaciones</span>
+                </div>
+                <button class="mark-read-btn" onclick="markAllAsRead()">
+                  ✓ Marcar todas
+                </button>
+              </div>
+
+              <div class="panel-filters">
+                <button class="filter-btn active" onclick="filterNotifications('all', this)">Todas</button>
+                <button class="filter-btn" onclick="filterNotifications('unread', this)">No leídas</button>
+              </div>
+
+              <div class="panel-notifications">
+                <!-- Notification 1 -->
+                <div class="notification-item unread" onclick="goToNotification('/signals')">
+                  <div class="notif-icon trading">📈</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Nueva señal disponible</div>
+                    <div class="notif-description">Champions League - Real Madrid vs Liverpool. Odds: 2.10</div>
+                    <div class="notif-time">Hace 5 minutos</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                  <div class="unread-indicator"></div>
+                </div>
+
+                <!-- Notification 2 -->
+                <div class="notification-item unread" onclick="goToNotification('/referidos')">
+                  <div class="notif-icon finance">💰</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Pool semanal ejecutado</div>
+                    <div class="notif-description">Has recibido $42.50 en bolsas R4+. Ver desglose.</div>
+                    <div class="notif-time">Hace 2 horas</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                  <div class="unread-indicator"></div>
+                </div>
+
+                <!-- Notification 3 -->
+                <div class="notification-item" onclick="goToNotification('/settings#security')">
+                  <div class="notif-icon account">🔐</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Inicio de sesión desde nuevo dispositivo</div>
+                    <div class="notif-description">Chrome/Windows - Bogotá, Colombia. Si no fuiste tú, asegura tu cuenta.</div>
+                    <div class="notif-time">Hace 1 día</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                </div>
+
+                <!-- Notification 4 -->
+                <div class="notification-item unread" onclick="goToNotification('/coach')">
+                  <div class="notif-icon discipline">🧠</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Alerta del Coach: Stake excesivo</div>
+                    <div class="notif-description">Tu último pick supera el stake máximo configurado ($50). Revisa tu plan.</div>
+                    <div class="notif-time">Hace 3 horas</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                  <div class="unread-indicator"></div>
+                </div>
+
+                <!-- Notification 5 -->
+                <div class="notification-item" onclick="goToNotification('/settings')">
+                  <div class="notif-icon system">⚙️</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Mantenimiento programado</div>
+                    <div class="notif-description">El sistema estará en mantenimiento mañana de 2:00 AM a 4:00 AM.</div>
+                    <div class="notif-time">Hace 2 días</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                </div>
+
+                <!-- Notification 6 -->
+                <div class="notification-item unread" onclick="goToNotification('/referidos')">
+                  <div class="notif-icon finance">💰</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Comisión directa generada</div>
+                    <div class="notif-description">Nuevo referido compró Plan Pro. Has ganado $12.99 (10%).</div>
+                    <div class="notif-time">Hace 4 horas</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                  <div class="unread-indicator"></div>
+                </div>
+
+                <!-- Notification 7 -->
+                <div class="notification-item" onclick="goToNotification('/watchlist')">
+                  <div class="notif-icon trading">📈</div>
+                  <div class="notif-content">
+                    <div class="notif-title">Pick resuelto: Ganaste</div>
+                    <div class="notif-description">Real Madrid vs Barcelona - Over 2.5 ✅ Ganancia: +$25.00</div>
+                    <div class="notif-time">Hace 1 día</div>
+                  </div>
+                  <div class="notif-arrow">→</div>
+                </div>
+              </div>
+
+              <div class="panel-footer">
+                <a href="/notifications" class="footer-link">Ver todas las notificaciones</a>
+                <a href="/settings#notifications" class="footer-link">Configurar notificaciones</a>
+
+              </div>
+            </div>
+            <div id="empty-fullpage" class="empty-state" style="display: none;">
+              <div class="empty-icon">🔍</div>
+              <div class="empty-text">No hay resultados</div>
+              <div class="empty-description">Prueba cambiar los filtros para ver otras notificaciones.</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <div class="notifications-container">
+          <!-- Filter Bar -->
+          <div class="filter-bar">
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="filterFullPage('all', this)">
+                <span>Todas</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('unread', this)">
+                <span>No leídas (5)</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('trading', this)">
+                <span>📈 Trading</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('finance', this)">
+                <span>💰 Finanzas</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('account', this)">
+                <span>🔐 Cuenta</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('system', this)">
+                <span>⚙️ Sistema</span>
+              </button>
+              <button class="filter-tab" onclick="filterFullPage('discipline', this)">
+                <span>🧠 Disciplina</span>
+              </button>
+            </div>
+
+            <div class="filter-actions">
+              <button class="btn btn-outline" onclick="markAllAsRead()">
+                <span>✓</span>
+                <span>Marcar todas leídas</span>
+              </button>
+              <a href="/settings#notifications" class="btn btn-primary">
+                <span>⚙️</span>
+                <span>Configurar</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Notification List -->
+          <div class="notification-list">
+            <!-- Notification Card 1 -->
+            <div class="notification-card unread" data-category="trading" data-read="false">
+              <div class="notif-icon trading">📈</div>
+              <div class="notif-content">
+                <div class="notif-title">Nueva señal disponible</div>
+                <div class="notif-description">
+                  Champions League - Real Madrid vs Liverpool<br>
+                  Mercado: Over 2.5 goles | Odds: 2.10 | Stake recomendado: 2%<br>
+                  Análisis: Ambos equipos en racha ofensiva, últimos 5 partidos promedio 3.2 goles.
+                </div>
+                <div class="notif-time">Hace 5 minutos • 2026-02-09 14:32</div>
+              </div>
+              <button class="btn btn-primary" onclick="goToNotification('/signals')">
+                <span>Ver señal</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 2 -->
+            <div class="notification-card unread" data-category="finance" data-read="false">
+              <div class="notif-icon finance">💰</div>
+              <div class="notif-content">
+                <div class="notif-title">Pool semanal ejecutado (2026-W06)</div>
+                <div class="notif-description">
+                  Has recibido $42.50 en el pool semanal<br>
+                  Desglose: R4 ($12.75) + R5 ($10.63) + R6 ($10.63) + R7 ($8.49)<br>
+                  Total acumulado en el mes: $180.20
+                </div>
+                <div class="notif-time">Hace 2 horas • 2026-02-09 12:00</div>
+              </div>
+              <button class="btn btn-primary" onclick="goToNotification('/referidos')">
+                <span>Ver desglose</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 3 -->
+            <div class="notification-card" data-category="account" data-read="true">
+              <div class="notif-icon account">🔐</div>
+              <div class="notif-content">
+                <div class="notif-title">Inicio de sesión desde nuevo dispositivo</div>
+                <div class="notif-description">
+                  Dispositivo: Chrome 120 • Windows 11<br>
+                  Ubicación: Bogotá, Colombia (IP: 190.***.***.123)<br>
+                  Si no reconoces esta actividad, cambia tu contraseña inmediatamente.
+                </div>
+                <div class="notif-time">Hace 1 día • 2026-02-08 09:15</div>
+              </div>
+              <button class="btn btn-outline" onclick="goToNotification('/settings#security')">
+                <span>Ver sesiones</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 4 -->
+            <div class="notification-card unread" data-category="discipline" data-read="false">
+              <div class="notif-icon discipline">🧠</div>
+              <div class="notif-content">
+                <div class="notif-title">⚠️ Alerta del Coach: Stake excesivo detectado</div>
+                <div class="notif-description">
+                  Tu último pick tiene un stake de $75, superando tu máximo configurado de $50.<br>
+                  Recomendación: Ajusta el stake o revisa tu plan de operación para evitar riesgos innecesarios.<br>
+                  Pick: NBA - Lakers vs Celtics | Stake: $75 (5% del bankroll)
+                </div>
+                <div class="notif-time">Hace 3 horas • 2026-02-09 11:20</div>
+              </div>
+              <button class="btn btn-primary" onclick="goToNotification('/watchlist')">
+                <span>Revisar pick</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 5 -->
+            <div class="notification-card" data-category="system" data-read="true">
+              <div class="notif-icon system">⚙️</div>
+              <div class="notif-content">
+                <div class="notif-title">Mantenimiento programado del sistema</div>
+                <div class="notif-description">
+                  Fecha: 10 de febrero de 2026<br>
+                  Horario: 2:00 AM - 4:00 AM (hora de Bogotá)<br>
+                  Durante este tiempo, la plataforma no estará disponible. Planifica tus picks con anticipación.
+                </div>
+                <div class="notif-time">Hace 2 días • 2026-02-07 18:00</div>
+              </div>
+            </div>
+
+            <!-- Notification Card 6 -->
+            <div class="notification-card unread" data-category="finance" data-read="false">
+              <div class="notif-icon finance">💰</div>
+              <div class="notif-content">
+                <div class="notif-title">Nueva comisión directa generada</div>
+                <div class="notif-description">
+                  Tu referido "Juan M." compró el Plan Pro ($129.99)<br>
+                  Comisión ganada: $12.99 (10%)<br>
+                  Estado: Pending → Available en 24h
+                </div>
+                <div class="notif-time">Hace 4 horas • 2026-02-09 10:15</div>
+              </div>
+              <button class="btn btn-primary" onclick="goToNotification('/referidos')">
+                <span>Ver comisiones</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 7 -->
+            <div class="notification-card" data-category="trading" data-read="true">
+              <div class="notif-icon trading">📈</div>
+              <div class="notif-content">
+                <div class="notif-title">✅ Pick resuelto: Ganaste</div>
+                <div class="notif-description">
+                  Partido: Real Madrid vs Barcelona (La Liga)<br>
+                  Mercado: Over 2.5 goles | Odds: 1.95 | Stake: $20<br>
+                  Resultado: 3-2 ✅ Ganancia: +$19.00 (ROI: +95%)
+                </div>
+                <div class="notif-time">Hace 1 día • 2026-02-08 22:45</div>
+              </div>
+              <button class="btn btn-outline" onclick="goToNotification('/watchlist')">
+                <span>Ver historial</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 8 -->
+            <div class="notification-card" data-category="discipline" data-read="true">
+              <div class="notif-icon discipline">🧠</div>
+              <div class="notif-content">
+                <div class="notif-title">🎉 Hoy cumpliste tu plan de staking</div>
+                <div class="notif-description">
+                  Todos tus picks de hoy siguieron tu stake configurado (1-2% del bankroll).<br>
+                  Racha de disciplina: 7 días consecutivos<br>
+                  Mantén esta consistencia para maximizar tu rentabilidad a largo plazo.
+                </div>
+                <div class="notif-time">Hace 1 día • 2026-02-08 23:59</div>
+              </div>
+            </div>
+
+            <!-- Notification Card 9 -->
+            <div class="notification-card unread" data-category="trading" data-read="false">
+              <div class="notif-icon trading">📈</div>
+              <div class="notif-content">
+                <div class="notif-title">Pick registrado pero no ejecutado</div>
+                <div class="notif-description">
+                  Tienes un pick registrado hace 45 minutos que aún no has marcado como ejecutado.<br>
+                  Partido: NBA - Lakers vs Celtics | Odds iniciales: 1.85<br>
+                  Recuerda ejecutarlo antes de que cambien las odds.
+                </div>
+                <div class="notif-time">Hace 45 minutos • 2026-02-09 13:50</div>
+              </div>
+              <button class="btn btn-primary" onclick="goToNotification('/watchlist')">
+                <span>Marcar ejecutado</span>
+                <span>→</span>
+              </button>
+            </div>
+
+            <!-- Notification Card 10 -->
+            <div class="notification-card" data-category="system" data-read="true">
+              <div class="notif-icon system">⚙️</div>
+              <div class="notif-content">
+                <div class="notif-title">🎉 Nueva función disponible: CLV Tracker</div>
+                <div class="notif-description">
+                  Ahora puedes ver el Closing Line Value (CLV) de todos tus picks automáticamente.<br>
+                  El CLV mide qué tan buenas odds conseguiste vs las odds al cierre del mercado.<br>
+                  Visita tu Watchlist para empezar a usar esta función.
+                </div>
+                <div class="notif-time">Hace 3 días • 2026-02-06 10:00</div>
+              </div>
+              <button class="btn btn-outline" onclick="goToNotification('/watchlist')">
+                <span>Ver función</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Toggle Notification Panel
+    function toggleNotificationPanel() {
+      const panel = document.getElementById('notification-panel');
+      panel.classList.toggle('active');
+    }
+
+    // Close panel when clicking outside
+    document.addEventListener('click', (e) => {
+      const panel = document.getElementById('notification-panel');
+      const bell = document.querySelector('.bell-button');
+      
+      if (panel.classList.contains('active') && 
+          !panel.contains(e.target) && 
+          !bell.contains(e.target)) {
+        panel.classList.remove('active');
+      }
+    });
+
+    // Mark all as read
+    function markAllAsRead() {
+      document.querySelectorAll('.notification-item.unread').forEach(item => {
+        item.classList.remove('unread');
+        const indicator = item.querySelector('.unread-indicator');
+        if (indicator) indicator.remove();
+      });
+      
+      document.querySelectorAll('.notification-card.unread').forEach(card => {
+        card.classList.remove('unread');
+        card.dataset.read = 'true';
+      });
+      
+      // Update badge
+      const badge = document.querySelector('.bell-badge');
+      if (badge) badge.textContent = '0';
+      
+      // Update filter
+      const unreadFilter = document.querySelector('.filter-tab:nth-child(2)');
+      if (unreadFilter) unreadFilter.innerHTML = '<span>No leídas (0)</span>';
+    }
+
+    // Helper: actualizar contadores de no leídas
+    function updateUnreadCount() {
+      const panelUnread = document.querySelectorAll('.notification-item.unread').length;
+      const pageUnread = document.querySelectorAll('.notification-card[data-read="false"]').length;
+      const badge = document.querySelector('.bell-badge');
+      if (badge) badge.textContent = String(panelUnread);
+      const unreadTab = document.querySelector('.filter-tab:nth-child(2)');
+      if (unreadTab) unreadTab.innerHTML = `<span>No leídas (${pageUnread})</span>`;
+    }
+
+    // Filter notifications in panel
+    function filterNotifications(type, el) {
+      const items = document.querySelectorAll('.notification-item');
+      const filters = document.querySelectorAll('.panel-filters .filter-btn');
+      
+      filters.forEach(f => f.classList.remove('active'));
+      if (el) el.classList.add('active');
+      
+      items.forEach(item => {
+        if (type === 'all') {
+          item.style.display = 'flex';
+        } else if (type === 'unread') {
+          item.style.display = item.classList.contains('unread') ? 'flex' : 'none';
+        }
+      });
+    
+      updateUnreadCount();
+    }
+
+    // Filter full page
+    function filterFullPage(type, el) {
+      const cards = document.querySelectorAll('.notification-card');
+      const tabs = document.querySelectorAll('.filter-tab');
+      
+      tabs.forEach(t => t.classList.remove('active'));
+      if (el) el.classList.add('active');
+      
+      cards.forEach(card => {
+        if (type === 'all') {
+          card.style.display = 'flex';
+        } else if (type === 'unread') {
+          card.style.display = card.dataset.read === 'false' ? 'flex' : 'none';
+        } else {
+          const category = card.dataset.category;
+          card.style.display = category === type ? 'flex' : 'none';
+        }
+      });
+    
+    // Mostrar estado vacío si no hay resultados
+    const empty = document.getElementById('empty-fullpage');
+    if (empty) {
+      const visibleCount = Array.from(cards).filter(c => c.style.display !== 'none').length;
+      empty.style.display = visibleCount === 0 ? 'block' : 'none';
+    }
+
+      updateUnreadCount();
+    }
+
+    // Go to notification
+    function goToNotification(url) {
+      console.log('Navigating to:', url);
+      // window.location.href = url;
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    console.log('Notifications page loaded');
+  </script>
+
+</body>
+</html>

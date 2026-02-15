@@ -1,0 +1,371 @@
+<svg viewBox="0 0 900 700" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="leader-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="teamA-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00F5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="teamB-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#B026FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7000CC;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="sub-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF94;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D970;stop-opacity:1" />
+    </linearGradient>
+
+    <!-- Glow filters -->
+    <filter id="glow-gold">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glow-cyan">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glow-purple">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="glow-green">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Person icon template -->
+    <g id="person-icon">
+      <circle cx="0" cy="-8" r="8"/>
+      <path d="M -10 12 Q -10 0 0 0 Q 10 0 10 12 L 8 20 L -8 20 Z"/>
+    </g>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="700" fill="#0A0A1A"/>
+
+  <!-- Binary structure zones (subtle background) -->
+  <g opacity="0.05">
+    <!-- Team A zone (left) -->
+    <rect x="0" y="200" width="450" height="500" fill="#00F5FF"/>
+    <!-- Team B zone (right) -->
+    <rect x="450" y="200" width="450" height="500" fill="#B026FF"/>
+  </g>
+
+  <!-- Connection lines with animation -->
+  <g stroke-width="2.5" fill="none">
+    <!-- Leader to Team A (left) -->
+    <path d="M 450 130 Q 400 180 280 250" stroke="#00F5FF" stroke-dasharray="5 5" opacity="0.6">
+      <animate attributeName="stroke-dashoffset" from="10" to="0" dur="2s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Leader to Team B (right) -->
+    <path d="M 450 130 Q 500 180 620 250" stroke="#B026FF" stroke-dasharray="5 5" opacity="0.6">
+      <animate attributeName="stroke-dashoffset" from="10" to="0" dur="2s" repeatCount="indefinite"/>
+    </path>
+    
+    <!-- Team A to sub-referrals (2 only) -->
+    <line x1="280" y1="300" x2="220" y2="450" stroke="#00FF94" stroke-dasharray="4 4" opacity="0.5">
+      <animate attributeName="stroke-dashoffset" from="8" to="0" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="280" y1="300" x2="340" y2="450" stroke="#00FF94" stroke-dasharray="4 4" opacity="0.5">
+      <animate attributeName="stroke-dashoffset" from="8" to="0" dur="2s" repeatCount="indefinite"/>
+    </line>
+    
+    <!-- Team B to sub-referrals (2 only) -->
+    <line x1="620" y1="300" x2="560" y2="450" stroke="#00FF94" stroke-dasharray="4 4" opacity="0.5">
+      <animate attributeName="stroke-dashoffset" from="8" to="0" dur="2s" repeatCount="indefinite"/>
+    </line>
+    <line x1="620" y1="300" x2="680" y2="450" stroke="#00FF94" stroke-dasharray="4 4" opacity="0.5">
+      <animate attributeName="stroke-dashoffset" from="8" to="0" dur="2s" repeatCount="indefinite"/>
+    </line>
+  </g>
+
+  <!-- LEADER (Top - Gold) -->
+  <g id="leader" transform="translate(450, 110)" filter="url(#glow-gold)">
+    <!-- Outer ring -->
+    <circle r="60" fill="none" stroke="url(#leader-gradient)" stroke-width="3" opacity="0.3">
+      <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="10s" repeatCount="indefinite"/>
+    </circle>
+    
+    <!-- Main circle -->
+    <circle r="48" fill="url(#leader-gradient)"/>
+    
+    <!-- Person icon -->
+    <g fill="#0A0A1A" transform="scale(2)">
+      <use href="#person-icon"/>
+    </g>
+    
+    <!-- Crown icon -->
+    <g transform="translate(0, -50)">
+      <path d="M -14 -10 L -10 2 L 0 -10 L 10 2 L 14 -10 L 12 6 L -12 6 Z" fill="#FFD700"/>
+      <circle cx="-10" cy="2" r="2.5" fill="#FFA500"/>
+      <circle cx="0" cy="-10" r="2.5" fill="#FFA500"/>
+      <circle cx="10" cy="2" r="2.5" fill="#FFA500"/>
+    </g>
+    
+    <!-- Label -->
+    <text y="78" text-anchor="middle" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFD700">
+      LÍDER
+    </text>
+    <text y="96" text-anchor="middle" font-family="Inter, sans-serif" font-size="13" fill="#8888A8">
+      (Tú)
+    </text>
+  </g>
+
+  <!-- TEAM A Label (Left side) -->
+  <g transform="translate(280, 180)">
+    <rect x="-75" y="-18" width="150" height="36" rx="18" fill="rgba(0, 245, 255, 0.15)" stroke="#00F5FF" stroke-width="2"/>
+    <text text-anchor="middle" y="-2" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#00F5FF" opacity="0.8">
+      EQUIPO A
+    </text>
+    <text text-anchor="middle" y="14" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#00F5FF">
+      Comisión
+    </text>
+  </g>
+
+  <!-- TEAM B Label (Right side) -->
+  <g transform="translate(620, 180)">
+    <rect x="-75" y="-18" width="150" height="36" rx="18" fill="rgba(176, 38, 255, 0.15)" stroke="#B026FF" stroke-width="2"/>
+    <text text-anchor="middle" y="-2" font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#B026FF" opacity="0.8">
+      EQUIPO B
+    </text>
+    <text text-anchor="middle" y="14" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#B026FF">
+      Comisión
+    </text>
+  </g>
+
+  <!-- TEAM A - Direct Referral (Left - Cyan) -->
+  <g id="teamA-direct" transform="translate(280, 280)" filter="url(#glow-cyan)">
+    <circle r="42" fill="url(#teamA-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.6)">
+      <use href="#person-icon"/>
+    </g>
+    
+    <!-- Badge -->
+    <g transform="translate(28, -28)">
+      <circle r="14" fill="#FFD700"/>
+      <text text-anchor="middle" y="5" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0A0A1A">A</text>
+    </g>
+    
+    <text y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#00F5FF">
+      Referido Directo
+    </text>
+    <text y="85" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#8888A8">
+      Equipo A
+    </text>
+  </g>
+
+  <!-- TEAM B - Direct Referral (Right - Purple) -->
+  <g id="teamB-direct" transform="translate(620, 280)" filter="url(#glow-purple)">
+    <circle r="42" fill="url(#teamB-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.6)">
+      <use href="#person-icon"/>
+    </g>
+    
+    <!-- Badge -->
+    <g transform="translate(28, -28)">
+      <circle r="14" fill="#FFD700"/>
+      <text text-anchor="middle" y="5" font-family="Inter, sans-serif" font-size="12" font-weight="700" fill="#0A0A1A">B</text>
+    </g>
+    
+    <text y="68" text-anchor="middle" font-family="Inter, sans-serif" font-size="14" font-weight="600" fill="#B026FF">
+      Referido Directo
+    </text>
+    <text y="85" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#8888A8">
+      Equipo B
+    </text>
+  </g>
+
+  <!-- Sub-referrals label (indirect) -->
+  <g transform="translate(450, 380)">
+    <rect x="-80" y="-15" width="160" height="30" rx="15" fill="rgba(0, 255, 148, 0.1)" stroke="#00FF94" stroke-width="1.5"/>
+    <text text-anchor="middle" y="5" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#00FF94">
+      Indirectos - 10%
+    </text>
+  </g>
+
+  <!-- TEAM A - Sub-referrals (2 people - Green) -->
+  <g id="teamA-sub1" transform="translate(220, 480)" filter="url(#glow-green)">
+    <circle r="32" fill="url(#sub-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.2)">
+      <use href="#person-icon"/>
+    </g>
+    <text y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#00FF94">
+      Sub A1
+    </text>
+  </g>
+
+  <g id="teamA-sub2" transform="translate(340, 480)" filter="url(#glow-green)">
+    <circle r="32" fill="url(#sub-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.2)">
+      <use href="#person-icon"/>
+    </g>
+    <text y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#00FF94">
+      Sub A2
+    </text>
+  </g>
+
+  <!-- TEAM B - Sub-referrals (2 people - Green) -->
+  <g id="teamB-sub1" transform="translate(560, 480)" filter="url(#glow-green)">
+    <circle r="32" fill="url(#sub-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.2)">
+      <use href="#person-icon"/>
+    </g>
+    <text y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#00FF94">
+      Sub B1
+    </text>
+  </g>
+
+  <g id="teamB-sub2" transform="translate(680, 480)" filter="url(#glow-green)">
+    <circle r="32" fill="url(#sub-gradient)"/>
+    <g fill="#FFFFFF" transform="scale(1.2)">
+      <use href="#person-icon"/>
+    </g>
+    <text y="50" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#00FF94">
+      Sub B2
+    </text>
+  </g>
+
+  <!-- Binary explanation boxes -->
+  <g transform="translate(50, 580)">
+    <!-- Team A stats -->
+    <rect x="0" y="0" width="200" height="80" rx="12" fill="rgba(0, 245, 255, 0.1)" stroke="#00F5FF" stroke-width="2"/>
+    <text x="20" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#00F5FF">
+      EQUIPO A
+    </text>
+    <text x="20" y="45" font-family="Inter, sans-serif" font-size="12" fill="#B8B8D0"> 
+      Directos: 1
+    </text>
+    <text x="20" y="62" font-family="Inter, sans-serif" font-size="12" fill="#B8B8D0"> 
+      Indirectos: 2
+    </text>
+    
+    <!-- Team B stats -->
+    <rect x="230" y="0" width="200" height="80" rx="12" fill="rgba(176, 38, 255, 0.1)" stroke="#B026FF" stroke-width="2"/>
+    <text x="250" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#B026FF">
+      EQUIPO B
+    </text>
+    <text x="250" y="45" font-family="Inter, sans-serif" font-size="12" fill="#B8B8D0"> 
+      Directos: 1
+    </text>
+    <text x="250" y="62" font-family="Inter, sans-serif" font-size="12" fill="#B8B8D0"> 
+      Indirectos: 2
+    </text>
+    
+    <!-- Total earnings -->
+    <rect x="460" y="0" width="200" height="80" rx="12" fill="rgba(255, 215, 0, 0.1)" stroke="#FFD700" stroke-width="2"/>
+    <text x="480" y="25" font-family="Inter, sans-serif" font-size="14" font-weight="700" fill="#FFD700">
+      TOTAL RED
+    </text>
+    <text x="480" y="45" font-family="Inter, sans-serif" font-size="12" fill="#B8B8D0">
+      2 Directos + 4 Indirectos
+    </text>
+    <text x="480" y="62" font-family="Inter, sans-serif" font-size="16" font-weight="700" fill="#FFD700">
+      = 6 personas
+    </text>
+  </g>
+
+  <!-- Top earnings badge -->
+  <g transform="translate(450, 30)">
+    <rect x="-100" y="-22" width="200" height="44" rx="22" fill="rgba(255, 215, 0, 0.2)" stroke="#FFD700" stroke-width="2.5"/>
+    <text text-anchor="middle" y="-4" font-family="Inter, sans-serif" font-size="12" fill="#8888A8">
+      Ganancias Mensuales
+    </text>
+    <text text-anchor="middle" y="14" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFD700">
+      $1,247
+    </text>
+  </g>
+
+  <!-- Binary structure icon (top right) -->
+  <g transform="translate(760, 60)" opacity="0.4">
+    <text font-family="Inter, sans-serif" font-size="12" font-weight="600" fill="#8888A8">
+      Sistema Binario
+    </text>
+    <g transform="translate(40, 25)">
+      <circle r="8" fill="#FFD700"/>
+      <line x1="0" y1="8" x2="-15" y2="25" stroke="#00F5FF" stroke-width="2"/>
+      <line x1="0" y1="8" x2="15" y2="25" stroke="#B026FF" stroke-width="2"/>
+      <circle cx="-15" cy="28" r="6" fill="#00F5FF"/>
+      <circle cx="15" cy="28" r="6" fill="#B026FF"/>
+      <!-- Binary sub-level -->
+      <line x1="-15" y1="32" x2="-22" y2="42" stroke="#00FF94" stroke-width="1.5" opacity="0.6"/>
+      <line x1="-15" y1="32" x2="-8" y2="42" stroke="#00FF94" stroke-width="1.5" opacity="0.6"/>
+      <line x1="15" y1="32" x2="8" y2="42" stroke="#00FF94" stroke-width="1.5" opacity="0.6"/>
+      <line x1="15" y1="32" x2="22" y2="42" stroke="#00FF94" stroke-width="1.5" opacity="0.6"/>
+      <circle cx="-22" cy="44" r="3" fill="#00FF94"/>
+      <circle cx="-8" cy="44" r="3" fill="#00FF94"/>
+      <circle cx="8" cy="44" r="3" fill="#00FF94"/>
+      <circle cx="22" cy="44" r="3" fill="#00FF94"/>
+    </g>
+  </g>
+
+  <!-- Decorative floating elements -->
+  <g opacity="0.2">
+    <!-- Dollar signs -->
+    <text x="80" y="350" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#00F5FF">$</text>
+    <text x="800" y="380" font-family="Inter, sans-serif" font-size="28" font-weight="700" fill="#B026FF">$</text>
+    
+    <!-- Floating coins -->
+    <circle cx="100" cy="150" r="4" fill="#FFD700">
+      <animate attributeName="cy" values="150;120;150" dur="3s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="800" cy="200" r="4" fill="#00FF94">
+      <animate attributeName="cy" values="200;170;200" dur="3.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Info note -->
+  <g transform="translate(450, 550)">
+    <text text-anchor="middle" font-family="Inter, sans-serif" font-size="11" fill="#5A5A78" opacity="0.8">
+      * Sistema binario: Cada referido puede tener máximo 2 directos
+    </text>
+  </g>
+
+  <!-- Plus signs to indicate expansion possibility -->
+  <g opacity="0.3">
+    <!-- Team A expansion indicator -->
+    <g transform="translate(220, 530)">
+      <circle r="12" fill="none" stroke="#00FF94" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <line x1="0" y1="-6" x2="0" y2="6" stroke="#00FF94" stroke-width="2"/>
+      <line x1="-6" y1="0" x2="6" y2="0" stroke="#00FF94" stroke-width="2"/>
+    </g>
+    <g transform="translate(340, 530)">
+      <circle r="12" fill="none" stroke="#00FF94" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <line x1="0" y1="-6" x2="0" y2="6" stroke="#00FF94" stroke-width="2"/>
+      <line x1="-6" y1="0" x2="6" y2="0" stroke="#00FF94" stroke-width="2"/>
+    </g>
+    
+    <!-- Team B expansion indicator -->
+    <g transform="translate(560, 530)">
+      <circle r="12" fill="none" stroke="#00FF94" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <line x1="0" y1="-6" x2="0" y2="6" stroke="#00FF94" stroke-width="2"/>
+      <line x1="-6" y1="0" x2="6" y2="0" stroke="#00FF94" stroke-width="2"/>
+    </g>
+    <g transform="translate(680, 530)">
+      <circle r="12" fill="none" stroke="#00FF94" stroke-width="1.5" stroke-dasharray="2 2"/>
+      <line x1="0" y1="-6" x2="0" y2="6" stroke="#00FF94" stroke-width="2"/>
+      <line x1="-6" y1="0" x2="6" y2="0" stroke="#00FF94" stroke-width="2"/>
+    </g>
+  </g>
+</svg>

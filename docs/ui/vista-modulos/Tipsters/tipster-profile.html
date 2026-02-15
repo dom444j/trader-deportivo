@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil Profesional | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      min-height: 100vh;
+    }
+
+    /* PROFILE BANNER */
+    .profile-banner {
+      height: 200px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      border-bottom: 2px solid var(--border-primary);
+    }
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 0%, rgba(10, 10, 26, 0.8) 100%);
+    }
+
+    /* PROFILE HEADER */
+    .profile-header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px 24px;
+      margin-top: -60px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .header-content {
+      display: flex;
+      gap: 24px;
+      align-items: flex-end;
+    }
+
+    .avatar-container {
+      position: relative;
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 20px;
+      border: 4px solid var(--bg-secondary);
+      background: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: 700;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .badge-verified {
+      position: absolute;
+      bottom: -8px;
+      right: -8px;
+      width: 36px;
+      height: 36px;
+      background: var(--primary-green);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      border: 3px solid var(--bg-secondary);
+      box-shadow: 0 2px 10px rgba(0, 255, 148, 0.5);
+    }
+
+    .header-info {
+      flex: 1;
+    }
+
+    .username-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .display-name {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .username {
+      font-size: 16px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge.verified {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.pro {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--tipster-primary);
+    }
+
+    .badge.rising {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .meta-info {
+      display: flex;
+      gap: 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* CONTENT AREA */
+    .content-area {
+      padding: 32px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-icon {
+      font-size: 20px;
+    }
+
+    /* BIO */
+    .bio-text {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .specialties {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .specialty-tag {
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    /* STATS GRID */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .stat-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--tipster-primary);
+      transform: translateY(-2px);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .stat-value.green {
+      color: var(--primary-green);
+    }
+
+    .stat-value.red {
+      color: var(--secondary-red);
+    }
+
+    .stat-value.gold {
+      color: var(--secondary-gold);
+    }
+
+    .stat-value.cyan {
+      color: var(--primary-cyan);
+    }
+
+    .stat-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* RECENT PERFORMANCE */
+    .performance-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .performance-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .perf-item {
+      background: var(--bg-tertiary);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    .perf-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .perf-value {
+      font-size: 20px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-top: 4px;
+    }
+
+    .chart-placeholder {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* PLANS */
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .plan-card {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .plan-card:hover {
+      border-color: var(--tipster-primary);
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
+    }
+
+    .plan-header {
+      text-align: center;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .plan-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .plan-price {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--tipster-primary);
+    }
+
+    .plan-period {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 16px;
+    }
+
+    .plan-features li {
+      padding: 8px 0;
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .plan-features li::before {
+      content: '✓';
+      color: var(--primary-green);
+      font-weight: 700;
+    }
+
+    /* SIGNALS TEASER */
+    .signals-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .signal-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 16px;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .signal-card:hover {
+      border-color: var(--tipster-primary);
+      transform: translateY(-2px);
+    }
+
+    .signal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .signal-sport {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .signal-tag {
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .signal-tag.free {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .signal-tag.vip {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .signal-market {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .signal-result {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .signal-result.win {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .signal-result.loss {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .signal-locked {
+      text-align: center;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 1px dashed var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .signal-locked-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    /* ALERT */
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* HIGHLIGHTS */
+    .highlights-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .highlight-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .highlight-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .highlight-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .highlight-value {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .stats-grid,
+      .plans-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .highlights-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .stats-grid,
+      .plans-grid,
+      .signals-grid,
+      .performance-grid,
+      .highlights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .header-actions {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item active">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Profile Banner -->
+      <div class="profile-banner">
+        <div class="banner-overlay"></div>
+      </div>
+
+      <!-- Profile Header -->
+      <div class="profile-header">
+        <div class="header-content">
+          <div class="avatar-container">
+            <div class="avatar">CM</div>
+            <div class="badge-verified">✓</div>
+          </div>
+
+          <div class="header-info">
+            <div class="username-row">
+              <h1 class="display-name">Carlos Méndez</h1>
+              <span class="username">@carlosbet</span>
+              <span class="badge verified">✓ Verificado</span>
+              <span class="badge pro">PRO</span>
+            </div>
+
+            <div class="meta-info">
+              <div class="meta-item">
+                <span>👥</span>
+                <span>1,247 seguidores</span>
+              </div>
+              <div class="meta-item">
+                <span>📅</span>
+                <span>Desde Enero 2024</span>
+              </div>
+              <div class="meta-item">
+                <span>📊</span>
+                <span>8 meses activo</span>
+              </div>
+            </div>
+
+            <div class="header-actions">
+              <button class="btn btn-primary" onclick="subscribe()">
+                <span>⭐</span>
+                <span>Suscribirse</span>
+              </button>
+              <button class="btn btn-outline" onclick="toggleFollow(event)">
+                <span>👤</span>
+                <span>Seguir</span>
+              </button>
+              <button class="btn btn-outline" onclick="viewSignals()">
+                <span>📡</span>
+                <span>Ver Señales</span>
+              </button>
+              <button class="btn btn-outline" onclick="buyPlan('vip')">
+                <span>💎</span>
+                <span>Comprar VIP</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Bio Profesional -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">📝</span>
+            <span>Bio Profesional</span>
+          </h2>
+          
+          <p class="bio-text">
+            Especialista en ligas europeas con enfoque en value betting y análisis estadístico profundo. 
+            8 años de experiencia en trading deportivo profesional. Transparencia y consistencia son mis pilares.
+          </p>
+
+          <div class="specialties">
+            <span class="specialty-tag">⚽ La Liga</span>
+            <span class="specialty-tag">⚽ Premier League</span>
+            <span class="specialty-tag">📊 Value Betting</span>
+            <span class="specialty-tag">📈 Over/Under</span>
+          </div>
+
+          <div class="info-row">
+            <span>🕐</span>
+            <span>Horario: L-V 13:00—22:00 UTC</span>
+          </div>
+          <div class="info-row">
+            <span>⚡</span>
+            <span>Estrategia: Value Betting + Análisis Pre-Match</span>
+          </div>
+        </div>
+
+        <!-- Highlights / Social Proof -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">🏆</span>
+            <span>Destacados</span>
+          </h2>
+
+          <div class="highlights-grid">
+            <div class="highlight-item">
+              <div class="highlight-icon">🎯</div>
+              <div class="highlight-label">Mercado Top</div>
+              <div class="highlight-value">Over/Under</div>
+            </div>
+
+            <div class="highlight-item">
+              <div class="highlight-icon">⚽</div>
+              <div class="highlight-label">Liga Top</div>
+              <div class="highlight-value">La Liga</div>
+            </div>
+
+            <div class="highlight-item">
+              <div class="highlight-icon">🔥</div>
+              <div class="highlight-label">Mejor Racha</div>
+              <div class="highlight-value">12 victorias</div>
+            </div>
+
+            <div class="highlight-item">
+              <div class="highlight-icon">⭐</div>
+              <div class="highlight-label">Consistencia</div>
+              <div class="highlight-value">87/100</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estadísticas Principales -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">📊</span>
+            <span>Estadísticas Principales</span>
+          </h2>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">ROI</div>
+              <div class="stat-value green">+12.5%</div>
+              <div class="stat-meta">Histórico</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Yield</div>
+              <div class="stat-value green">+8.3%</div>
+              <div class="stat-meta">Promedio</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Win Rate</div>
+              <div class="stat-value gold">58.2%</div>
+              <div class="stat-meta">Aciertos</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">CLV</div>
+              <div class="stat-value cyan">+2.8%</div>
+              <div class="stat-meta">Promedio</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Picks Total</div>
+              <div class="stat-value">1,847</div>
+              <div class="stat-meta">Señales</div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-label">Experiencia</div>
+              <div class="stat-value">8</div>
+              <div class="stat-meta">Meses activo</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rendimiento Reciente (30d) -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">📈</span>
+            <span>Rendimiento Reciente (30 días)</span>
+          </h2>
+
+          <div class="performance-grid">
+            <div class="performance-stats">
+              <div class="perf-item">
+                <div class="perf-label">Picks</div>
+                <div class="perf-value">142</div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Win</div>
+                <div class="perf-value" style="color: var(--primary-green);">84</div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Loss</div>
+                <div class="perf-value" style="color: var(--secondary-red);">52</div>
+              </div>
+              <div class="perf-item">
+                <div class="perf-label">Profit</div>
+                <div class="perf-value" style="color: var(--primary-green);">+18.2u</div>
+              </div>
+            </div>
+
+            <div class="chart-placeholder">
+              📊 Gráfico de tendencia (próximamente)
+            </div>
+          </div>
+        </div>
+
+        <!-- Planes del Tipster -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">💎</span>
+            <span>Planes de Suscripción</span>
+          </h2>
+
+          <div class="plans-grid">
+            <!-- Plan Mensual -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-name">Plan Mensual</div>
+                <div class="plan-price">50</div>
+                <div class="plan-period">créditos/mes</div>
+              </div>
+              <ul class="plan-features">
+                <li>Acceso a todas las señales</li>
+                <li>Historial completo</li>
+                <li>Análisis detallado</li>
+                <li>Notificaciones en tiempo real</li>
+              </ul>
+              <button class="btn btn-primary" style="width: 100%;" onclick="buyPlan('monthly')">
+                Suscribirse
+              </button>
+            </div>
+
+            <!-- Plan VIP -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-name">VIP Personal</div>
+                <div class="plan-price">200</div>
+                <div class="plan-period">créditos/mes</div>
+              </div>
+              <ul class="plan-features">
+                <li>Todo del plan mensual</li>
+                <li>Señales VIP exclusivas</li>
+                <li>Soporte prioritario</li>
+                <li>Análisis personalizado</li>
+              </ul>
+              <button class="btn btn-primary" style="width: 100%;" onclick="buyPlan('vip')">
+                Comprar VIP
+              </button>
+            </div>
+
+            <!-- Señal Individual -->
+            <div class="plan-card">
+              <div class="plan-header">
+                <div class="plan-name">Señal Individual</div>
+                <div class="plan-price">5-10</div>
+                <div class="plan-period">créditos/señal</div>
+              </div>
+              <ul class="plan-features">
+                <li>Compra por señal</li>
+                <li>Sin compromiso mensual</li>
+                <li>Análisis completo</li>
+                <li>Acceso permanente</li>
+              </ul>
+              <button class="btn btn-outline" style="width: 100%;" onclick="viewSignals()">
+                Ver Señales
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Señales Recientes (Teaser) -->
+        <div class="section">
+          <h2 class="section-title">
+            <span class="section-icon">📡</span>
+            <span>Señales Recientes</span>
+          </h2>
+
+          <div class="alert alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <div class="alert-content">
+              <div class="alert-text">
+                Suscríbete para ver detalles completos de las señales (selección exacta, stake, bookmaker, timing)
+              </div>
+            </div>
+          </div>
+
+          <div class="signals-grid">
+            <!-- Signal 1 - FREE -->
+            <div class="signal-card">
+              <div class="signal-header">
+                <span class="signal-sport">⚽ Fútbol</span>
+                <span class="signal-tag free">FREE</span>
+              </div>
+              <div class="signal-market">La Liga • Over/Under • @1.95</div>
+              <span class="signal-result win">🟢 Win</span>
+            </div>
+
+            <!-- Signal 2 - VIP (Locked) -->
+            <div class="signal-card" style="opacity: 0.6;">
+              <div class="signal-header">
+                <span class="signal-sport">⚽ Fútbol</span>
+                <span class="signal-tag vip">VIP</span>
+              </div>
+              <div class="signal-locked">
+                <div class="signal-locked-icon">🔒</div>
+                <div>Suscríbete para ver detalles</div>
+              </div>
+            </div>
+
+            <!-- Signal 3 - FREE -->
+            <div class="signal-card">
+              <div class="signal-header">
+                <span class="signal-sport">🏀 Baloncesto</span>
+                <span class="signal-tag free">FREE</span>
+              </div>
+              <div class="signal-market">NBA • Totales • @2.10</div>
+              <span class="signal-result loss">🔴 Loss</span>
+            </div>
+
+            <!-- Signal 4 - VIP (Locked) -->
+            <div class="signal-card" style="opacity: 0.6;">
+              <div class="signal-header">
+                <span class="signal-sport">⚽ Fútbol</span>
+                <span class="signal-tag vip">VIP</span>
+              </div>
+              <div class="signal-locked">
+                <div class="signal-locked-icon">🔒</div>
+                <div>Suscríbete para ver detalles</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reglas Importantes -->
+        <div class="alert alert-warning">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-title">Reglas Importantes</div>
+            <div class="alert-text">
+              • Las estadísticas son calculadas automáticamente por la plataforma<br>
+              • El historial de picks es auditable y no borrable<br>
+              • Resultados verificables con evidencia de publicación<br>
+              • El tipster no puede editar estadísticas ni resultados históricos
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Contexto de visualización y estado del perfil (alineado con MD)
+    const profileStatus = 'ACTIVE'; // ACTIVE | INCOMPLETE | UNDER_REVIEW | FROZEN | SUSPENDED
+    const viewer_context = {
+      is_following: false,
+      has_active_subscription: false,
+      has_active_vip: false,
+      get can_view_full_signals() { return this.has_active_subscription || this.has_active_vip; },
+      my_plan: null // { plan_id, type, expires_at }
+    };
+    
+    // Follow/Unfollow
+    let isFollowing = viewer_context.is_following;
+    function toggleFollow(event) {
+      isFollowing = !isFollowing;
+      viewer_context.is_following = isFollowing;
+      const btn = event.target.closest('.btn');
+      if (isFollowing) {
+        btn.innerHTML = '<span>👤</span><span>Siguiendo</span>';
+        btn.classList.remove('btn-outline');
+        btn.classList.add('btn-primary');
+      } else {
+        btn.innerHTML = '<span>👤</span><span>Seguir</span>';
+        btn.classList.remove('btn-primary');
+        btn.classList.add('btn-outline');
+      }
+      console.log('Follow toggled:', isFollowing);
+    }
+    
+    // Subscribe
+    function subscribe() {
+      if (profileStatus === 'FROZEN' || profileStatus === 'UNDER_REVIEW') {
+        alert('Acción no disponible mientras el perfil está en revisión o congelado');
+        return;
+      }
+      console.log('Subscribe modal opened');
+      alert('Modal de suscripción (integrar con Store)');
+    }
+    
+    // View Signals
+    function viewSignals() {
+      console.log('Navigate to signals');
+      alert('Navegar a /signals/@carlosbet');
+    }
+    
+    // Buy Plan
+    function buyPlan(planType) {
+      if (profileStatus === 'FROZEN' || profileStatus === 'UNDER_REVIEW') {
+        alert('Acción no disponible mientras el perfil está en revisión o congelado');
+        return;
+      }
+      console.log('Buy plan:', planType);
+      alert(`Comprar plan ${planType} (integrar con Store)`);
+    }
+    
+    // Mobile menu
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inicializar botón Seguir según viewer_context
+      const followBtn = document.querySelector('button[onclick="toggleFollow(event)"]');
+      if (viewer_context.is_following && followBtn) {
+        followBtn.innerHTML = '<span>👤</span><span>Siguiendo</span>';
+        followBtn.classList.remove('btn-outline');
+        followBtn.classList.add('btn-primary');
+      }
+    
+      const subscribeBtn = document.querySelector('button[onclick="subscribe()"]');
+      const viewSignalsBtn = document.querySelector('button[onclick="viewSignals()"]');
+      const buyMonthlyBtns = document.querySelectorAll('button[onclick="buyPlan(\'monthly\')"]');
+      const buyVipBtns = document.querySelectorAll('button[onclick="buyPlan(\'vip\')"]');
+    
+      // Ocultar CTAs de compra si perfil está FROZEN o UNDER_REVIEW
+      if (profileStatus === 'FROZEN' || profileStatus === 'UNDER_REVIEW') {
+        if (subscribeBtn) subscribeBtn.style.display = 'none';
+        buyMonthlyBtns.forEach(btn => btn.style.display = 'none');
+        buyVipBtns.forEach(btn => btn.style.display = 'none');
+      }
+    
+      // Reglas de CTAs según viewer_context
+      if (viewer_context.can_view_full_signals) {
+        // Destacar "Ver Señales"
+        if (viewSignalsBtn) {
+          viewSignalsBtn.classList.remove('btn-outline');
+          viewSignalsBtn.classList.add('btn-primary');
+        }
+        // Suscribirse pasa a estilo secundario
+        if (subscribeBtn) {
+          subscribeBtn.classList.remove('btn-primary');
+          subscribeBtn.classList.add('btn-outline');
+        }
+    
+        // Desbloquear tarjetas VIP en teaser
+        document.querySelectorAll('.signal-card').forEach(card => {
+          const vipTag = card.querySelector('.signal-tag.vip');
+          const locked = card.querySelector('.signal-locked');
+          if (vipTag && locked) {
+            card.style.opacity = '1';
+            locked.innerHTML = '<div class="signal-locked-icon">✅</div><div>Detalles VIP disponibles</div>';
+            locked.style.borderStyle = 'solid';
+          }
+        });
+      } else {
+        // Mantener aviso de gating
+        // Ya existe alert-info arriba; no se requiere acción adicional.
+      }
+    
+      // Botón menú móvil
+      if (window.innerWidth <= 768) {
+        const banner = document.querySelector('.profile-banner');
+        const btn = document.createElement('button');
+        btn.textContent = '☰';
+        btn.style.cssText = 'position: absolute; top: 20px; left: 20px; background: rgba(10, 10, 26, 0.8); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; z-index: 20;';
+        btn.addEventListener('click', toggleSidebar);
+        banner.appendChild(btn);
+      }
+    });
+
+    console.log('Tipster Profile loaded');
+  </script>
+</body>
+</html>

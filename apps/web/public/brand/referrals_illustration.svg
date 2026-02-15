@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360" fill="none">
+  <defs>
+    <linearGradient id="gradPrimary" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#00F5FF" />
+      <stop offset="100%" stop-color="#00C2FF" />
+    </linearGradient>
+  </defs>
+
+  <!-- Card background -->
+  <rect x="40" y="40" width="560" height="280" rx="20" fill="#0E121A" stroke="#1E2A3A" />
+
+  <!-- Network nodes -->
+  <circle cx="160" cy="140" r="24" fill="url(#gradPrimary)" />
+  <circle cx="320" cy="110" r="24" fill="#1F2A38" stroke="#00F5FF" />
+  <circle cx="480" cy="160" r="24" fill="#1F2A38" stroke="#00F5FF" />
+  <circle cx="260" cy="220" r="20" fill="#1F2A38" stroke="#00F5FF" />
+  <circle cx="420" cy="220" r="20" fill="#1F2A38" stroke="#00F5FF" />
+
+  <!-- Connections -->
+  <path d="M160 140 L320 110" stroke="#00F5FF" stroke-width="2" opacity="0.7" />
+  <path d="M320 110 L480 160" stroke="#00F5FF" stroke-width="2" opacity="0.7" />
+  <path d="M320 110 L260 220" stroke="#00F5FF" stroke-width="2" opacity="0.6" />
+  <path d="M480 160 L420 220" stroke="#00F5FF" stroke-width="2" opacity="0.6" />
+
+  <!-- Center badge -->
+  <rect x="280" y="150" width="80" height="32" rx="16" fill="#101522" stroke="#00F5FF" />
+  <text x="320" y="170" text-anchor="middle" font-size="14" fill="#9ABAD6" font-family="Inter, Arial, sans-serif">Ref</text>
+
+  <!-- Caption -->
+  <text x="320" y="320" text-anchor="middle" font-size="16" fill="#9ABAD6" font-family="Inter, Arial, sans-serif">Comparte tu enlace y crea tu red</text>
+</svg>

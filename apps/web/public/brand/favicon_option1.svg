@@ -1,0 +1,80 @@
+<svg viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="primary" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00F5FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0066FF;stop-opacity:1" />
+    </linearGradient>
+    
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#00FF94;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00D970;stop-opacity:1" />
+    </linearGradient>
+
+    <linearGradient id="gold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:1" />
+    </linearGradient>
+
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Fondo -->
+  <rect width="250" height="250" fill="#0A0A1A" rx="50"/>
+  
+  <!-- Círculo base -->
+  <circle cx="125" cy="125" r="95" fill="url(#primary)" opacity="0.1"/>
+  
+  <!-- Forma principal: TD fusionado con gráfico -->
+  <g filter="url(#shadow)">
+    <!-- T estilizada -->
+    <path d="M 75 85 L 175 85 L 175 100 L 135 100 L 135 175 L 115 175 L 115 100 L 75 100 Z" 
+          fill="url(#primary)"/>
+    
+    <!-- D con curva -->
+    <path d="M 140 115 L 160 115 Q 185 115 185 145 Q 185 175 160 175 L 140 175 Z M 155 130 L 160 130 Q 170 130 170 145 Q 170 160 160 160 L 155 160 Z" 
+          fill="url(#accent)"/>
+    
+    <!-- Velas de trading -->
+    <g opacity="0.9">
+      <rect x="80" y="110" width="6" height="20" fill="#FF4444" opacity="0.7"/>
+      <line x1="83" y1="105" x2="83" y2="135" stroke="#FF4444" stroke-width="1.5"/>
+      
+      <rect x="95" y="100" width="6" height="30" fill="url(#accent)"/>
+      <line x1="98" y1="95" x2="98" y2="137" stroke="#00FF94" stroke-width="1.5"/>
+      
+      <rect x="110" y="90" width="6" height="40" fill="url(#accent)"/>
+      <line x1="113" y1="85" x2="113" y2="140" stroke="#00FF94" stroke-width="1.5"/>
+    </g>
+
+    <!-- Estrella AI -->
+    <g transform="translate(170, 95)" filter="url(#glow)">
+      <path d="M 0 -8 L 2 -2 L 8 -2 L 3 2 L 5 8 L 0 4 L -5 8 L -3 2 L -8 -2 L -2 -2 Z" 
+            fill="url(#gold)">
+        <animateTransform attributeName="transform" type="rotate" from="0 0 0" to="360 0 0" dur="20s" repeatCount="indefinite"/>
+      </path>
+    </g>
+
+    <!-- Puntos orbitales -->
+    <circle cx="175" cy="155" r="3" fill="#00F5FF">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2s" repeatCount="indefinite"/>
+    </circle>
+    <circle cx="70" cy="160" r="2.5" fill="#00FF94">
+      <animate attributeName="opacity" values="0.3;1;0.3" dur="2.5s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Anillo orbital -->
+  <circle cx="125" cy="125" r="115" fill="none" stroke="url(#primary)" stroke-width="2" opacity="0.15" stroke-dasharray="5 10">
+    <animateTransform attributeName="transform" type="rotate" from="0 125 125" to="360 125 125" dur="30s" repeatCount="indefinite"/>
+  </circle>
+</svg>

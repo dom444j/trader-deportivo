@@ -1,0 +1,59 @@
+/* Variables CSS para Trading Deportivo */
+:root {
+  /* Colores principales */
+  --primary-cyan: #00F5FF;
+  --primary-green: #00FF94;
+  --primary-blue: #0066FF;
+  --secondary-gold: #FFD700;
+  --secondary-purple: #B026FF;
+  
+  /* Colores de fondo */
+  --bg-primary: #0A0A1A;
+  --bg-secondary: #141428;
+  --bg-tertiary: #1E1E38;
+  
+  /* Colores de texto */
+  --text-primary: #FFFFFF;
+  --text-secondary: #B8B8D0;
+  --text-tertiary: #8888A0;
+  
+  /* Bordes */
+  --border-primary: #2A2A4A;
+  --border-secondary: #3A3A5A;
+  
+  /* Gradientes */
+  --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+  --gradient-secondary: linear-gradient(135deg, #00FF94 0%, #00F5FF 100%);
+  --gradient-accent: linear-gradient(135deg, #B026FF 0%, #0066FF 100%);
+  
+  /* Efectos de brillo */
+  --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.3);
+  --glow-green: 0 0 20px rgba(0, 255, 148, 0.3);
+  --glow-purple: 0 0 20px rgba(176, 38, 255, 0.3);
+  
+  /* Tipografía */
+  --font-primary: 'Rajdhani', sans-serif;
+  --font-mono: 'Space Mono', monospace;
+  
+  /* Dashboard Shell Variables */
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 80px;
+  --topbar-height: 64px;
+  --border-color: #e5e7eb;
+  --bg-hover: #f3f4f6;
+  --text-muted: #9ca3af;
+  --badge-bg: #ef4444;
+  --error-color: #ef4444;
+  --error-bg: #fef2f2;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Dark mode colors */
+  --bg-primary-dark: #111827;
+  --bg-secondary-dark: #1f2937;
+  --bg-hover-dark: #374151;
+  --sidebar-bg-dark: #1f2937;
+  --border-color-dark: #374151;
+  --text-primary-dark: #f9fafb;
+  --text-secondary-dark: #d1d5db;
+}

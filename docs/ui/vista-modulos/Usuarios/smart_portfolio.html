@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Deportivo — Smart Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-cyan:#00F5FF; --primary-green:#00FF94; --primary-blue:#0066FF;
+      --secondary-gold:#FFD700; --secondary-purple:#B026FF; --secondary-red:#FF4444;
+      --bg-primary:#0A0A1A; --bg-secondary:#141428; --bg-tertiary:#1E1E38; --bg-elevated:#252545;
+      --border-primary:#2A2A4A; --text-primary:#FFFFFF; --text-secondary:#B8B8D0; --text-muted:#8888A8;
+      --sidebar-width:280px; --sidebar-collapsed:80px; --topbar-height:70px;
+      --success-grad: linear-gradient(135deg,#00FF94,#00D970);
+      --primary-grad: linear-gradient(135deg,#00F5FF,#0066FF);
+      --premium-grad: linear-gradient(135deg,#FFD700,#FFA500);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Rajdhani',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh}
+    /* Sidebar */
+    .sidebar{width:var(--sidebar-width);background:var(--bg-secondary);border-right:1px solid var(--border-primary);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:1000}
+    .sidebar-logo{padding:20px;border-bottom:1px solid var(--border-primary);display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(0,245,255,.08),rgba(176,38,255,.08))}
+    .logo-icon{width:40px;height:40px;background:var(--primary-grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;box-shadow:0 0 20px rgba(0,245,255,.4)}
+    .logo-text{font-size:18px;font-weight:700;background:var(--primary-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+    .nav-section{margin-bottom:24px}
+    .nav-section-title{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 12px;margin-bottom:6px;border-radius:10px;color:var(--text-secondary);text-decoration:none;font-size:15px;font-weight:500;transition:all .3s}
+    .nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary);transform:translateX(4px)}
+    .nav-item.active{background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(0,102,255,.15));color:var(--primary-cyan);border-left:3px solid var(--primary-cyan)}
+    .nav-item.sub-item{padding-left:36px}
+    .nav-icon{font-size:20px;width:24px;text-align:center}
+    .nav-badge{margin-left:auto;background:var(--primary-cyan);color:var(--bg-primary);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+    .nav-dropdown .nav-dropdown-toggle{display:flex;align-items:center;justify-content:space-between}
+    .nav-dropdown-menu{display:none;padding-left:12px}
+    .nav-dropdown.open .nav-dropdown-menu{display:block}
+    .dropdown-arrow{margin-left:auto;font-size:12px;color:var(--text-muted)}
+    /* Main */
+    .main-content{flex:1;margin-left:var(--sidebar-width);display:flex;flex-direction:column;min-height:100vh}
+    .topbar{height:var(--topbar-height);background:var(--bg-secondary);border-bottom:1px solid var(--border-primary);padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .page-title{font-size:24px;font-weight:700}
+    .breadcrumbs{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted)}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .chip{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:8px}
+    .chip.gold{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.35);color:#FFD700}
+    .chip.success{background:rgba(0,255,148,.12);border-color:rgba(0,255,148,.35);color:#00FF94}
+    .chip.primary{background:rgba(0,245,255,.12);border-color:rgba(0,245,255,.35);color:#00F5FF}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--primary-grad);color:#081018;border:none}
+    .btn.ghost{background:var(--bg-tertiary);color:var(--text-secondary)}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .content-area{flex:1;padding:24px 32px;overflow-y:auto}
+    /* Cards */
+    .stat-card{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .stat-card-header{display:flex;justify-content:space-between;align-items:center}
+    .stat-card-title{font-size:14px;font-weight:600;color:var(--text-secondary)}
+    .stat-card-value{font-size:24px;font-weight:700}
+    .stat-card-change{font-size:12px;font-weight:600}
+    .stat-card-change.positive{color:var(--primary-green)}
+    .stat-card-change.negative{color:var(--secondary-red)}
+    .grid{display:grid;gap:16px}
+    .grid-4{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+    .grid-3{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+    .grid-2{grid-template-columns:repeat(auto-fit,minmax(400px,1fr))}
+    /* Badges */
+    .badge{font-size:11px;font-weight:700;padding:4px 8px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary)}
+    .badge.success{background:rgba(0,255,148,.12);border-color:rgba(0,255,148,.35);color:#00FF94}
+    .badge.warning{background:rgba(255,165,0,.12);border-color:rgba(255,165,0,.35);color:#FFA500}
+    .badge.danger{background:rgba(255,68,68,.12);border-color:rgba(255,68,68,.35);color:#FF4444}
+    .badge.primary{background:rgba(0,245,255,.12);border-color:rgba(0,245,255,.35);color:#00F5FF}
+    .badge.gold{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.35);color:#FFD700}
+    /* Progress bars */
+    .progress-bar{background:var(--bg-tertiary);border-radius:10px;height:6px;overflow:hidden}
+    .progress-fill{background:var(--primary-grad);height:100%;transition:width .3s}
+    /* Lists */
+    .list{display:flex;flex-direction:column;gap:8px}
+    .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border:1px solid var(--border-primary);border-radius:10px;background:var(--bg-tertiary);color:var(--text-secondary)}
+    .list-item:hover{background:var(--bg-elevated)}
+    .mono{font-family:'JetBrains Mono',monospace}
+    /* Empty states */
+    .empty-state{text-align:center;padding:32px;color:var(--text-muted)}
+    .empty-state-icon{font-size:48px;margin-bottom:16px;opacity:.5}
+    .empty-state-title{font-size:18px;font-weight:600;margin-bottom:8px}
+    .empty-state-text{font-size:14px;margin-bottom:16px}
+    /* Tooltips */
+    .tooltip{position:relative;display:inline-block}
+    .tooltip .tooltiptext{visibility:hidden;width:200px;background-color:var(--bg-elevated);color:var(--text-primary);text-align:center;border-radius:6px;padding:8px;position:absolute;z-index:1;bottom:125%;left:50%;margin-left:-100px;opacity:0;transition:opacity .3s;font-size:12px}
+    .tooltip:hover .tooltiptext{visibility:visible;opacity:1}
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      <nav class="sidebar-nav">
+        <!-- Inteligencia -->
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a class="nav-item" href="/dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item" href="/agents">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Agents Hub</span>
+          </a>
+          <a class="nav-item" href="/signals">
+            <span class="nav-icon">📡</span>
+            <span class="nav-label">Señales</span>
+          </a>
+          <a class="nav-item" href="/trader-master">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Trader Master</span>
+          </a>
+          <a class="nav-item active" href="/portfolio">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Smart Portfolio</span>
+          </a>
+        </div>
+
+        <!-- Capital & Control -->
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a class="nav-item" href="/bankroll"><span class="nav-icon">💼</span><span class="nav-label">Bankroll</span></a>
+          <a class="nav-item" href="/watchlist"><span class="nav-icon">👀</span><span class="nav-label">Watchlist</span></a>
+          <a class="nav-item" href="/risk"><span class="nav-icon">⚠️</span><span class="nav-label">Alertas de Riesgo</span></a>
+        </div>
+
+        <!-- Tienda / Premium Hub -->
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a class="nav-item" href="/premiumhub/plans"><span class="nav-icon">💎</span><span class="nav-label">Planes Premium</span></a>
+          <a class="nav-item" href="/premiumhub/credits"><span class="nav-icon">🪙</span><span class="nav-label">Créditos</span></a>
+          <a class="nav-item" href="/premiumhub/promotions"><span class="nav-icon">🎁</span><span class="nav-label">Promociones</span></a>
+        </div>
+
+        <!-- Comunidad -->
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <a class="nav-item" href="/community/leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">Clasificación</span></a>
+          <a class="nav-item" href="/community/discussions"><span class="nav-icon">💬</span><span class="nav-label">Debates</span></a>
+          <a class="nav-item" href="/community/following"><span class="nav-icon">👤</span><span class="nav-label">Siguiendo</span></a>
+          <a class="nav-item" href="/support"><span class="nav-icon">🆘</span><span class="nav-label">Soporte</span></a>
+        </div>
+
+        <!-- IA & Mejora -->
+        <div class="nav-section">
+          <div class="nav-section-title">IA & Mejora</div>
+          <a class="nav-item" href="/coach"><span class="nav-icon">🧑‍🏫</span><span class="nav-label">Tu Entrenador de Trading</span></a>
+          <a class="nav-item" href="/stats"><span class="nav-icon">📈</span><span class="nav-label">Mis Estadísticas</span></a>
+        </div>
+
+        <!-- Referidos (dropdown) -->
+        <div class="nav-section nav-dropdown" id="referralsDropdown">
+          <div class="nav-item nav-dropdown-toggle">
+            <span><span class="nav-icon">👥</span> <span class="nav-label">Referidos</span></span>
+            <span class="dropdown-arrow">▾</span>
+          </div>
+          <div class="nav-dropdown-menu">
+            <a class="nav-item" href="/referrals"><span class="nav-icon">📄</span><span class="nav-label">Resumen</span></a>
+            <a class="nav-item" href="/referrals#directs"><span class="nav-icon">➡️</span><span class="nav-label">Directos</span></a>
+            <a class="nav-item" href="/referrals#team-binary"><span class="nav-icon">🧩</span><span class="nav-label">Equipo Binario</span></a>
+            <a class="nav-item" href="/referrals#payments"><span class="nav-icon">💳</span><span class="nav-label">Pagos</span></a>
+          </div>
+        </div>
+
+        <!-- Otros -->
+        <div class="nav-section">
+          <div class="nav-section-title">Otros</div>
+          <a class="nav-item" href="/settings"><span class="nav-icon">⚙️</span><span class="nav-label">Configuración</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Smart Portfolio</h1>
+          <div class="breadcrumbs"><span>Inicio</span>›<span>Smart Portfolio</span></div>
+        </div>
+        <div class="topbar-right">
+          <div class="chip gold">
+            <span>💎</span>
+            <span>Plan Pro</span>
+          </div>
+          <div class="chip success">
+            <span>✅</span>
+            <span>Portfolio Saludable</span>
+          </div>
+          <button class="btn ghost" onclick="simulateRefresh()">
+            <span>🔄</span>
+            <span>Actualizar</span>
+          </button>
+        </div>
+      </header>
+
+      <div class="content-area">
+        <!-- Resumen Principal -->
+        <div class="grid grid-4" style="margin-bottom: 24px;">
+          <!-- Balance / Bankroll -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Balance Disponible</span>
+              <div class="tooltip">
+                <span class="badge primary">💰</span>
+                <span class="tooltiptext">Fuente: Wallet/Bankroll Service</span>
+              </div>
+            </div>
+            <div class="stat-card-value" id="balanceValue">$2,450.00</div>
+            <div class="stat-card-change positive">+$150.00 (+6.5%) esta semana</div>
+            <div style="margin-top: 8px; font-size: 12px; color: var(--text-muted);">
+              <div>Bloqueado: $150.00</div>
+              <div>Pendiente: $75.00</div>
+            </div>
+          </div>
+
+          <!-- Suscripción -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Suscripción</span>
+              <span class="badge gold">Pro</span>
+            </div>
+            <div class="stat-card-value">Vence en 12 días</div>
+            <div class="stat-card-change">Renovación automática activa</div>
+            <button class="btn primary" style="margin-top: 8px; width: 100%;">Renovar Ahora</button>
+          </div>
+
+          <!-- Perfil de rendimiento (renombrado de Rango de Performance) -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Perfil de rendimiento</span>
+              <span class="badge success">Silver</span>
+            </div>
+            <div class="stat-card-value">Silver Trader</div>
+            <div class="stat-card-change positive">+2.3% ROI este mes</div>
+            <div style="margin-top: 8px;">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Progreso a Gold</div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 65%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cuotas API (ajustado a valores reales del plan) -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Cuotas API</span>
+              <span class="badge">Plan Pro</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: var(--text-muted);">PRE</span>
+                <span style="font-weight: 600;">30/100</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 30%;"></div>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 12px; color: var(--text-muted);">LIVE</span>
+                <span style="font-weight: 600;">8/30</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 27%;"></div>
+              </div>
+              <div style="font-size: 10px; color: var(--text-muted); margin-top: 4px;">
+                <span class="tooltip">
+                  ℹ️ Valores de ejemplo
+                  <span class="tooltiptext">Estos valores son placeholders. En producción se cargarán según tu plan real.</span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Salud del Portfolio y Performance -->
+        <div class="grid grid-2" style="margin-bottom: 24px;">
+          <!-- Salud del Portfolio -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Salud del Portfolio</span>
+              <span class="badge success">✅ Saludable</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Drawdown Actual</span>
+                <span style="font-weight: 600; color: var(--primary-green);">-2.1%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Límite Drawdown</span>
+                <span style="font-weight: 600;">15%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Toploss Configurado</span>
+                <span style="font-weight: 600; color: var(--primary-green);">✅ Sí</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Agentes Activos</span>
+                <span style="font-weight: 600;">3/5</span>
+              </div>
+            </div>
+            <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-primary);">
+              <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 4px;">Sin alertas de riesgo</div>
+              <div style="font-size: 11px; color: var(--text-muted);">Última actualización: hace 2 min</div>
+            </div>
+          </div>
+
+          <!-- Performance -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Performance</span>
+              <span class="badge">Últimos 30 días</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">ROI Mensual</span>
+                <span style="font-weight: 600; color: var(--primary-green);">+8.3%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Win Rate</span>
+                <span style="font-weight: 600;">67%</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">Profit/Loss Neto</span>
+                <span style="font-weight: 600; color: var(--primary-green);">+$203.50</span>
+              </div>
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="color: var(--text-secondary);">vs Mes Anterior</span>
+                <span style="font-weight: 600; color: var(--primary-green);">↗️ +2.1%</span>
+              </div>
+            </div>
+            <div style="margin-top: 12px; font-size: 11px; color: var(--text-muted);">
+              <span class="tooltip">
+                ℹ️ Nota: Valores estimados basados en datos históricos
+                <span class="tooltiptext">Estos valores son proyecciones basadas en tu actividad previa y no garantizan resultados futuros</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Oportunidades -->
+        <div class="grid grid-3" style="margin-bottom: 24px;">
+          <!-- Top Señales PRE -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Top Señales PRE</span>
+              <span class="badge primary">🎯 Recomendadas</span>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div>
+                  <div style="font-weight: 600;">Real Madrid vs Barcelona</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Over 2.5 Goles • 1.85</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">85%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">confianza</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div style="font-weight: 600;">Lakers vs Warriors</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Lakers -3.5 • 1.92</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">78%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">confianza</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div>
+                  <div style="font-weight: 600;">Nadal vs Djokovic</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">Nadal ML • 2.10</div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">72%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">confianza</div>
+                </div>
+              </div>
+            </div>
+            <a href="/signals/pre" class="btn primary" style="margin-top: 12px; width: 100%;">Ver Todas las Señales</a>
+          </div>
+
+          <!-- Combinada Sugerida -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Combinada Sugerida</span>
+              <span class="badge gold">⭐ Premium</span>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px;">
+              <div style="background: var(--bg-tertiary); padding: 12px; border-radius: 10px;">
+                <div style="font-weight: 600; margin-bottom: 8px;">Parlay de 3 picks</div>
+                <div style="display: flex; flex-direction: column; gap: 4px; font-size: 12px;">
+                  <div>• Over 2.5 RM-Barça (1.85)</div>
+                  <div>• Lakers -3.5 (1.92)</div>
+                  <div>• Nadal ML (2.10)</div>
+                </div>
+                <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-primary);">
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>Cuota total:</span>
+                    <span style="font-weight: 600; color: var(--primary-green);">7.45</span>
+                  </div>
+                  <div style="display: flex; justify-content: space-between;">
+                    <span>ROI estimado:</span>
+                    <span style="font-weight: 600; color: var(--primary-green);">+12.3%</span>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted);">
+                <span class="tooltip">
+                  ℹ️ Basado en análisis histórico
+                  <span class="tooltiptext">Esta combinada es una sugerencia basada en datos históricos y no garantiza resultados</span>
+                </span>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px; margin-top: 12px;">
+              <button class="btn primary" style="flex: 1;">Guardar</button>
+              <button class="btn ghost" style="flex: 1;">Enviar a Señales</button>
+            </div>
+          </div>
+
+          <!-- Tipsters Destacados -->
+          <div class="stat-card">
+            <div class="stat-card-header">
+              <span class="stat-card-title">Tipsters Destacados</span>
+              <span class="badge">Esta Semana</span>
+            </div>
+            <div class="list">
+              <div class="list-item">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 32px; height: 32px; background: var(--primary-grad); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                  <div>
+                    <div style="font-weight: 600;">TraderPro2024</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ROI: +24.5%</div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">85%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">win rate</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 32px; height: 32px; background: var(--success-grad); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                  <div>
+                    <div style="font-weight: 600;">SportsAnalyst</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ROI: +18.2%</div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">78%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">win rate</div>
+                </div>
+              </div>
+              <div class="list-item">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <div style="width: 32px; height: 32px; background: var(--premium-grad); border-radius: 50%; display: flex; align-items: center; justify-content: center;">👤</div>
+                  <div>
+                    <div style="font-weight: 600;">DataDrivenBets</div>
+                    <div style="font-size: 11px; color: var(--text-muted);">ROI: +15.8%</div>
+                  </div>
+                </div>
+                <div style="text-align: right;">
+                  <div style="font-weight: 600; color: var(--primary-green);">72%</div>
+                  <div style="font-size: 11px; color: var(--text-muted);">win rate</div>
+                </div>
+              </div>
+            </div>
+            <button class="btn ghost" style="margin-top: 12px; width: 100%;">Ver Todos los Tipsters</button>
+          </div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <span class="stat-card-title">Acciones Rápidas</span>
+            <span class="badge">Sugerencias</span>
+          </div>
+          <div class="grid grid-4">
+            <a href="/signals?tab=PRE" class="btn primary">
+              <span>🧾</span>
+              <span>Ir a Señales PRE</span>
+            </a>
+            <a href="/signals?tab=LIVE" class="btn primary">
+              <span>🧾</span>
+              <span>Ir a Señales LIVE</span>
+            </a>
+            <a href="/agents" class="btn primary">
+              <span>🧠</span>
+              <span>Ir a Agents Hub</span>
+            </a>
+            <a href="/premium/credits" class="btn ghost">
+              <span>💎</span>
+              <span>Comprar Créditos</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Nota Importante -->
+        <div style="background: var(--bg-secondary); border: 1px solid var(--border-primary); border-radius: 14px; padding: 16px; margin-top: 24px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 24px;">⚠️</span>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 4px;">Principio Clave: Acciones Sugeridas ≠ Ejecutadas</div>
+              <div style="font-size: 14px; color: var(--text-secondary);">
+                Todas las acciones mostradas son sugerencias informativas. Las apuestas reales se ejecutan únicamente a través de: 
+                <strong>Señales → Agents Hub → Risk Guard → Ejecución</strong>. 
+                Nunca se generan apuestas directamente desde el Smart Portfolio.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function toggleDropdown(id) {
+      const dropdown = document.getElementById(id);
+      dropdown.classList.toggle('open');
+    }
+
+    function simulateRefresh() {
+      // Simulate refresh animation
+      const button = event.target.closest('.btn');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<span>🔄</span><span>Actualizando...</span>';
+      button.disabled = true;
+      
+      setTimeout(() => {
+        // Update balance with random variation
+        const balanceElement = document.getElementById('balanceValue');
+        const currentBalance = parseFloat(balanceElement.textContent.replace('$', '').replace(',', ''));
+        const newBalance = currentBalance + (Math.random() - 0.5) * 50;
+        balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+        
+        // Restore button
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }, 1500);
+    }
+
+    // Set active navigation based on current page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add click handlers for cards and buttons
+      document.querySelectorAll('.list-item').forEach(item => {
+        item.addEventListener('click', function() {
+          this.style.background = 'var(--bg-elevated)';
+          setTimeout(() => {
+            this.style.background = 'var(--bg-tertiary)';
+          }, 200);
+        });
+      });
+
+      // Simulate periodic balance updates (only balanceValue)
+      setInterval(() => {
+        const balanceElement = document.getElementById('balanceValue');
+        const currentBalance = parseFloat(balanceElement.textContent.replace('$', '').replace(',', ''));
+        const newBalance = currentBalance + (Math.random() - 0.5) * 10;
+        balanceElement.textContent = `$${newBalance.toFixed(2)}`;
+      }, 30000);
+    });
+  </script>
+</body>
+</html>

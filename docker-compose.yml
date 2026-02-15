@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres-trader:
+    image: postgres:15-alpine
+    container_name: trader-deportivo-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: traderdeportivo
+      POSTGRES_USER: trader_admin
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-TraderSecure2024!}
+    ports:
+      - "5435:5432"  # Puerto 5435 para evitar conflictos con otros proyectos
+    volumes:
+      - trader_deportivo_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - trader_network
+
+  redis-trader:
+    image: redis:7-alpine
+    container_name: trader-deportivo-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"  # Puerto 6380 para evitar conflictos
+    volumes:
+      - trader_redis_data:/data
+    networks:
+      - trader_network
+
+  pgadmin-trader:
+    image: dpage/pgadmin4:latest
+    container_name: trader-deportivo-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@traderdeportivo.co
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-AdminTrader2024!}
+    ports:
+      - "5055:80"  # Puerto 5055 para evitar conflictos
+    depends_on:
+      - postgres-trader
+    networks:
+      - trader_network
+
+volumes:
+  trader_deportivo_data:
+  trader_redis_data:
+
+networks:
+  trader_network:
+    driver: bridge

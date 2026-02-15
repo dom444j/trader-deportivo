@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Deportivo — Agents Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-cyan:#00F5FF; --primary-green:#00FF94; --primary-blue:#0066FF;
+      --secondary-gold:#FFD700; --secondary-purple:#B026FF; --secondary-red:#FF4444;
+      --bg-primary:#0A0A1A; --bg-secondary:#141428; --bg-tertiary:#1E1E38; --bg-elevated:#252545;
+      --border-primary:#2A2A4A; --text-primary:#FFFFFF; --text-secondary:#B8B8D0; --text-muted:#8888A8;
+      --sidebar-width:280px; --sidebar-collapsed:80px; --topbar-height:70px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Rajdhani',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh}
+    .dashboard{display:flex;min-height:100vh}
+    /* Sidebar */
+    .sidebar{width:var(--sidebar-width);background:var(--bg-secondary);border-right:1px solid var(--border-primary);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:1000}
+    .sidebar-logo{padding:20px;border-bottom:1px solid var(--border-primary);display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(0,245,255,.08),rgba(176,38,255,.08))}
+    .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,#00F5FF,#0066FF);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;box-shadow:0 0 20px rgba(0,245,255,.4)}
+    .logo-text{font-size:18px;font-weight:700;background:linear-gradient(135deg,#00F5FF,#0066FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+    .nav-section{margin-bottom:24px}
+    .nav-section-title{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 12px;margin-bottom:6px;border-radius:10px;color:var(--text-secondary);text-decoration:none;font-size:15px;font-weight:500;transition:all .3s}
+    .nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary);transform:translateX(4px)}
+    .nav-item.active{background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(0,102,255,.15));color:var(--primary-cyan);border-left:3px solid var(--primary-cyan)}
+    .nav-icon{font-size:20px;width:24px;text-align:center}
+    .nav-badge{margin-left:auto;background:var(--primary-cyan);color:var(--bg-primary);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+    /* Main */
+    .main-content{flex:1;margin-left:var(--sidebar-width);display:flex;flex-direction:column;min-height:100vh}
+    .topbar{height:var(--topbar-height);background:var(--bg-secondary);border-bottom:1px solid var(--border-primary);padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .page-title{font-size:24px;font-weight:700}
+    .breadcrumbs{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted)}
+    .content-area{flex:1;padding:32px;overflow-y:auto}
+    /* Panels & cards */
+    .panel{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:16px;padding:20px;margin-bottom:24px}
+    .panel-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+    .panel-title{font-size:18px;font-weight:700}
+    .panel-sub{font-size:12px;color:var(--text-muted)}
+    .card-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:768px){.card-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1200px){.card-grid{grid-template-columns:repeat(3,1fr)}}
+    .agent-card{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:14px;padding:16px}
+    .agent-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .agent-name{font-size:16px;font-weight:700}
+    .status-badge{font-size:11px;font-weight:700;padding:4px 8px;border-radius:10px}
+    .status-on{background:var(--primary-green);color:var(--bg-primary)}
+    .status-off{background:var(--text-muted);color:#111}
+    .status-paused{background:#FFA500;color:#111}
+    .status-limit{background:var(--secondary-gold);color:#111}
+    .status-locked{background:var(--secondary-red);color:#fff}
+    .status-running{background:var(--primary-cyan);color:#111}
+    .metrics{display:flex;gap:12px;margin:10px 0}
+    .metric{flex:1;background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:10px;padding:10px}
+    .metric-label{font-size:11px;color:var(--text-muted);text-transform:uppercase}
+    .metric-value{font-size:18px;font-weight:700}
+    .usage{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+    .chip{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--text-secondary)}
+    .actions{display:flex;gap:8px;margin-top:12px}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(135deg,#00F5FF,#0066FF);color:#081018;border:none}
+    .btn.gold{background:linear-gradient(135deg,#FFD700,#FFA500);color:#081018;border:none}
+    .btn.danger{background:var(--secondary-red);color:#fff;border:none}
+    .list{display:flex;flex-direction:column;gap:10px}
+    .list-item{display:flex;justify-content:space-between;align-items:center;background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:10px;padding:10px}
+    .mono{font-family:'JetBrains Mono',monospace}
+    /* Modal & side panel */
+    .modal-backdrop{position:fixed;inset:0;background:rgba(10,10,26,.7);display:none;z-index:2000}
+    .modal-panel{position:fixed;top:0;right:0;height:100vh;width:480px;max-width:90vw;background:var(--bg-elevated);border-left:1px solid var(--border-primary);box-shadow:-10px 0 30px rgba(0,0,0,.4);display:flex;flex-direction:column}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border-primary)}
+    .modal-title{font-size:18px;font-weight:700}
+    .modal-close{background:none;border:none;color:var(--text-secondary);font-size:22px;cursor:pointer}
+    .modal-body{padding:16px 20px;overflow-y:auto}
+    .form-grid{display:grid;grid-template-columns:1fr;gap:12px}
+    @media(min-width:768px){.form-grid{grid-template-columns:1fr 1fr}}
+    .form-group{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:10px;padding:12px}
+    .form-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;margin-bottom:6px}
+    .form-row{display:flex;gap:10px;align-items:center}
+    .input, select{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:8px;padding:8px;color:var(--text-secondary)}
+    .switch{display:flex;align-items:center;gap:8px}
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trading Deportivo</div>
+      </div>
+      <nav class="sidebar-nav">
+        <!-- Inteligencia -->
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a class="nav-item" href="/dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item active" href="/agents">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Agents Hub</span>
+          </a>
+          <a class="nav-item" href="/signals">
+            <span class="nav-icon">📡</span>
+            <span class="nav-label">Señales</span>
+          </a>
+          <a class="nav-item" href="/trader-master">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Trader Master</span>
+          </a>
+          <a class="nav-item" href="/portfolio">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Smart Portfolio</span>
+          </a>
+        </div>
+
+        <!-- Capital & Control -->
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a class="nav-item" href="/bankroll"><span class="nav-icon">💼</span><span class="nav-label">Bankroll</span></a>
+          <a class="nav-item" href="/watchlist"><span class="nav-icon">👀</span><span class="nav-label">Watchlist</span></a>
+          <a class="nav-item" href="/risk"><span class="nav-icon">⚠️</span><span class="nav-label">Alertas de Riesgo</span></a>
+        </div>
+
+        <!-- Tienda / Premium Hub -->
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a class="nav-item" href="/premiumhub/plans"><span class="nav-icon">💎</span><span class="nav-label">Planes Premium</span></a>
+          <a class="nav-item" href="/premiumhub/credits"><span class="nav-icon">🪙</span><span class="nav-label">Créditos</span></a>
+          <a class="nav-item" href="/premiumhub/promotions"><span class="nav-icon">🎁</span><span class="nav-label">Promociones</span></a>
+        </div>
+
+        <!-- Comunidad -->
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <a class="nav-item" href="/community/leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">Clasificación</span></a>
+          <a class="nav-item" href="/community/discussions"><span class="nav-icon">💬</span><span class="nav-label">Debates</span></a>
+          <a class="nav-item" href="/community/following"><span class="nav-icon">👤</span><span class="nav-label">Siguiendo</span></a>
+          <a class="nav-item" href="/support"><span class="nav-icon">🆘</span><span class="nav-label">Soporte</span></a>
+        </div>
+
+        <!-- IA & Mejora -->
+        <div class="nav-section">
+          <div class="nav-section-title">IA & Mejora</div>
+          <a class="nav-item" href="/coach"><span class="nav-icon">🧑‍🏫</span><span class="nav-label">Tu Entrenador de Trading</span></a>
+          <a class="nav-item" href="/stats"><span class="nav-icon">📈</span><span class="nav-label">Mis Estadísticas</span></a>
+        </div>
+
+        <!-- Referidos (dropdown) -->
+        <div class="nav-section nav-dropdown" id="referralsDropdown">
+          <div class="nav-item nav-dropdown-toggle">
+            <span><span class="nav-icon">👥</span> <span class="nav-label">Referidos</span></span>
+            <span class="dropdown-arrow">▾</span>
+          </div>
+          <div class="nav-dropdown-menu">
+            <a class="nav-item" href="/referrals"><span class="nav-icon">📄</span><span class="nav-label">Resumen</span></a>
+            <a class="nav-item" href="/referrals#directs"><span class="nav-icon">➡️</span><span class="nav-label">Directos</span></a>
+            <a class="nav-item" href="/referrals#team-binary"><span class="nav-icon">🧩</span><span class="nav-label">Equipo Binario</span></a>
+            <a class="nav-item" href="/referrals#payments"><span class="nav-icon">💳</span><span class="nav-label">Pagos</span></a>
+          </div>
+        </div>
+
+        <!-- Otros -->
+        <div class="nav-section">
+          <div class="nav-section-title">Otros</div>
+          <a class="nav-item" href="/settings"><span class="nav-icon">⚙️</span><span class="nav-label">Configuración</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Agents Hub</h1>
+          <div class="breadcrumbs"><span>Inicio</span>›<span>Agents Hub</span></div>
+        </div>
+        <div class="topbar-right"></div>
+      </header>
+
+      <section class="content-area">
+        <!-- Ranking semanal de agentes + filtros -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Ranking semanal de agentes</div>
+              <div class="panel-sub">Top 10 por ROI y CLV (últimos 7 días)</div>
+            </div>
+          </div>
+          <div class="usage" style="gap:8px;flex-wrap:wrap">
+            <label class="chip">Tipo
+              <select style="margin-left:8px;background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border-primary);border-radius:8px;padding:6px 8px">
+                <option>IA</option>
+                <option>Copy</option>
+              </select>
+            </label>
+            <label class="chip">Modo
+              <select style="margin-left:8px;background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border-primary);border-radius:8px;padding:6px 8px">
+                <option>Observe</option>
+                <option>Semi</option>
+                <option>Auto</option>
+              </select>
+            </label>
+            <label class="chip">Mercado
+              <select style="margin-left:8px;background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border-primary);border-radius:8px;padding:6px 8px">
+                <option>PRE</option>
+                <option>LIVE</option>
+              </select>
+            </label>
+            <label class="chip">Estado
+              <select style="margin-left:8px;background:var(--bg-tertiary);color:var(--text-secondary);border:1px solid var(--border-primary);border-radius:8px;padding:6px 8px">
+                <option>ON</option>
+                <option>PAUSED</option>
+                <option>LOCKED</option>
+                <option>ERROR</option>
+                <option>PAUSED_BY_LIMIT</option>
+              </select>
+            </label>
+          </div>
+          <div class="list">
+            <div class="list-item">
+              <span class="mono">#1 — AI Signals Agent — ROI +8.2% · CLV +0.12 · modo AUTO · estado ON</span>
+              <span class="chip">IA</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#2 — Copy-Trade Agent — ROI +6.1% · Consist. 74% · modo SEMI · estado PAUSED</span>
+              <span class="chip">Copy</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#3 — Live Value Agent — ROI +5.4% · CLV +0.08 · mercado LIVE · estado ON</span>
+              <span class="chip">IA</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#4 — Tipster Sync — ROI +4.7% · Consist. 69% · modo OBSERVE · estado ON</span>
+              <span class="chip">Copy</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#5 — Unders PRE Agent — ROI +4.1% · CLV +0.05 · mercado PRE · estado ON</span>
+              <span class="chip">IA</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#6 — Risk-Aware Copy — ROI +3.5% · Consist. 72% · modo SEMI · estado ON</span>
+              <span class="chip">Copy</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#7 — Over 2.5 LIVE — ROI +3.2% · CLV +0.03 · mercado LIVE · estado PAUSED_BY_LIMIT</span>
+              <span class="chip">IA</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#8 — Tipster Pro Mirror — ROI +2.8% · Consist. 68% · modo AUTO · estado ON</span>
+              <span class="chip">Copy</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#9 — Value PRE Scanner — ROI +2.3% · CLV +0.02 · mercado PRE · estado LOCKED</span>
+              <span class="chip">IA</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">#10 — Tipster Safe — ROI +1.9% · Consist. 65% · modo OBSERVE · estado ERROR</span>
+              <span class="chip">Copy</span>
+            </div>
+          </div>
+        </div>
+         <!-- Mis Agentes -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Mis Agentes</div>
+              <div class="panel-sub">Visualiza, configura y controla agentes automáticos y asistidos</div>
+            </div>
+            <div class="actions">
+              <button class="btn gold">Crear agente</button>
+            </div>
+          </div>
+          <div class="card-grid">
+            <!-- AI Signals Agent -->
+            <div class="agent-card">
+              <div class="agent-header">
+                <div class="agent-name">AI Signals Agent</div>
+                <span class="status-badge status-on">ON</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="metric-label">ROI</div><div class="metric-value positive">+8.2%</div></div>
+                <div class="metric"><div class="metric-label">CLV</div><div class="metric-value">+0.12</div></div>
+                <div class="metric"><div class="metric-label">Drawdown</div><div class="metric-value">-6.5%</div></div>
+              </div>
+              <div class="usage">
+                <span class="chip mono">Plan: Pro</span>
+                <span class="chip mono">Bets: 6/8</span>
+                <span class="chip mono">Reset: 2026-03-01</span>
+              </div>
+              <div class="actions">
+                <button class="btn">Pausar</button>
+                <button class="btn primary open-config" data-name="AI Signals Agent" data-status="ON">Ver detalle</button>
+              </div>
+            </div>
+            <!-- Copy-Trade Agent -->
+            <div class="agent-card">
+              <div class="agent-header">
+                <div class="agent-name">Copy-Trade Agent</div>
+                <span class="status-badge status-paused">PAUSED</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="metric-label">ROI</div><div class="metric-value">+3.1%</div></div>
+                <div class="metric"><div class="metric-label">Consist.</div><div class="metric-value">72%</div></div>
+                <div class="metric"><div class="metric-label">Ops</div><div class="metric-value">18</div></div>
+              </div>
+              <div class="usage">
+                <span class="chip mono">Plan: Básico</span>
+                <span class="chip mono">Modo: Observación</span>
+                <span class="chip mono">Upgrade requerido</span>
+              </div>
+              <div class="actions">
+                <button class="btn">Reanudar</button>
+                <button class="btn gold">Upgrade plan</button>
+                <button class="btn primary open-config" data-name="Copy-Trade Agent" data-status="PAUSED">Ver detalle</button>
+              </div>
+            </div>
+            <!-- Risk Guard Agent -->
+            <div class="agent-card">
+              <div class="agent-header">
+                <div class="agent-name">Risk Guard (siempre activo)</div>
+                <span class="status-badge status-running">RUNNING</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="metric-label">Bloqueos</div><div class="metric-value">2</div></div>
+                <div class="metric"><div class="metric-label">Alertas</div><div class="metric-value">4</div></div>
+                <div class="metric"><div class="metric-label">Estado</div><div class="metric-value">OK</div></div>
+              </div>
+              <div class="usage">
+                <span class="chip mono">Toploss: ON</span>
+                <span class="chip mono">Diario OK</span>
+                <span class="chip mono">Drawdown OK</span>
+              </div>
+              <div class="actions">
+                <button class="btn primary">Ver auditoría</button>
+              </div>
+            </div>
+            <!-- Ejemplo agente limitado -->
+            <div class="agent-card">
+              <div class="agent-header">
+                <div class="agent-name">Ejemplo agente limitado</div>
+                <span class="status-badge status-limit">PAUSED_BY_LIMIT</span>
+              </div>
+              <div class="metrics">
+                <div class="metric"><div class="metric-label">ROI</div><div class="metric-value">+2.4%</div></div>
+                <div class="metric"><div class="metric-label">CLV</div><div class="metric-value">+0.03</div></div>
+                <div class="metric"><div class="metric-label">Ops</div><div class="metric-value">12</div></div>
+              </div>
+              <div class="usage">
+                <span class="chip mono">Plan: Pro</span>
+                <span class="chip mono">billing_mode: plan_first</span>
+                <span class="chip mono">limit reached</span>
+              </div>
+              <div class="actions">
+                <button class="btn gold">Comprar créditos</button>
+                <button class="btn gold">Upgrade plan</button>
+                <button class="btn primary open-config" data-name="Ejemplo agente limitado" data-status="PAUSED_BY_LIMIT">Ver detalle</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Integración Cloudbet -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Integración Cloudbet</div>
+              <div class="panel-sub">Conecta tu API para habilitar ejecución (según plan)</div>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary">Conectar</button>
+            <button class="btn">Probar conexión</button>
+            <button class="btn danger">Revocar</button>
+          </div>
+          <div class="usage" style="margin-top:12px">
+            <span class="badge badge-muted"><span class="dot dot-muted"></span>revoked</span>
+            <span class="badge badge-warn"><span class="dot dot-warn"></span>rate_limited</span>
+            <span class="chip mono">Rate limit: —</span>
+          </div>
+          <div class="panel-sub" style="margin-top:8px">Nunca almacenamos tu key completa en claro. Usa alias cifrado y puedes revocar en cualquier momento.</div>
+        </div>
+
+        <!-- Cuotas y créditos -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Cuotas de Plan y Créditos</div>
+              <div class="panel-sub">Bets usadas / disponibles y fecha de reset mensual</div>
+            </div>
+          </div>
+          <div class="list">
+            <div class="list-item">
+              <div>
+                <div class="mono">AI Signals Agent — Bets 6/8 · LIVE 0/0</div>
+                <div class="panel-sub">Reset: 2026-03-01 · billing_mode: plan_first</div>
+              </div>
+              <div class="actions">
+                <button class="btn gold">Comprar créditos</button>
+              </div>
+            </div>
+            <div class="list-item">
+              <div>
+                <div class="mono">Copy-Trade Agent — Observación (Básico)</div>
+                <div class="panel-sub">Ejecutar requiere plan Pro o créditos</div>
+              </div>
+              <div class="actions">
+                <button class="btn gold">Upgrade plan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Historial del agente (auditoría) -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Historial del Agente</div>
+              <div class="panel-sub">Últimas decisiones: observe · suggest · execute · block</div>
+            </div>
+          </div>
+          <div class="list">
+            <div class="list-item">
+              <span class="mono">2026-02-06 12:01Z — execute — betId=CB-10294 — odds=2.10 — stake=2%</span>
+              <span class="chip">OK</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">2026-02-05 18:22Z — block — reason=risk (daily_loss_limit)</span>
+              <span class="chip">Risk Guard</span>
+            </div>
+            <div class="list-item">
+              <span class="mono">2026-02-04 09:10Z — suggest — market=O/U 2.5 — value=+0.08</span>
+              <span class="chip">AI</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notas de plan y riesgo -->
+        <div class="panel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Toploss y Risk Guard</div>
+              <div class="panel-sub">Defaults por plan y reglas de bloqueo</div>
+            </div>
+          </div>
+          <ul style="margin-left:18px;line-height:1.6;color:var(--text-secondary)">
+            <li>Premium: toploss ON recomendado; LIVE habilitado dentro de cupo.</li>
+            <li>Pro: ejecución PRE limitada (hasta 8/mes); requiere confirmación.</li>
+            <li>Básico: observación y alertas; sin ejecución automática.</li>
+            <li>Risk Guard puede PAUSAR o LOCKED con prioridad absoluta.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+<style>
+  /* Dropdown Referidos */
+  .nav-dropdown { position: relative; }
+  .nav-dropdown-menu { display: none; position: absolute; left: 0; top: 100%; background: #0f172a; border: 1px solid #1f2937; border-radius: 8px; min-width: 220px; z-index: 1000; padding: 8px 0; }
+  .nav-dropdown.open .nav-dropdown-menu { display: block; }
+  .nav-dropdown-menu a { display: block; padding: 10px 14px; color: #cbd5e1; text-decoration: none; font-size: 14px; }
+  .nav-dropdown-menu a:hover { background: #1f2937; color: #fff; }
+
+  /* Status badges (agents) y Cloudbet */
+   .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+   .badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+   .badge-success { background: #0f766e; color: #eafffb; }
+   .badge-warn { background: #b45309; color: #fff7ed; }
+   .badge-danger { background: #b91c1c; color: #fee2e2; }
+   .badge-muted { background: #334155; color: #cbd5e1; }
+   .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+   .dot-success { background: #22c55e; }
+   .dot-warn { background: #f59e0b; }
+   .dot-danger { background: #ef4444; }
+   .dot-muted { background: #94a3b8; }
+
+  /* Ensure modal backdrop layering */
+  .modal-backdrop { position: fixed; inset: 0; background: rgba(2,6,23,0.6); display: none; align-items: center; justify-content: center; z-index: 2000; }
+  .modal-backdrop.open { display: flex; }
+  .modal { background: #0b1220; border: 1px solid #1f2937; border-radius: 12px; width: 720px; max-width: 90vw; color: #e5e7eb; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+  .modal-header { display:flex; justify-content: space-between; align-items:center; padding: 16px; border-bottom: 1px solid #1f2937; }
+  .modal-body { padding: 16px; }
+  .modal-actions { display:flex; gap: 8px; justify-content:flex-end; padding: 16px; border-top: 1px solid #1f2937; }
+  .select-input { background:#0f172a; border:1px solid #1f2937; color:#e5e7eb; border-radius:8px; padding:8px 10px; }
+</style>
+<!-- Modal: Detalle / Configuración del agente -->
+<div id="agentConfigModal" class="modal-backdrop">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Detalle / Configuración del agente — <span id="configAgentName">Agente</span></h3>
+      <button id="closeAgentConfig" class="btn btn-secondary">Cerrar</button>
+    </div>
+    <div class="modal-body">
+      <!-- Billing mode selector -->
+      <div class="form-row" style="display:flex; gap:12px; align-items:center; margin-bottom:12px;">
+        <label for="billingModeSelect">Billing mode</label>
+        <select id="billingModeSelect" class="select-input">
+          <option value="plan_first" selected>plan_first (default)</option>
+          <option value="credits_first">credits_first</option>
+          <option value="manual">manual</option>
+        </select>
+      </div>
+      <div class="form-grid">
+        <div class="form-group">
+          <div class="form-label">Modo</div>
+          <select id="cfgMode" class="input">
+            <option>Notify</option>
+            <option>Semi</option>
+            <option>Auto</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Fuentes</div>
+          <div class="form-row">
+            <label class="chip"><input type="radio" name="cfgSources" checked> IA</label>
+            <label class="chip"><input type="radio" name="cfgSources"> Tipster</label>
+            <label class="chip"><input type="radio" name="cfgSources"> Ambas</label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Stake</div>
+          <div class="form-row">
+            <select id="cfgStakeType" class="input"><option>Flat</option><option>%</option></select>
+            <input id="cfgStakeValue" type="number" class="input" placeholder="Valor" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Mercados</div>
+          <div class="form-row">
+            <label class="chip"><input type="checkbox" checked> PRE</label>
+            <label class="chip"><input type="checkbox"> LIVE</label>
+          </div>
+          <div class="panel-sub" style="margin-top:6px">LIVE solo premium con cupo</div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Toploss</div>
+          <div class="form-row">
+            <label class="switch"><input id="cfgToplossOn" type="checkbox"> ON</label>
+            <input id="cfgToplossValue" type="number" class="input" placeholder="Valor %" min="0" step="0.1" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-label">Cooldown</div>
+          <div class="form-row">
+            <input id="cfgCooldown" type="number" class="input" placeholder="Minutos" min="0" step="1" />
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <div class="form-label">Horarios activos</div>
+          <div class="form-row" style="flex-wrap:wrap">
+            <label class="chip"><input type="checkbox" checked> Lunes</label>
+            <label class="chip"><input type="checkbox" checked> Martes</label>
+            <label class="chip"><input type="checkbox" checked> Miércoles</label>
+            <label class="chip"><input type="checkbox" checked> Jueves</label>
+            <label class="chip"><input type="checkbox" checked> Viernes</label>
+            <label class="chip"><input type="checkbox"> Sábado</label>
+            <label class="chip"><input type="checkbox"> Domingo</label>
+          </div>
+        </div>
+        <div class="form-group" style="grid-column:1/-1">
+          <div class="form-label">Estado</div>
+          <div class="form-row">
+            <span id="configAgentStatus" class="status-badge status-off">—</span>
+            <span id="configAgentReason" class="panel-sub" style="margin-left:8px">Motivo: —</span>
+          </div>
+        </div>
+      </div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn primary" id="saveConfig">Guardar</button>
+        <button class="btn" id="cancelConfig">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      // Dropdown Referidos toggle
+      document.querySelectorAll('.nav-dropdown').forEach(dd => {
+        const trigger = dd.querySelector('.nav-dropdown-toggle');
+        if (trigger) {
+          trigger.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            dd.classList.toggle('open');
+          });
+        }
+        document.addEventListener('click', function(e) {
+          if (!dd.contains(e.target)) dd.classList.remove('open');
+        });
+      });
+
+      // Modal: abrir desde botones "Ver detalle"
+      const backdrop = document.getElementById('agentConfigModal');
+      function openModal(){ backdrop.classList.add('open'); }
+      function closeModal(){ backdrop.classList.remove('open'); }
+
+      document.querySelectorAll('.open-config').forEach(btn => {
+        btn.addEventListener('click', () => {
+          openModal();
+          const nameEl = document.getElementById('configAgentName');
+          const statusEl = document.getElementById('configAgentStatus');
+          const reasonEl = document.getElementById('configAgentReason');
+          const status = btn.dataset.status || 'ON';
+          if(nameEl) nameEl.textContent = btn.dataset.name || 'Agente';
+          if(statusEl){
+            statusEl.textContent = status;
+            statusEl.className = 'status-badge ' + (status === 'ON' ? 'status-on' : (status === 'PAUSED' ? 'status-paused' : (status === 'LOCKED' ? 'status-locked' : (status === 'ERROR' ? 'status-off' : status === 'PAUSED_BY_LIMIT' ? 'status-limit' : 'status-off'))));
+          }
+          let reason = '—';
+          if(status === 'LOCKED'){ reason = 'Bloqueado por Risk Guard'; }
+          else if(status === 'ERROR'){ reason = 'Error de API/estado inválido'; }
+          else if(status === 'PAUSED_BY_LIMIT'){ reason = 'Límite de plan/créditos alcanzado'; }
+          if(reasonEl) reasonEl.textContent = 'Motivo: ' + reason;
+        });
+      });
+
+      // Cerrar modal
+      document.getElementById('closeAgentConfig')?.addEventListener('click', closeModal);
+      document.getElementById('cancelConfig')?.addEventListener('click', closeModal);
+      backdrop.addEventListener('click', (e)=>{ if(e.target === backdrop) closeModal(); });
+
+      // Guardar (ejemplo) — billing_mode selector
+      document.getElementById('saveConfig')?.addEventListener('click', function(){
+        const mode = document.getElementById('billingModeSelect')?.value || 'plan_first';
+        console.log('Saved billing_mode:', mode);
+        closeModal();
+      });
+    });
+  </script>
+</body>
+</html>

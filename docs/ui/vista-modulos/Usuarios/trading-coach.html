@@ -1,0 +1,1901 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trading Coach | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .plan-badge {
+      padding: 4px 12px;
+      background: var(--gradient-premium);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--bg-primary);
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== ALERT ========== */
+    .alert {
+      padding: 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      border: 1px solid;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border-color: rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    .alert.warning {
+      background: rgba(255, 140, 0, 0.1);
+      border-color: rgba(255, 140, 0, 0.3);
+      color: var(--secondary-orange);
+    }
+
+    /* ========== TABS ========== */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      padding-bottom: 0;
+    }
+
+    .tab {
+      padding: 12px 20px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      position: relative;
+      bottom: -1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab:hover {
+      color: var(--text-primary);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .tab.active {
+      color: var(--primary-cyan);
+      border-bottom-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.08);
+    }
+
+    /* ========== METRICS GRID ========== */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 24px;
+    }
+
+    .metric-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-secondary);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .metric-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .metric-trend {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .metric-trend.up {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .metric-trend.down {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .metric-trend.stable {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .metric-value {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      margin-bottom: 8px;
+    }
+
+    .metric-value.cyan {
+      color: var(--primary-cyan);
+    }
+
+    .metric-value.green {
+      color: var(--primary-green);
+    }
+
+    .metric-value.gold {
+      color: var(--secondary-gold);
+    }
+
+    .metric-description {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* ========== HERO SUGGESTION ========== */
+    .hero-suggestion {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.1), rgba(0, 102, 255, 0.1));
+      border: 2px solid rgba(0, 245, 255, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-suggestion::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-title {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-description {
+      font-size: 16px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: 10px;
+      color: var(--bg-primary);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .hero-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    /* ========== PANEL ========== */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ========== INSIGHT CARDS ========== */
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+
+    .insight-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .insight-card:hover {
+      border-color: var(--border-secondary);
+      transform: translateY(-2px);
+    }
+
+    .insight-card.priority-high {
+      border-left: 4px solid var(--secondary-red);
+    }
+
+    .insight-card.priority-medium {
+      border-left: 4px solid var(--secondary-orange);
+    }
+
+    .insight-card.priority-low {
+      border-left: 4px solid var(--primary-cyan);
+    }
+
+    .insight-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+
+    .insight-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .insight-type {
+      padding: 4px 8px;
+      background: rgba(0, 245, 255, 0.15);
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary-cyan);
+    }
+
+    .insight-explanation {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .insight-evidence {
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+    }
+
+    .evidence-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .evidence-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .insight-action {
+      background: rgba(0, 245, 255, 0.1);
+      border-left: 3px solid var(--primary-cyan);
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+    }
+
+    .action-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .action-text {
+      font-size: 13px;
+      color: var(--primary-cyan);
+      font-weight: 600;
+    }
+
+    .insight-footer {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== WEEKLY PLAN ========== */
+    .plan-goal {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .goal-type {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(0, 245, 255, 0.2);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary-cyan);
+      margin-bottom: 8px;
+    }
+
+    .goal-description {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .progress-bar-container {
+      margin-bottom: 24px;
+    }
+
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+
+    .progress-bar {
+      height: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--gradient-success);
+      border-radius: 6px;
+      transition: width 0.5s ease;
+    }
+
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .task-item {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .task-item:hover {
+      border-color: var(--border-secondary);
+    }
+
+    .task-item.completed {
+      opacity: 0.6;
+      background: rgba(0, 255, 148, 0.05);
+      border-color: rgba(0, 255, 148, 0.3);
+    }
+
+    .task-checkbox {
+      width: 24px;
+      height: 24px;
+      min-width: 24px;
+      border: 2px solid var(--border-primary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .task-item.completed .task-checkbox {
+      background: var(--gradient-success);
+      border-color: var(--primary-green);
+    }
+
+    .task-checkbox::after {
+      content: '✓';
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--bg-primary);
+      display: none;
+    }
+
+    .task-item.completed .task-checkbox::after {
+      display: block;
+    }
+
+    .task-content {
+      flex: 1;
+    }
+
+    .task-title {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .task-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .task-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .task-objective {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .task-howto {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+      display: none;
+    }
+
+    .task-item.expanded .task-howto {
+      display: block;
+    }
+
+    .task-toggle {
+      font-size: 12px;
+      color: var(--primary-cyan);
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    .task-toggle:hover {
+      text-decoration: underline;
+    }
+
+    /* ========== PICK REVIEW ========== */
+    .review-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .review-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 13px;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .review-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .review-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .quality-score {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .quality-score.high {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .quality-score.medium {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .quality-score.low {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .category-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .category-badge.studied {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .category-badge.opportunistic {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .category-badge.recreational {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    .coach-comment {
+      max-width: 300px;
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    /* ========== FILTERS ========== */
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .filter-btn:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    .filter-btn.active {
+      background: rgba(0, 245, 255, 0.15);
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .review-table {
+        font-size: 12px;
+      }
+
+      .review-table th,
+      .review-table td {
+        padding: 10px 6px;
+      }
+    }
+
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/coach" class="nav-item active">
+            <span class="nav-icon">🤖</span>
+            <span>Trading Coach</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <a href="/community" class="nav-item">
+            <span class="nav-icon">🏆</span>
+            <span>Community Hub</span>
+          </a>
+          <a href="/support" class="nav-item">
+            <span class="nav-icon">🛟</span>
+            <span>Support Hub</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="hamburger-menu" id="hamburger-toggle" aria-label="Abrir menú" style="display:none">☰</button>
+          <h1 class="page-title">🤖 Trading Coach</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Inteligencia</span>
+            <span>›</span>
+            <span>Trading Coach</span>
+          </div>
+        </div>
+        <div>
+          <span class="plan-badge">PRO</span>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Disclaimer Alert -->
+        <div class="alert info">
+          <span class="alert-icon">💡</span>
+          <div>
+            <strong>El Trading Coach ayuda a mejorar tu proceso.</strong><br>
+            NO garantiza resultados ni recomienda apuestas específicas. Usa Risk Guard para proteger tu banca.
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+          <button class="tab active" data-tab="dashboard">
+            <span>📊</span>
+            <span>Dashboard</span>
+          </button>
+          <button class="tab" data-tab="insights">
+            <span>💡</span>
+            <span>Insights</span>
+          </button>
+          <button class="tab" data-tab="weekly-plan">
+            <span>📋</span>
+            <span>Plan Semanal</span>
+          </button>
+          <button class="tab" data-tab="review">
+            <span>📝</span>
+            <span>Review de Picks</span>
+          </button>
+        </div>
+
+        <!-- Tab Content: Dashboard -->
+        <div id="tab-dashboard" class="tab-content">
+          <!-- Trader Status Panel -->
+          <div class="panel" id="trader-status-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🧭</span>
+                <span>Tu etapa actual</span>
+              </div>
+              <div style="font-size:12px;color:var(--text-muted)">Progreso hacia <strong id="next-stage-label">DISCIPLINED</strong></div>
+            </div>
+            <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+              <div style="font-size:18px;font-weight:700"><span style="opacity:.8">Etapa:</span> <span id="current-stage">STRUCTURED TRADER</span></div>
+              <div style="flex:1;min-width:220px">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="stage-progress-fill" style="width: 68%;"></div>
+                </div>
+                <div class="progress-label" style="justify-content:flex-end"><span></span><span id="stage-progress-label">68%</span></div>
+              </div>
+            </div>
+            <div id="stage-coach-note" style="margin-top:10px;color:var(--text-muted)">Ya escribes razonamiento antes de apostar y mantienes stake estable. El siguiente paso es evitar operar después de pérdidas.</div>
+          </div>
+
+          <!-- Recovery Mode Banner -->
+          <div class="alert info" id="recovery-banner" style="display:none;background: linear-gradient(135deg, rgba(255, 166, 0, 0.15), rgba(255, 68, 68, 0.15)); color: var(--secondary-red); border-left: 3px solid var(--secondary-red); box-shadow: 0 0 20px rgba(255, 68, 68, 0.2);">
+            <span class="alert-icon">🛡️</span>
+            <div>
+              <strong>Modo Recuperación activo</strong><br>
+              Durante los próximos 3 días evita LIVE. Solo registra picks en Watchlist. El objetivo no es ganar, es estabilizar.
+            </div>
+          </div>
+
+          <!-- Metrics Grid -->
+          <div class="metrics-grid">
+            <!-- Discipline Score -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Disciplina</span>
+                <span class="metric-trend up">↑ +5%</span>
+              </div>
+              <div class="metric-value cyan">82</div>
+              <div class="metric-description">
+                Mantienes consistencia en stake. Mejora: evita picks impulsivos post-pérdidas.
+              </div>
+            </div>
+
+            <!-- Current Focus -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Enfoque Actual</span>
+                <span class="metric-trend stable">→ Estable</span>
+              </div>
+              <div class="metric-value gold">
+                <div style="font-size: 18px; margin-bottom: 8px;">⚽ Premier League</div>
+                <div style="font-size: 16px;">Over/Under</div>
+              </div>
+              <div class="metric-description">
+                Tu mejor segmento: 62% WR en 21 picks.
+              </div>
+            </div>
+
+            <!-- Risk Status -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Estado de Riesgo</span>
+                <span class="metric-trend up" style="background: rgba(0, 255, 148, 0.15); color: var(--primary-green);">✓ SAFE</span>
+              </div>
+              <div class="metric-value green">0</div>
+              <div class="metric-description">
+                Sin alertas recientes. Risk Guard en estado normal.
+              </div>
+            </div>
+
+            <!-- Performance 30d -->
+            <div class="metric-card">
+              <div class="metric-header">
+                <span class="metric-label">Rendimiento 30d</span>
+                <span class="metric-trend up">↑ Mejorando</span>
+              </div>
+              <div class="metric-value cyan">
+                <div style="font-size: 20px; margin-bottom: 4px;">WR: 58.2%</div>
+                <div style="font-size: 16px; color: var(--text-muted);">43 picks</div>
+              </div>
+              <div class="metric-description">
+                Consistency Score: 76/100. Sigue así.
+              </div>
+            </div>
+          </div>
+
+          <!-- Behavior Insight Panel: Cómo operas realmente -->
+          <div class="panel" id="behavior-insight-panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>🧠</span>
+                <span>Cómo operas realmente</span>
+              </div>
+              <div style="font-size:13px;color:var(--text-muted)">Basado en tus últimos 60 días</div>
+            </div>
+            <div class="insights-grid">
+              <div class="insight-card">
+                <div class="insight-header"><div><div class="insight-type">Patrón</div><div class="insight-title">Pierdes más en LIVE que en PRE</div></div></div>
+                <div class="insight-explanation">Tu WR en LIVE es 12% menor que en PRE. Considera limitar sesiones LIVE a 1 por día.</div>
+              </div>
+              <div class="insight-card">
+                <div class="insight-header"><div><div class="insight-type">Hábito</div><div class="insight-title">Subes stake después de perder</div></div></div>
+                <div class="insight-explanation">Detectamos incremento promedio de +0.8% en stake tras pérdidas. Usa stake fijo hasta recuperar consistencia.</div>
+              </div>
+              <div class="insight-card">
+                <div class="insight-header"><div><div class="insight-type">Mercado</div><div class="insight-title">Tu mejor mercado es Over/Under</div></div></div>
+                <div class="insight-explanation">WR superior en Over/Under vs mercados alternativos. Mantén enfoque y documenta tus criterios.</div>
+              </div>
+              <div class="insight-card">
+                <div class="insight-header"><div><div class="insight-type">Horario</div><div class="insight-title">Operas peor en la noche</div></div></div>
+                <div class="insight-explanation">Tu WR nocturno cae -9% respecto a la tarde. Evita picks después de las 22:00.</div>
+              </div>
+              <div class="insight-card">
+                <div class="insight-header"><div><div class="insight-type">Ritmo</div><div class="insight-title">Tu winrate baja al tercer pick del día</div></div></div>
+                <div class="insight-explanation">Tras dos picks, tu rendimiento cae. Limita a 2 picks/día o pausa antes del tercero.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coach Nudge Component -->
+          <div class="panel" id="coach-nudge" style="display:none">
+            <div class="panel-header">
+              <div class="panel-title"><span>👋</span><span>Coach Nudge</span></div>
+              <button class="btn btn-outline" onclick="document.getElementById('coach-nudge').style.display='none'">Ignorar</button>
+            </div>
+            <div class="insight-explanation">Este pick es distinto a tu patrón. Sueles tener mejor rendimiento en PRE y con stake 2%. ¿Quieres registrarlo primero en Watchlist?</div>
+            <div style="margin-top:12px;display:flex;gap:8px">
+              <button class="btn btn-primary" onclick="window.location.href='/watchlist'">Registrar en Watchlist</button>
+              <button class="btn btn-outline" onclick="document.getElementById('coach-nudge').style.display='none'">Continuar consciente</button>
+            </div>
+          </div>
+
+          <!-- Hero Suggestion -->
+          <div class="hero-suggestion">
+            <div class="hero-content">
+              <div class="hero-title">
+                <span>⚽</span>
+                <span>Especialízate en Premier League</span>
+              </div>
+              <div class="hero-description">
+                Tu win rate en Premier League (62%) es 12% mayor que en otras ligas. Concentrarte aquí puede mejorar tu consistencia significativamente.
+              </div>
+              <button class="hero-cta" onclick="applyHeroRecommendation()">
+                <span>✓</span>
+                <span>Aplicar Recomendación</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Weekly Plan Progress -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📋</span>
+                <span>Progreso del Plan Semanal</span>
+              </div>
+            </div>
+
+            <div class="progress-bar-container" id="weekly-progress">
+              <div class="progress-label">
+                <span id="weekly-progress-text">3 de 5 tareas completadas</span>
+                <span id="weekly-progress-percent" style="font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">60%</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" id="weekly-progress-fill" style="width: 60%;"></div>
+              </div>
+            </div>
+
+            <div style="text-align: center;">
+              <button class="btn btn-outline" onclick="switchTab('weekly-plan')">
+                Ver Plan Completo →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Insights -->
+        <div id="tab-insights" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>💡</span>
+                <span>Insights Accionables</span>
+              </div>
+              <div style="font-size: 13px; color: var(--text-muted);">
+                7 de 10 insights usados esta semana
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+              <button class="filter-btn active">Todos</button>
+              <button class="filter-btn">30 días</button>
+              <button class="filter-btn">7 días</button>
+              <button class="filter-btn">Alta prioridad</button>
+            </div>
+
+            <!-- Insights Grid -->
+            <div class="insights-grid">
+              <!-- Insight 1: Focus Recommendation -->
+              <div class="insight-card priority-high">
+                <div class="insight-header">
+                  <div>
+                    <div class="insight-type">Focus</div>
+                    <div class="insight-title">⚽ Especialízate en Premier League</div>
+                  </div>
+                </div>
+
+                <div class="insight-explanation">
+                  Tu win rate en Premier League (62%) es 12% mayor que en otras ligas. Concentrarte aquí puede mejorar consistencia.
+                </div>
+
+                <div class="insight-evidence">
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Premier League: 62% WR (21 picks)</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>La Liga: 50% WR (14 picks)</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Serie A: 48% WR (8 picks)</span>
+                  </div>
+                </div>
+
+                <div class="insight-action">
+                  <div class="action-label">ACCIÓN SUGERIDA</div>
+                  <div class="action-text">
+                    Reduce picks a Premier League + máx 1 liga más por 30 días
+                  </div>
+                </div>
+
+                <div class="insight-footer">
+                  <button class="btn btn-primary" onclick="applyInsight(this)">
+                    <span>✓</span>
+                    <span>Aplicar</span>
+                  </button>
+                  <button class="btn btn-outline" onclick="discardInsight(this)">Descartar</button>
+                </div>
+              </div>
+
+              <!-- Insight 2: Stake Deviation -->
+              <div class="insight-card priority-high">
+                <div class="insight-header">
+                  <div>
+                    <div class="insight-type">Disciplina</div>
+                    <div class="insight-title">⚠️ Stakes inconsistentes</div>
+                  </div>
+                </div>
+
+                <div class="insight-explanation">
+                  Has desviado tu stake plan en 8 de últimos 10 picks. Promedio: +42% sobre recomendado.
+                </div>
+
+                <div class="insight-evidence">
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Plan: 2% flat</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Real promedio: 2.84%</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Desviación máxima: +120%</span>
+                  </div>
+                </div>
+
+                <div class="insight-action">
+                  <div class="action-label">ACCIÓN SUGERIDA</div>
+                  <div class="action-text">
+                    Vuelve a stake flat 1% por 14 días para recuperar disciplina
+                  </div>
+                </div>
+
+                <div class="insight-footer">
+                  <button class="btn btn-primary">
+                    <span>✓</span>
+                    <span>Aplicar</span>
+                  </button>
+                  <button class="btn btn-outline">Descartar</button>
+                </div>
+              </div>
+
+              <!-- Insight 3: Overtrading -->
+              <div class="insight-card priority-medium">
+                <div class="insight-header">
+                  <div>
+                    <div class="insight-type">Overtrading</div>
+                    <div class="insight-title">🚨 Demasiados mercados</div>
+                  </div>
+                </div>
+
+                <div class="insight-explanation">
+                  Operaste en 7 ligas diferentes esta semana. Los traders pro se enfocan en 1-2.
+                </div>
+
+                <div class="insight-evidence">
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>7 ligas diferentes</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>12 mercados diferentes</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Win rate: 48% (disperso)</span>
+                  </div>
+                </div>
+
+                <div class="insight-action">
+                  <div class="action-label">ACCIÓN SUGERIDA</div>
+                  <div class="action-text">
+                    Limita a 2 ligas máximo durante 7 días
+                  </div>
+                </div>
+
+                <div class="insight-footer">
+                  <button class="btn btn-primary">
+                    <span>✓</span>
+                    <span>Aplicar</span>
+                  </button>
+                  <button class="btn btn-outline">Descartar</button>
+                </div>
+              </div>
+
+              <!-- Insight 4: Timing Analysis -->
+              <div class="insight-card priority-low">
+                <div class="insight-header">
+                  <div>
+                    <div class="insight-type">Timing</div>
+                    <div class="insight-title">⏰ Operas mejor entre 14h-16h</div>
+                  </div>
+                </div>
+
+                <div class="insight-explanation">
+                  Tu win rate es 65.2% en este horario vs 54.1% promedio general.
+                </div>
+
+                <div class="insight-evidence">
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>14h-16h: 65.2% WR (23 picks)</span>
+                  </div>
+                  <div class="evidence-item">
+                    <span>•</span>
+                    <span>Otros horarios: 54.1% WR</span>
+                  </div>
+                </div>
+
+                <div class="insight-action">
+                  <div class="action-label">ACCIÓN SUGERIDA</div>
+                  <div class="action-text">
+                    Prioriza análisis en este horario. Evita 22h-00h (42% WR).
+                  </div>
+                </div>
+
+                <div class="insight-footer">
+                  <button class="btn btn-primary">
+                    <span>✓</span>
+                    <span>Aplicar</span>
+                  </button>
+                  <button class="btn btn-outline">Descartar</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Weekly Plan -->
+        <div id="tab-weekly-plan" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📋</span>
+                <span>Plan Semanal de Mejora</span>
+              </div>
+            </div>
+
+            <div class="alert info" style="margin-bottom: 24px;">
+              <span class="alert-icon">📝</span>
+              <div>
+                Este plan se enfoca en mejorar tu <strong>PROCESO</strong>, no en garantizar ganancias.<br>
+                Completa lo que puedas sin presión. Cada tarea es pequeña y accionable.
+              </div>
+            </div>
+
+            <!-- Goal -->
+            <div class="plan-goal">
+              <div class="goal-type">Specialization</div>
+              <div class="goal-description">
+                Reducir dispersión y dominar Over/Under en Premier League
+              </div>
+            </div>
+
+            <!-- Progress -->
+            <div class="progress-bar-container">
+              <div class="progress-label">
+                <span style="font-weight: 700;">Progreso del Plan</span>
+                <span style="font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan); font-weight: 700;">3/5 (60%)</span>
+              </div>
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: 60%;"></div>
+              </div>
+            </div>
+
+            <!-- Task List -->
+            <div class="task-list">
+              <!-- Task 1: Completed -->
+              <div class="task-item completed">
+                <div class="task-checkbox"></div>
+                <div class="task-content">
+                  <div class="task-title">Operar solo Premier League</div>
+                  <div class="task-meta">
+                    <div class="task-meta-item">
+                      <span>🎯</span>
+                      <span>Reducir dispersión de ligas</span>
+                    </div>
+                    <div class="task-meta-item">
+                      <span>⏱️</span>
+                      <span>7 días</span>
+                    </div>
+                  </div>
+                  <div class="task-objective">
+                    Solo añade picks de Premier League a tu Watchlist. Ignora otras ligas temporalmente.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task 2: Completed -->
+              <div class="task-item completed">
+                <div class="task-checkbox"></div>
+                <div class="task-content">
+                  <div class="task-title">Usar stake flat 2%</div>
+                  <div class="task-meta">
+                    <div class="task-meta-item">
+                      <span>🎯</span>
+                      <span>Mejorar disciplina de stake</span>
+                    </div>
+                    <div class="task-meta-item">
+                      <span>⏱️</span>
+                      <span>7 días</span>
+                    </div>
+                  </div>
+                  <div class="task-objective">
+                    Todas tus apuestas deben ser exactamente 2% de tu bankroll. Sin excepciones.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task 3: Completed -->
+              <div class="task-item completed">
+                <div class="task-checkbox"></div>
+                <div class="task-content">
+                  <div class="task-title">Escribir razonamiento antes de apostar</div>
+                  <div class="task-meta">
+                    <div class="task-meta-item">
+                      <span>🎯</span>
+                      <span>Mejorar calidad de análisis</span>
+                    </div>
+                    <div class="task-meta-item">
+                      <span>⏱️</span>
+                      <span>7 días</span>
+                    </div>
+                  </div>
+                  <div class="task-objective">
+                    Completa la plantilla de razonamiento ANTES de ejecutar. Min 3 evidencias.
+                  </div>
+                  <div class="task-toggle" onclick="toggleTask(this)">Ver cómo hacerlo ▼</div>
+                  <div class="task-howto">
+                    <strong>Plantilla:</strong><br>
+                    1. VALUE THESIS: ¿Por qué hay valor?<br>
+                    2. EVIDENCE: Min 3 datos/stats<br>
+                    3. INVALIDATION: ¿Qué lo haría inválido?<br>
+                    4. CONFIDENCE: 1-5 nivel
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task 4: Pending -->
+              <div class="task-item">
+                <div class="task-checkbox" onclick="completeTask(this)"></div>
+                <div class="task-content">
+                  <div class="task-title">Máximo 2 picks por día</div>
+                  <div class="task-meta">
+                    <div class="task-meta-item">
+                      <span>🎯</span>
+                      <span>Evitar overtrading</span>
+                    </div>
+                    <div class="task-meta-item">
+                      <span>⏱️</span>
+                      <span>7 días</span>
+                    </div>
+                  </div>
+                  <div class="task-objective">
+                    Limítate a tus 2 mejores oportunidades diarias. Calidad > cantidad.
+                  </div>
+                  <div class="task-toggle" onclick="toggleTask(this)">Ver cómo hacerlo ▼</div>
+                  <div class="task-howto">
+                    Al final del día, pregúntate: "¿Cuáles son las 2 oportunidades con mejor value?"<br>
+                    Solo opera esas. Las demás las registras pero no ejecutas.<br>
+                    Esto te fuerza a ser selectivo.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Task 5: Pending -->
+              <div class="task-item">
+                <div class="task-checkbox" onclick="completeTask(this)"></div>
+                <div class="task-content">
+                  <div class="task-title">Review semanal el domingo</div>
+                  <div class="task-meta">
+                    <div class="task-meta-item">
+                      <span>🎯</span>
+                      <span>Reflexión y aprendizaje</span>
+                    </div>
+                    <div class="task-meta-item">
+                      <span>⏱️</span>
+                      <span>30 minutos</span>
+                    </div>
+                  </div>
+                  <div class="task-objective">
+                    Revisa tus picks de la semana. ¿Qué funcionó? ¿Qué mejorar?
+                  </div>
+                  <div class="task-toggle" onclick="toggleTask(this)">Ver cómo hacerlo ▼</div>
+                  <div class="task-howto">
+                    Agenda 30 minutos cada domingo.<br>
+                    Revisa tab "Review de Picks".<br>
+                    Identifica: 1 cosa que salió bien, 1 cosa a mejorar.<br>
+                    Ajusta tu estrategia para la próxima semana.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Pick Review -->
+        <div id="tab-review" class="tab-content" style="display: none;">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <span>📝</span>
+                <span>Review de Picks</span>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+              <button class="filter-btn active">Todos</button>
+              <button class="filter-btn">Ganados</button>
+              <button class="filter-btn">Perdidos</button>
+              <button class="filter-btn">Estudiados</button>
+              <button class="filter-btn">Oportunísticos</button>
+            </div>
+
+            <!-- Review Table -->
+            <table class="review-table">
+              <thead>
+                <tr>
+                  <th>Partido</th>
+                  <th>Mercado</th>
+                  <th>Resultado</th>
+                  <th>Quality Score</th>
+                  <th>Categoría</th>
+                  <th>Coach Comment</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Row 1 -->
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;">Liverpool vs Man City</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Premier League • Hace 2 días</div>
+                  </td>
+                  <td>Over 2.5</td>
+                  <td><span style="color: var(--primary-green);">✓ Ganado</span></td>
+                  <td><span class="quality-score high">92</span></td>
+                  <td><span class="category-badge studied">Estudiado</span></td>
+                  <td class="coach-comment">Excelente análisis pre-partido. 4 evidencias sólidas.</td>
+                </tr>
+
+                <!-- Row 2 -->
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;">Barcelona vs Real Madrid</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">La Liga • Hace 3 días</div>
+                  </td>
+                  <td>BTTS</td>
+                  <td><span style="color: var(--secondary-red);">✗ Perdido</span></td>
+                  <td><span class="quality-score medium">68</span></td>
+                  <td><span class="category-badge opportunistic">Oportunístico</span></td>
+                  <td class="coach-comment">Buena tesis pero late entry (15min antes).</td>
+                </tr>
+
+                <!-- Row 3 -->
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;">Arsenal vs Chelsea</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Premier League • Hace 5 días</div>
+                  </td>
+                  <td>Arsenal ML</td>
+                  <td><span style="color: var(--primary-green);">✓ Ganado</span></td>
+                  <td><span class="quality-score high">85</span></td>
+                  <td><span class="category-badge studied">Estudiado</span></td>
+                  <td class="coach-comment">Razonamiento sólido. Buen timing (2h antes).</td>
+                </tr>
+
+                <!-- Row 4 -->
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;">Inter vs Juventus</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Serie A • Hace 1 semana</div>
+                  </td>
+                  <td>Under 2.5</td>
+                  <td><span style="color: var(--secondary-red);">✗ Perdido</span></td>
+                  <td><span class="quality-score low">42</span></td>
+                  <td><span class="category-badge recreational">Recreativo</span></td>
+                  <td class="coach-comment">Análisis superficial. Solo 1 evidencia. Mejora razonamiento.</td>
+                </tr>
+
+                <!-- Row 5 -->
+                <tr>
+                  <td>
+                    <div style="font-weight: 600;">Tottenham vs West Ham</div>
+                    <div style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Premier League • Hace 1 semana</div>
+                  </td>
+                  <td>Over 2.5</td>
+                  <td><span style="color: var(--primary-green);">✓ Ganado</span></td>
+                  <td><span class="quality-score high">78</span></td>
+                  <td><span class="category-badge studied">Estudiado</span></td>
+                  <td class="coach-comment">Bien preparado. Considera añadir invalidation triggers.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 24px; text-align: center;">
+              <button class="btn btn-outline">
+                <span>📥</span>
+                <span>Exportar Review (CSV)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Tab switching
+    function switchTab(tabName) {
+      const tabs = document.querySelectorAll('.tab');
+      tabs.forEach(tab => {
+        if (tab.dataset.tab === tabName) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => {
+        content.style.display = 'none';
+      });
+      
+      const activeContent = document.getElementById(`tab-${tabName}`);
+      if (activeContent) {
+        activeContent.style.display = 'block';
+      }
+    }
+
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', function() {
+        switchTab(this.dataset.tab);
+      });
+    });
+
+    // Filter buttons
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const parent = this.parentElement;
+        parent.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // Task completion
+    function completeTask(checkbox) {
+      const taskItem = checkbox.closest('.task-item');
+      taskItem.classList.toggle('completed');
+      
+      // Update weekly plan progress only
+      updateWeeklyProgress();
+      
+      // Show confetti effect (mock)
+      if (taskItem.classList.contains('completed')) {
+        console.log('🎉 Task completed!');
+      }
+    }
+
+    // Toggle task how-to
+    function toggleTask(toggle) {
+      const taskItem = toggle.closest('.task-item');
+      taskItem.classList.toggle('expanded');
+      
+      if (taskItem.classList.contains('expanded')) {
+        toggle.textContent = 'Ocultar ▲';
+      } else {
+        toggle.textContent = 'Ver cómo hacerlo ▼';
+      }
+    }
+
+    // Update weekly plan progress only
+    function updateWeeklyProgress() {
+      const tasks = document.querySelectorAll('#tab-weekly-plan .task-item');
+      const completed = document.querySelectorAll('#tab-weekly-plan .task-item.completed').length;
+      const total = tasks.length || 5; // fallback to 5
+      const percentage = Math.round((completed / total) * 100);
+      const text = `${completed} de ${total} tareas completadas`;
+      
+      const fill = document.getElementById('weekly-progress-fill');
+      const percentLabel = document.getElementById('weekly-progress-percent');
+      const textLabel = document.getElementById('weekly-progress-text');
+      
+      if (fill) fill.style.width = percentage + '%';
+      if (percentLabel) percentLabel.textContent = `${percentage}%`;
+      if (textLabel) textLabel.textContent = text;
+    }
+
+    // Recovery/Nudge demo runtime signals
+    const runtimeSignals = {
+      recentLosses: 3, // consecutive
+      drawdownPct: 12, // %
+      lastPick: { type: 'LIVE', stakePct: 3.5, recommendedStakePct: 2.0, timeHour: 23 },
+      picksInLastHour: 4,
+    };
+
+    function evaluateRecoveryMode() {
+      const banner = document.getElementById('recovery-banner');
+      if (!banner) return;
+      const isRecovery = runtimeSignals.drawdownPct >= 10 || runtimeSignals.recentLosses >= 3;
+      banner.style.display = isRecovery ? 'flex' : 'none';
+    }
+
+    function evaluateCoachNudge() {
+      const nudge = document.getElementById('coach-nudge');
+      if (!nudge) return;
+      const stakeHigh = runtimeSignals.lastPick.stakePct > runtimeSignals.lastPick.recommendedStakePct;
+      const tooManyPicks = runtimeSignals.picksInLastHour >= 3;
+      const liveAtNight = runtimeSignals.lastPick.type === 'LIVE' && runtimeSignals.lastPick.timeHour >= 22;
+      const shouldNudge = stakeHigh || tooManyPicks || liveAtNight;
+      nudge.style.display = shouldNudge ? 'block' : 'none';
+    }
+
+    // Mock actions and mobile toggle
+    function applyHeroRecommendation(){
+      alert('Aplicado (demo)');
+      // activar badge "Aplicado" en el primer insight de Focus si existe
+      const focusCard = document.querySelector('#tab-insights .insight-card');
+      if(focusCard){
+        let badge = focusCard.querySelector('.badge.applied');
+        if(!badge){
+          badge = document.createElement('span');
+          badge.className = 'badge applied';
+          badge.style.marginLeft = '8px';
+          badge.textContent = 'Aplicado';
+          const header = focusCard.querySelector('.insight-header div div');
+          (header||focusCard).appendChild(badge);
+        }
+        focusCard.classList.add('state-applied');
+      }
+    }
+
+    function applyInsight(btn){
+      const card = btn.closest('.insight-card');
+      if(!card) return;
+      let badge = card.querySelector('.badge.applied');
+      if(!badge){
+        badge = document.createElement('span');
+        badge.className = 'badge applied';
+        badge.style.marginLeft = '8px';
+        badge.textContent = 'Aplicado';
+        const header = card.querySelector('.insight-header div div');
+        (header||card).appendChild(badge);
+      }
+      card.classList.add('state-applied');
+    }
+
+    function discardInsight(btn){
+      const card = btn.closest('.insight-card');
+      if(!card) return;
+      let badge = card.querySelector('.badge.discarded');
+      if(!badge){
+        badge = document.createElement('span');
+        badge.className = 'badge discarded';
+        badge.style.marginLeft = '8px';
+        badge.textContent = 'Descartado';
+        const header = card.querySelector('.insight-header div div');
+        (header||card).appendChild(badge);
+      }
+      card.classList.add('state-discarded');
+    }
+
+    // mobile sidebar toggle
+    (function(){
+      const toggleBtn = document.getElementById('hamburger-toggle');
+      const sidebar = document.querySelector('.sidebar');
+      const mq = window.matchMedia('(max-width: 768px)');
+      function applyVisibility(){
+        if(mq.matches){
+          if(toggleBtn) toggleBtn.style.display = 'inline-flex';
+          if(sidebar) sidebar.style.transition = 'transform 0.25s ease';
+        } else {
+          if(toggleBtn) toggleBtn.style.display = 'none';
+          if(sidebar) sidebar.style.transform = 'translateX(0)';
+        }
+      }
+      applyVisibility();
+      mq.addEventListener('change', applyVisibility);
+      if(toggleBtn){
+        toggleBtn.addEventListener('click', function(){
+          if(!sidebar) return;
+          const hidden = sidebar.style.transform === 'translateX(-100%)';
+          sidebar.style.transform = hidden ? 'translateX(0)' : 'translateX(-100%)';
+        });
+      }
+    })();
+
+    // Initialize
+    evaluateRecoveryMode();
+    evaluateCoachNudge();
+    console.log('Trading Coach loaded');
+  </script>
+</body>
+</html>

@@ -1,0 +1,422 @@
+.appSidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width, 280px);
+  height: 100vh;
+  background: var(--bg-tertiary, #111827);
+  border-right: 1px solid var(--border-color, #2A2A4A);
+  display: flex;
+  flex-direction: column;
+  transition: width 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  z-index: 1000;
+  box-shadow: inset -1px 0 0 rgba(255,255,255,0.03);
+}
+
+.appSidebar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -1px;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(var(--border-color, #2A2A4A), transparent 60%);
+  opacity: .6;
+  pointer-events: none;
+}
+
+.appSidebar.collapsed {
+  width: var(--sidebar-collapsed-width, 80px);
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border-color, #2A2A4A);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logoIcon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--gradient-primary, linear-gradient(135deg, #00F5FF, #0066FF));
+  color: #00131a;
+  font-size: 18px;
+  box-shadow: 0 6px 18px rgba(0, 245, 255, 0.25);
+}
+
+/* New: explicit image styling for favicon */
+.logoImg {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  box-shadow: 0 6px 18px rgba(0, 245, 255, 0.25);
+}
+
+.logoText {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary, #E5E7EB);
+  letter-spacing: 0.2px;
+}
+
+.sidebarToggle {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border-color, #2A2A4A);
+  font-size: 1rem;
+  color: var(--text-secondary, #B8B8D0);
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.sidebarToggle:hover {
+  background: rgba(255,255,255,0.07);
+  color: var(--text-primary, #FFFFFF);
+}
+
+.sidebarNav {
+  flex: 1;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+.navGroup {
+  margin-bottom: 14px;
+}
+
+.navGroupLabel {
+  padding: 0 14px;
+  margin: 8px 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted, #8888A8);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.navList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.navItem { margin: 2px 0; }
+
+.navLink {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  color: var(--text-secondary, #B8B8D0);
+  text-decoration: none;
+  border-radius: 12px;
+  margin: 0 8px;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: transparent;
+}
+
+.navLink:hover {
+  background: rgba(255,255,255,0.04);
+  color: var(--text-primary, #FFFFFF);
+  border-color: var(--border-color, #2A2A4A);
+}
+
+.navLink.active {
+  background: rgba(0, 245, 255, 0.08);
+  color: #FFFFFF;
+  border-color: color-mix(in oklab, var(--accent-color, #2563eb) 60%, transparent);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.03) inset;
+}
+
+.navLink.active::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 10px;
+  bottom: 10px;
+  width: 3px;
+  border-radius: 3px;
+  background: var(--accent-color, #2563eb);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--accent-color) 50%, transparent);
+}
+
+.navIcon {
+  font-size: 18px;
+  width: 22px;
+  text-align: center;
+  flex-shrink: 0;
+  color: color-mix(in oklab, var(--accent-color, #2563eb) 70%, #9aa3b2);
+}
+
+.navText { flex: 1; white-space: nowrap; }
+
+.navBadge {
+  background: rgba(255,255,255,0.06);
+  color: var(--text-primary, #FFFFFF);
+  font-size: 11px;
+  padding: 4px 13px; /* +~30% sobre 3px 10px */
+  border-radius: 999px;
+  font-weight: 700;
+  margin-left: auto;
+  border: 1px solid var(--border-color, #2A2A4A);
+}
+
+.sidebarFooter {
+  padding: 12px;
+  border-top: 1px solid var(--border-color, #2A2A4A);
+  background: linear-gradient(0deg, rgba(255,255,255,0.02), transparent);
+}
+
+.userInfo {
+  display: grid;
+  gap: 8px;
+}
+
+/* NEW: user card at the bottom */
+.userCard {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color, #2A2A4A);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.userAvatar {
+  width: 40px; height: 40px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: var(--gradient-primary, linear-gradient(135deg, #00F5FF, #0066FF));
+  color: #00131a; font-weight: 800;
+}
+.userMeta { display: flex; flex-direction: column; line-height: 1.1; }
+.userName { font-size: 13px; font-weight: 700; color: var(--text-primary, #FFFFFF); }
+.userPlan { font-size: 12px; color: var(--text-secondary, #B8B8D0); }
+
+.userActions {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px;
+}
+.userAction {
+  text-align: center; padding: 8px 10px; border-radius: 10px;
+  text-decoration: none; font-size: 12px; font-weight: 700;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border-color, #2A2A4A);
+  color: var(--text-secondary, #B8B8D0);
+  transition: all .2s ease;
+}
+.userAction:hover { background: rgba(255,255,255,0.06); color: var(--text-primary, #FFFFFF); }
+.logoutAction { color: #ff6b6b; border-color: color-mix(in oklab, #ff6b6b 40%, var(--border-color, #2A2A4A)); }
+.logoutAction:hover { background: rgba(255,107,107,0.12); color: #fff; }
+
+/* Role accent ring */
+.admin .userCard { border-color: color-mix(in oklab, #dc2626 35%, var(--border-color, #2A2A4A)); }
+.tipster .userCard { border-color: color-mix(in oklab, #7c3aed 35%, var(--border-color, #2A2A4A)); }
+.user .userCard { border-color: color-mix(in oklab, #2563eb 35%, var(--border-color, #2A2A4A)); }
+
+/* Keep legacy role chip if needed */
+.userRole {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #B8B8D0);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+/* Role-specific colors */
+.admin {
+  --accent-color: #dc2626;
+  --accent-hover: #b91c1c;
+}
+
+.tipster {
+  --accent-color: #7c3aed;
+  --accent-hover: #6d28d9;
+}
+
+.user {
+  --accent-color: #00D4E6;
+  --accent-hover: #12a8b3;
+}
+
+/* Collapsed behavior */
+.appSidebar.collapsed .logoText { display: none; }
+.appSidebar.collapsed .navText { display: none; }
+.appSidebar.collapsed .navLink { justify-content: center; }
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .appSidebar {
+    transform: translateX(-100%);
+  }
+  .appSidebar.open { transform: translateX(0); }
+  .appSidebar.collapsed { width: var(--sidebar-width, 280px); transform: translateX(-100%); }
+  .appSidebar.collapsed.open { transform: translateX(0); }
+}
+
+.quickStatus {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border-color, #2A2A4A);
+  background: var(--bg-tertiary, #111827);
+}
+
+.statusTitle {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 10px;
+}
+
+.statusGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.statusItem {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color, #2A2A4A);
+  background: var(--bg-secondary, #0F172A);
+}
+
+.statusLabel {
+  font-size: 11px;
+  color: var(--text-secondary, #9ca3af);
+  margin-bottom: 6px;
+}
+
+.statusValue {
+  font-weight: 700;
+  color: var(--text-primary, #f9fafb);
+}
+
+/* Accents */
+.positive { color: #059669; }
+.warning { color: #f59e0b; }
+.danger { color: #dc2626; }
+
+/* Role accents sync with app shell */
+.admin .quickStatus { border-color: #ef4444; }
+.tipster .quickStatus { border-color: #7c3aed; }
+.user .quickStatus { border-color: #2563eb; }
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .quickStatus { 
+    background: var(--bg-tertiary, #1f2937);
+    border-color: var(--border-color-dark, #374151);
+  }
+  .statusItem { 
+    background: var(--bg-secondary, #111827);
+    border-color: var(--border-color-dark, #374151);
+  }
+  .statusLabel { color: var(--text-secondary-dark, #9ca3af); }
+  .statusValue { color: var(--text-primary-dark, #f9fafb); }
+}
+
+/* Sub-navigation (collapsible) */
+.navDropdown { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; position: relative; }
+
+.dropdownArrow {
+  margin-left: 6px;
+  margin-right: 10px;
+  background: transparent;
+  border: 1px solid var(--border-color, #2A2A4A);
+  color: var(--text-secondary, #B8B8D0);
+  width: 26px; height: 26px;
+  border-radius: 8px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: transform .2s ease, background .2s ease;
+}
+.dropdownArrow:hover { background: rgba(255,255,255,0.06); color: var(--text-primary, #fff); }
+.dropdownArrow.open { transform: rotate(180deg); }
+
+.navSubList { grid-column: 1 / -1; list-style: none; padding: 6px 0 6px 18px; margin: 6px 8px 6px 12px; border-left: 1px dashed var(--border-color, #2A2A4A); }
+.navSubItem { margin: 4px 0; }
+
+.navSubLink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  margin: 0 8px;
+  color: var(--text-secondary, #B8B8D0);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition: all .2s ease;
+}
+.navSubLink:hover { background: rgba(255,255,255,0.04); color: var(--text-primary, #fff); border-color: var(--border-color, #2A2A4A); }
+.navSubLink.active { background: rgba(0, 245, 255, 0.06); color: #fff; border-color: color-mix(in oklab, var(--accent-color, #2563eb) 50%, transparent); }
+
+/* Badge variants */
+.badgeSuccess { background: color-mix(in oklab, #059669 25%, rgba(255,255,255,0.06)); border-color: color-mix(in oklab, #059669 40%, transparent); }
+.badgeDanger { background: color-mix(in oklab, #dc2626 25%, rgba(255,255,255,0.06)); border-color: color-mix(in oklab, #dc2626 40%, transparent); }
+.badgeGold { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 50%, #f59e0b 100%); color: #111; border-color: rgba(0,0,0,0.15); box-shadow: 0 0 0 1px rgba(255,255,255,0.15) inset; }
+
+@media (prefers-color-scheme: dark) {
+  .badgeGold { color: #111; }
+}
+
+/* --- Sidebar: shrink fonts by 30% and prevent horizontal scroll --- */
+.appSidebar {
+  overflow-x: hidden;
+}
+
+.sidebarNav {
+  font-size: 70%; /* reduce ~30% */
+}
+
+.navGroupLabel {
+  font-size: 109%;
+}
+
+.navLink,
+.navSubLink {
+  font-size: 70%;
+}
+
+.navBadge {
+  font-size: 102%; /* antes 78%, +~30% relativo */
+}
+.dropdownArrow {
+  font-size: 65%;
+}
+
+.navText {
+  font-size: 187.5%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Ensure no horizontal overflow in nested elements */
+.sidebarNav,
+.navList,
+.navItem,
+.navLink,
+.navSubLink {
+  overflow-x: hidden;
+}

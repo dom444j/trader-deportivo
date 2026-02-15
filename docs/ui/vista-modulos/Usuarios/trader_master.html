@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trader Master — Motor de Decisión | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      /* Colors */
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      
+      /* Backgrounds */
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      
+      /* Borders & Text */
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      
+      /* Layout */
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      
+      /* Gradients */
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-ai: linear-gradient(135deg, #B026FF 0%, #7000CC 100%);
+      
+      /* Glows */
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4), 0 0 40px rgba(0, 245, 255, 0.2);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4), 0 0 40px rgba(0, 255, 148, 0.2);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4), 0 0 40px rgba(255, 215, 0, 0.2);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Animated Background Grid */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -40%;
+      right: -20%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(circle, rgba(0, 245, 255, 0.08) 0%, transparent 70%);
+      z-index: 0;
+      pointer-events: none;
+      animation: glowPulse 8s ease-in-out infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { opacity: 0.4; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.05); }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ================================
+       SIDEBAR
+       ================================ */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 10px;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    /* ================================
+       MAIN CONTENT
+       ================================ */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .topbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* ================================
+       CONTENT AREA
+       ================================ */
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* Two Column Layout */
+    .decision-layout {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    /* Panel Base */
+    .panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .panel:hover {
+      border-color: var(--border-secondary);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel-title-icon {
+      font-size: 24px;
+    }
+
+    .panel-subtitle {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Chips */
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid;
+      transition: all 0.3s ease;
+    }
+
+    .chip.primary {
+      background: rgba(0, 245, 255, 0.12);
+      border-color: rgba(0, 245, 255, 0.35);
+      color: var(--primary-cyan);
+    }
+
+    .chip.success {
+      background: rgba(0, 255, 148, 0.12);
+      border-color: rgba(0, 255, 148, 0.35);
+      color: var(--primary-green);
+    }
+
+    .chip.gold {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: rgba(255, 215, 0, 0.35);
+      color: var(--secondary-gold);
+    }
+
+    .chip.danger {
+      background: rgba(255, 68, 68, 0.12);
+      border-color: rgba(255, 68, 68, 0.35);
+      color: var(--secondary-red);
+    }
+
+    .chip.purple {
+      background: rgba(176, 38, 255, 0.12);
+      border-color: rgba(176, 38, 255, 0.35);
+      color: var(--secondary-purple);
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseDot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+      50% { box-shadow: 0 0 0 4px transparent; }
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+    }
+
+    .btn-success {
+      background: var(--gradient-success);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 255, 148, 0.3);
+    }
+
+    .btn-success:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 148, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.05);
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .btn-icon {
+      font-size: 16px;
+    }
+
+    /* Signal Sources */
+    .source-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .source-checkbox {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .source-checkbox:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-secondary);
+    }
+
+    .source-checkbox.active {
+      border-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.08);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.15);
+    }
+
+    .source-checkbox input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--primary-cyan);
+      cursor: pointer;
+    }
+
+    .source-info {
+      flex: 1;
+    }
+
+    .source-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .source-count {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .source-icon {
+      font-size: 24px;
+    }
+
+    /* Execution Mode Selector */
+    .mode-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .mode-option {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .mode-option:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-secondary);
+    }
+
+    .mode-option.active {
+      border-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.1);
+      box-shadow: 0 0 30px rgba(0, 245, 255, 0.2);
+    }
+
+    .mode-option.active::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 24px;
+      height: 24px;
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .mode-icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .mode-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .mode-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    /* Validation Checklist */
+    .validation-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .validation-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-left: 3px solid;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .validation-item.passed {
+      border-color: var(--primary-green);
+      background: rgba(0, 255, 148, 0.05);
+    }
+
+    .validation-item.failed {
+      border-color: var(--secondary-red);
+      background: rgba(255, 68, 68, 0.08);
+    }
+
+    .validation-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .validation-item.passed .validation-icon {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .validation-item.failed .validation-icon {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .validation-info {
+      flex: 1;
+    }
+
+    .validation-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .validation-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    /* Strategy Table */
+    .strategy-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 16px;
+      overflow: hidden;
+      border-radius: 10px;
+    }
+
+    .strategy-table th {
+      background: var(--bg-tertiary);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .strategy-table td {
+      padding: 14px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .strategy-table tr {
+      background: var(--bg-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .strategy-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .strategy-table tr.active {
+      background: rgba(0, 245, 255, 0.08);
+      border-left: 3px solid var(--primary-cyan);
+    }
+
+    .strategy-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .strategy-count {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .risk-badge.low {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .risk-badge.medium {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .risk-badge.high {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    /* Agent Selector */
+    .agent-selector {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .agent-option {
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .agent-option:hover {
+      background: var(--bg-elevated);
+      border-color: var(--border-secondary);
+    }
+
+    .agent-option.active {
+      border-color: var(--primary-cyan);
+      background: rgba(0, 245, 255, 0.1);
+    }
+
+    .agent-option.active::after {
+      content: '✓';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: var(--primary-cyan);
+      color: var(--bg-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .agent-icon {
+      font-size: 28px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .agent-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .agent-type {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* VIP Benefits */
+    .vip-benefits {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .vip-benefit {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    .vip-benefit-icon {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .vip-benefit-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .vip-benefit-value {
+      font-size: 12px;
+      color: var(--secondary-gold);
+      font-weight: 700;
+    }
+
+    /* Alert Box */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 10px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .alert.warning {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+      color: var(--secondary-gold);
+    }
+
+    .alert.danger {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+      color: var(--secondary-red);
+    }
+
+    .alert.info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+      color: var(--primary-cyan);
+    }
+
+    .alert.success {
+      background: rgba(0, 255, 148, 0.1);
+      border: 1px solid rgba(0, 255, 148, 0.3);
+      color: var(--primary-green);
+    }
+
+    /* Mono Font */
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Section Divider */
+    .section-divider {
+      height: 1px;
+      background: var(--border-primary);
+      margin: 24px 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 1400px) {
+      .decision-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .main-content {
+        margin-left: 0;
+      }
+      
+      .mode-selector,
+      .agent-selector {
+        grid-template-columns: 1fr;
+      }
+
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .vip-benefits {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <div class="nav-dropdown" id="signalsDropdown">
+            <a href="#" class="nav-item nav-dropdown-toggle" onclick="toggleDropdown('signalsDropdown'); return false;">
+              <span class="nav-icon">📡</span>
+              <span>Señales</span>
+              <span class="nav-icon" style="margin-left:auto">▾</span>
+            </a>
+            <!-- Boceto usa ?tab=PRE/LIVE; en producción usar /signals/pre y /signals/live -->
+                <div class="nav-dropdown-menu" style="display:none; padding-left:12px;">
+                  <a href="/signals?tab=PRE" class="nav-item"><span class="nav-icon">⏱️</span><span>Señales PRE</span></a>
+                  <a href="/signals?tab=LIVE" class="nav-item"><span class="nav-icon">🎥</span><span>Señales LIVE</span></a>
+                </div>
+          </div>
+          <!-- Boceto usa ?tab= ; Producción usa /signals/pre y /signals/live -->
+          <a href="/portfolio" class="nav-item">
+            <span class="nav-icon">🎯</span>
+            <span>Smart Portfolio</span>
+          </a>
+          <a href="/trader-master" class="nav-item active">
+            <span class="nav-icon">⚡</span>
+            <span>Trader Master</span>
+            <span class="nav-badge">BETA</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a href="/premium/plans" class="nav-item">
+            <span class="nav-icon">💎</span>
+            <span>Planes</span>
+          </a>
+          <a href="/premium/credits" class="nav-item">
+            <span class="nav-icon">🪙</span>
+            <span>Créditos</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">⚡ Trader Master — Motor de Decisión</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Trader Master</span>
+          </div>
+        </div>
+        <div class="topbar-right">
+          <div class="chip gold">
+            <span class="chip-dot"></span>
+            <span>Plan: <strong>Pro</strong></span>
+          </div>
+          <div class="chip primary">
+            <span>💰 <strong>$1,250</strong></span>
+          </div>
+          <div class="chip success">
+            <span>🪙 <strong>120 créditos</strong></span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Alert Info -->
+        <div class="alert info">
+          <span class="alert-icon">ℹ️</span>
+          <div>
+            <strong>Motor de Decisión Previo a Ejecución</strong><br>
+            Trader Master conecta Señales con Agents Hub. Configura fuentes, valida requisitos, selecciona estrategia y envía al agente para ejecución.
+          </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="decision-layout">
+          <!-- Left Column: Configuration -->
+          <div>
+            <!-- Signal Sources -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">📡</span>
+                    <span>Fuentes de Señales</span>
+                  </div>
+                  <div class="panel-subtitle">Selecciona hasta 7 fuentes para poblar Top Picks</div>
+                </div>
+                <div class="panel-actions">
+                  <div class="chip primary">
+                    <span id="sourceCount">0</span> / 7
+                  </div>
+                </div>
+              </div>
+
+              <div class="source-grid">
+                <label class="source-checkbox" data-source="ia-core">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">IA Core</div>
+                    <div class="source-count">Poisson + XGBoost</div>
+                  </div>
+                  <div class="source-icon">🤖</div>
+                </label>
+
+                <label class="source-checkbox" data-source="ia-value">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">IA Value</div>
+                    <div class="source-count">CLV + EV Optimizer</div>
+                  </div>
+                  <div class="source-icon">💎</div>
+                </label>
+
+                <label class="source-checkbox" data-source="tipsters">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">Tipsters</div>
+                    <div class="source-count">Verificados ROI+</div>
+                  </div>
+                  <div class="source-icon">👤</div>
+                </label>
+
+                <label class="source-checkbox" data-source="master-elite">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">Master Elite</div>
+                    <div class="source-count">Top Performers</div>
+                  </div>
+                  <div class="source-icon">⭐</div>
+                </label>
+
+                <label class="source-checkbox" data-source="sharp-money">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">Sharp Money</div>
+                    <div class="source-count">Movimientos Pro</div>
+                  </div>
+                  <div class="source-icon">💸</div>
+                </label>
+
+                <label class="source-checkbox" data-source="contrarian">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">Contrarian</div>
+                    <div class="source-count">Fade The Public</div>
+                  </div>
+                  <div class="source-icon">🎭</div>
+                </label>
+
+                <label class="source-checkbox" data-source="live-edge">
+                  <input type="checkbox" onchange="updateSourceCount()">
+                  <div class="source-info">
+                    <div class="source-name">Live Edge</div>
+                    <div class="source-count">In-Play Specialist</div>
+                  </div>
+                  <div class="source-icon">🔴</div>
+                </label>
+              </div>
+
+              <div class="alert warning" id="maxSourcesAlert" style="display: none; margin-top: 16px;">
+                <span class="alert-icon">⚠️</span>
+                <div>Has alcanzado el máximo de 7 fuentes seleccionadas.</div>
+              </div>
+            </div>
+
+            <!-- Execution Mode -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">🎮</span>
+                    <span>Modo de Ejecución</span>
+                  </div>
+                  <div class="panel-subtitle">Define cómo se procesará el ticket</div>
+                </div>
+              </div>
+
+              <div class="mode-selector">
+                <div class="mode-option" data-mode="manual" onclick="selectMode('manual')">
+                  <div class="mode-icon">💾</div>
+                  <div class="mode-name">Manual</div>
+                  <div class="mode-desc">Solo guardar ticket para revisión</div>
+                </div>
+
+                <div class="mode-option active" data-mode="assisted" onclick="selectMode('assisted')">
+                  <div class="mode-icon">🤝</div>
+                  <div class="mode-name">Asistido</div>
+                  <div class="mode-desc">Validación + stake recomendado</div>
+                </div>
+
+                <div class="mode-option" data-mode="automatic" onclick="selectMode('automatic')">
+                  <div class="mode-icon">⚡</div>
+                  <div class="mode-name">Automático <span style="margin-left:6px; font-size:10px; font-weight:700; padding:2px 6px; border-radius:8px; background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); color: #0A0A1A;">Premium</span></div>
+                  <div class="mode-desc">Envío directo a agente</div>
+                </div>
+              </div>
+
+              <div class="alert info" style="margin-top: 16px;">
+                <span class="alert-icon">ℹ️</span>
+                <div id="modeDescription">
+                  <strong>Modo Asistido:</strong> El sistema validará requisitos, calculará stake óptimo con Kelly Criterion y mostrará recomendaciones antes de enviar al agente.
+                </div>
+              </div>
+            </div>
+
+            <!-- Trading Coach Strategy -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">📊</span>
+                    <span>Estrategia de Apuestas (Tu Entrenador de Trading)</span>
+                  </div>
+                  <div class="panel-subtitle">Distribución de riesgo y varianza</div>
+                </div>
+              </div>
+
+              <table class="strategy-table">
+                <thead>
+                  <tr>
+                    <th>Estrategia</th>
+                    <th>Cantidad</th>
+                    <th>Probabilidad</th>
+                    <th>Varianza</th>
+                    <th>Riesgo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="active" onclick="selectStrategy(this)">
+                    <td>
+                      <div class="strategy-name">Simples</div>
+                      <div class="strategy-count">2 apuestas × 1</div>
+                    </td>
+                    <td>2</td>
+                    <td class="mono">54%</td>
+                    <td class="mono">±18%</td>
+                    <td><span class="risk-badge low">Bajo</span></td>
+                  </tr>
+                  <tr onclick="selectStrategy(this)">
+                    <td>
+                      <div class="strategy-name">Dobles</div>
+                      <div class="strategy-count">1 apuesta × 2</div>
+                    </td>
+                    <td>1</td>
+                    <td class="mono">29%</td>
+                    <td class="mono">±35%</td>
+                    <td><span class="risk-badge medium">Medio</span></td>
+                  </tr>
+                  <tr onclick="selectStrategy(this)">
+                    <td>
+                      <div class="strategy-name">Trixie (3 selecciones)</div>
+                      <div class="strategy-count">3 dobles + 1 triple</div>
+                    </td>
+                    <td>4</td>
+                    <td class="mono">41%</td>
+                    <td class="mono">±28%</td>
+                    <td><span class="risk-badge medium">Medio</span></td>
+                  </tr>
+                  <tr onclick="selectStrategy(this)">
+                    <td>
+                      <div class="strategy-name">Yankee (4 selecciones)</div>
+                      <div class="strategy-count">6 dobles + 4 triples + 1 cuádruple</div>
+                    </td>
+                    <td>11</td>
+                    <td class="mono">38%</td>
+                    <td class="mono">±42%</td>
+                    <td><span class="risk-badge high">Alto</span></td>
+                  </tr>
+                  <tr onclick="selectStrategy(this)">
+                    <td>
+                      <div class="strategy-name">Combinada Plena</div>
+                      <div class="strategy-count">1 parlay total</div>
+                    </td>
+                    <td>1</td>
+                    <td class="mono">15%</td>
+                    <td class="mono">±65%</td>
+                    <td><span class="risk-badge high">Alto</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="alert warning" style="margin-top: 16px;">
+                <span class="alert-icon">⚠️</span>
+                <div>
+                  <strong>Recomendación:</strong> Con 2 selecciones, la estrategia de <strong>Simples</strong> ofrece mejor ratio riesgo/retorno (54% probabilidad, varianza ±18%).
+                </div>
+              </div>
+
+              <!-- Nota estrategia dinámica por picks -->
+              <div class="alert info" style="margin-top: 10px;">
+                <span class="alert-icon">ℹ️</span>
+                <div>
+                  <strong>Nota:</strong> La tabla cambia según <span class="mono">#picks</span>; con <strong>7 picks</strong> mostrar <strong>dobles × 21</strong>, <strong>triples × 35</strong>, <strong>cuádruples × 35</strong>, <strong>quíntuple × 21</strong>, <strong>séxtuple × 7</strong>, <strong>séptuple × 1</strong>; con <strong>5 picks</strong> mostrar <strong>dobles × 10</strong>, <strong>triples × 10</strong>, <strong>cuádruples × 5</strong>, <strong>quíntuple × 1</strong>.
+                </div>
+              </div>
+            </div>
+
+            <!-- VIP Credits Benefits -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">🪙</span>
+                    <span>Beneficios VIP con Créditos</span>
+                  </div>
+                  <div class="panel-subtitle">Ventajas adicionales al usar créditos VIP</div>
+                </div>
+              </div>
+
+              <div class="vip-benefits">
+                <div class="vip-benefit">
+                  <div class="vip-benefit-icon">📉</div>
+                  <div class="vip-benefit-name">Stake Reducido</div>
+                  <div class="vip-benefit-value">-15% sugerido</div>
+                </div>
+
+                <div class="vip-benefit">
+                  <div class="vip-benefit-icon">⚡</div>
+                  <div class="vip-benefit-name">Prioridad Ejecución</div>
+                  <div class="vip-benefit-value">Queue VIP</div>
+                </div>
+
+                <div class="vip-benefit">
+                  <div class="vip-benefit-icon">🔓</div>
+                  <div class="vip-benefit-name">Picks Ocultos</div>
+                  <div class="vip-benefit-value">+5 disponibles</div>
+                </div>
+              </div>
+
+              <div class="alert success" style="margin-top: 16px;">
+                <span class="alert-icon">✨</span>
+                <div>
+                  <strong>120 créditos disponibles.</strong> Desbloquear señal VIP (14 créditos) te dará acceso a picks premium con mejor EV y menor competencia.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Validation & Execution -->
+          <div>
+            <!-- Pre-Execution Validation -->
+            <div class="panel">
+              <div class="panel-header">
+                  <div>
+                    <div class="panel-title">
+                      <span class="panel-title-icon">✅</span>
+                      <span>Validación Pre-Ejecución</span>
+                    </div>
+                    <div class="panel-subtitle">Requisitos obligatorios</div>
+                  </div>
+                </div>
+
+                <!-- Demo: Simular fallos de validación -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin: 8px 0 12px 0;">
+                  <button class="btn danger" onclick="simulateFail('ODDS_CHANGED')">Simular fallo: ODDS_CHANGED</button>
+                  <button class="btn danger" onclick="simulateFail('PLAN_LIMIT')">Simular fallo: PLAN_LIMIT</button>
+                  <button class="btn danger" onclick="simulateFail('INSUFFICIENT_FUNDS')">Simular fallo: INSUFFICIENT_FUNDS</button>
+                </div>
+
+                <div class="validation-list">
+                  <div class="validation-item passed">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">Risk Guard</div>
+                      <div class="validation-desc">Estado HEALTHY - Sin restricciones</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">EVENT_STARTED</div>
+                      <div class="validation-desc">Eventos no iniciados - Válido para PRE</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed" id="validation-ODDS_CHANGED">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">ODDS_CHANGED</div>
+                      <div class="validation-desc">Cuotas dentro del rango aceptable</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">MARKET_CLOSED</div>
+                      <div class="validation-desc">Mercados abiertos y disponibles</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed" id="validation-PLAN_LIMIT">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">PLAN_LIMIT</div>
+                      <div class="validation-desc">5 de 8 cuotas PRE disponibles</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed" id="validation-INSUFFICIENT_FUNDS">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">INSUFFICIENT_FUNDS</div>
+                      <div class="validation-desc">Bankroll: $1,250 ≥ Stake: $25</div>
+                    </div>
+                  </div>
+
+                  <div class="validation-item passed">
+                    <div class="validation-icon">✓</div>
+                    <div class="validation-info">
+                      <div class="validation-name">LIVE_NOT_ALLOWED</div>
+                      <div class="validation-desc">Solo picks PRE seleccionados</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="section-divider"></div>
+
+                <div class="alert success" id="validationsStatusAlert">
+                  <span class="alert-icon">✅</span>
+                  <div>
+                    <strong>Todas las validaciones pasadas.</strong> El ticket está listo para ejecutarse.
+                  </div>
+                </div>
+            </div>
+
+            <!-- Agent Selection -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">🤖</span>
+                    <span>Ejecutar con Agente</span>
+                  </div>
+                  <div class="panel-subtitle">Selecciona el agente para ejecución</div>
+                </div>
+              </div>
+
+              <div class="agent-selector">
+                <div class="agent-option active" data-agent="signals" onclick="selectAgent('signals')">
+                  <div class="agent-icon">📡</div>
+                  <div class="agent-name">Signals Agent</div>
+                  <div class="agent-type">Manual Assist</div>
+                </div>
+
+                <div class="agent-option" data-agent="copy" onclick="selectAgent('copy')">
+                  <div class="agent-icon">📋</div>
+                  <div class="agent-name">Copy Agent</div>
+                  <div class="agent-type">Semi-Auto</div>
+                </div>
+
+                <div class="agent-option" data-agent="auto" onclick="selectAgent('auto')">
+                  <div class="agent-icon">⚡</div>
+                  <div class="agent-name">Auto Agent</div>
+                  <div class="agent-type">Full Auto</div>
+                </div>
+              </div>
+
+              <div class="alert info" style="margin-top: 16px;">
+                <span class="alert-icon">ℹ️</span>
+                <div id="agentDescription">
+                  <strong>Signals Agent:</strong> Ejecución asistida con confirmación manual. El agente preparará el ticket y esperará tu aprobación final antes de enviar a Cloudbet.
+                </div>
+              </div>
+            </div>
+
+            <!-- Execution Actions -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">🚀</span>
+                    <span>Acciones de Ejecución</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <button class="btn btn-success" id="executeBtn" onclick="executeTicket()" style="font-size: 16px; padding: 14px 20px;">
+                  <span class="btn-icon">⚡</span>
+                  <span>Enviar a Signals Agent</span>
+                </button>
+
+                <button class="btn btn-outline" onclick="saveTicket()">
+                  <span class="btn-icon">💾</span>
+                  <span>Guardar Ticket (sin ejecutar)</span>
+                </button>
+
+                <div class="section-divider"></div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                  <a href="/signals?tab=PRE" class="btn btn-outline">
+                    <span class="btn-icon">📡</span>
+                    <span>Ver Señales</span>
+                  </a>
+                  <a href="/agents" class="btn btn-outline">
+                    <span class="btn-icon">🧠</span>
+                    <span>Agents Hub</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="panel">
+              <div class="panel-header">
+                <div>
+                  <div class="panel-title">
+                    <span class="panel-title-icon">📈</span>
+                    <span>Resumen del Ticket</span>
+                  </div>
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 12px;">
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                  <span>Selecciones:</span>
+                  <span class="mono" style="font-weight: 700;">2 picks</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                  <span>Cuota Total:</span>
+                  <span class="mono" style="color: var(--primary-cyan); font-weight: 700;">4.49</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                  <span>Stake Sugerido:</span>
+                  <span class="mono" style="color: var(--primary-green); font-weight: 700;">$25.00</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                  <span>Retorno Esperado:</span>
+                  <span class="mono" style="color: var(--primary-green); font-weight: 700;">$112.25</span>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; padding: 10px; background: var(--bg-tertiary); border-radius: 8px;">
+                  <span>EV Total:</span>
+                  <span class="mono" style="color: var(--secondary-gold); font-weight: 700;">+6.0%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Source counter
+    function updateSourceCount() {
+      const checkboxes = document.querySelectorAll('.source-checkbox input[type="checkbox"]');
+      const checked = Array.from(checkboxes).filter(cb => cb.checked);
+      const count = checked.length;
+      
+      document.getElementById('sourceCount').textContent = count;
+      
+      // Update active state
+      checkboxes.forEach(cb => {
+        const label = cb.closest('.source-checkbox');
+        if (cb.checked) {
+          label.classList.add('active');
+        } else {
+          label.classList.remove('active');
+        }
+      });
+      
+      // Show/hide max alert
+      const alert = document.getElementById('maxSourcesAlert');
+      if (count >= 7) {
+        alert.style.display = 'flex';
+        // Disable unchecked checkboxes
+        checkboxes.forEach(cb => {
+          if (!cb.checked) {
+            cb.disabled = true;
+            cb.closest('.source-checkbox').style.opacity = '0.5';
+          }
+        });
+      } else {
+        alert.style.display = 'none';
+        // Enable all checkboxes
+        checkboxes.forEach(cb => {
+          cb.disabled = false;
+          cb.closest('.source-checkbox').style.opacity = '1';
+        });
+      }
+    }
+
+    // Mode selection
+    const currentPlan = 'Pro';
+    function selectMode(mode) {
+      if (mode === 'automatic' && currentPlan !== 'Premium') {
+        const autoOpt = document.querySelector('[data-mode="automatic"]');
+        if (autoOpt) {
+          autoOpt.style.opacity = '0.5';
+          autoOpt.style.pointerEvents = 'none';
+        }
+        alert('⚠️ Modo Automático requiere Plan Premium. Deshabilitado en Plan Pro.');
+        return;
+      }
+      const options = document.querySelectorAll('.mode-option');
+      options.forEach(opt => opt.classList.remove('active'));
+      const selected = document.querySelector(`[data-mode="${mode}"]`);
+      selected.classList.add('active');
+      const descriptions = {
+        manual: '<strong>Modo Manual:</strong> El ticket se guardará para revisión posterior. No se enviará a ningún agente ni se ejecutará automáticamente.',
+        assisted: '<strong>Modo Asistido:</strong> El sistema validará requisitos, calculará stake óptimo con Kelly Criterion y mostrará recomendaciones antes de enviar al agente.',
+        automatic: '<strong>Modo Automático:</strong> El ticket se enviará directamente al agente seleccionado y se ejecutará en Cloudbet sin confirmación adicional (solo Premium).'
+      };
+      document.getElementById('modeDescription').innerHTML = descriptions[mode];
+    }
+
+    // Strategy selection
+    function selectStrategy(row) {
+      const rows = document.querySelectorAll('.strategy-table tbody tr');
+      rows.forEach(r => r.classList.remove('active'));
+      row.classList.add('active');
+    }
+
+    // Agent selection
+    function selectAgent(agent) {
+      const options = document.querySelectorAll('.agent-option');
+      options.forEach(opt => opt.classList.remove('active'));
+      
+      const selected = document.querySelector(`[data-agent="${agent}"]`);
+      selected.classList.add('active');
+      
+      // Update description
+      const descriptions = {
+        signals: '<strong>Signals Agent:</strong> Ejecución asistida con confirmación manual. El agente preparará el ticket y esperará tu aprobación final antes de enviar a Cloudbet.',
+        copy: '<strong>Copy Agent:</strong> Ejecución semi-automática. El agente copiará las señales seleccionadas y ejecutará automáticamente si pasan las validaciones de riesgo.',
+        auto: '<strong>Auto Agent:</strong> Ejecución completamente automática. El agente ejecutará el ticket inmediatamente sin intervención humana (requiere Plan Premium).'
+      };
+      
+      document.getElementById('agentDescription').innerHTML = descriptions[agent];
+      
+      // Update button text
+      const btn = document.getElementById('executeBtn');
+      const agentNames = {
+        signals: 'Signals Agent',
+        copy: 'Copy Agent',
+        auto: 'Auto Agent'
+      };
+      btn.querySelector('span:last-child').textContent = `Enviar a ${agentNames[agent]}`;
+    }
+
+    // Execute ticket
+    function executeTicket() {
+      const validations = document.querySelectorAll('.validation-item');
+      const allPassed = Array.from(validations).every(v => v.classList.contains('passed'));
+      
+      if (!allPassed) {
+        alert('❌ No se puede ejecutar: algunas validaciones fallaron.');
+        return;
+      }
+      
+      const agent = document.querySelector('.agent-option.active').dataset.agent;
+      const mode = document.querySelector('.mode-option.active').dataset.mode;
+      
+      alert(`✅ Ticket enviado a ${agent.toUpperCase()} en modo ${mode.toUpperCase()}!\n\n📊 Redirigiendo a Agents Hub...`);
+      
+      // En producción: window.location.href = '/agents';
+    }
+
+    // Save ticket
+    function saveTicket() {
+      alert('💾 Ticket guardado correctamente.\n\nPodrás revisarlo y ejecutarlo más tarde desde tu historial.');
+    }
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+      updateSourceCount();
+      const autoOpt = document.querySelector('[data-mode="automatic"]');
+      if (autoOpt && currentPlan !== 'Premium') {
+        autoOpt.style.opacity = '0.5';
+        autoOpt.style.pointerEvents = 'none';
+      }
+    });
+
+    // Sidebar dropdown
+    function toggleDropdown(dropdownId) {
+      const dd = document.getElementById(dropdownId);
+      if (!dd) return;
+      const menu = dd.querySelector('.nav-dropdown-menu');
+      const isOpen = dd.classList.toggle('open');
+      if (menu) menu.style.display = isOpen ? 'block' : 'none';
+      // Cerrar otros
+      document.querySelectorAll('.nav-dropdown').forEach(other => {
+        if (other.id !== dropdownId) {
+          other.classList.remove('open');
+          const m = other.querySelector('.nav-dropdown-menu');
+          if (m) m.style.display = 'none';
+        }
+      });
+    }
+
+    // Simulación de fallos de validación (demo)
+    function simulateFail(valId) {
+      const item = document.getElementById('validation-' + valId);
+      if (!item) return;
+      item.classList.remove('passed');
+      item.classList.add('failed');
+      const icon = item.querySelector('.validation-icon');
+      if (icon) icon.textContent = '✗';
+      const desc = item.querySelector('.validation-desc');
+      if (desc) desc.textContent = `Fallo simulado: ${valId}`;
+      // Actualizar alerta de estado
+      const status = document.getElementById('validationsStatusAlert');
+      if (status) {
+        status.classList.remove('success');
+        status.classList.add('danger');
+        const iconEl = status.querySelector('.alert-icon');
+        if (iconEl) iconEl.textContent = '❌';
+        const textEl = status.querySelector('div');
+        if (textEl) textEl.innerHTML = '<strong>Validaciones fallidas.</strong> Revisa los requisitos antes de ejecutar.';
+      }
+      // Deshabilitar ejecución
+      const execBtn = document.getElementById('executeBtn');
+      if (execBtn) {
+        execBtn.classList.add('disabled');
+        execBtn.disabled = true;
+        execBtn.title = 'Bloqueado por validaciones fallidas';
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trading Deportivo — Señales</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary-cyan:#00F5FF; --primary-green:#00FF94; --primary-blue:#0066FF;
+      --secondary-gold:#FFD700; --secondary-purple:#B026FF; --secondary-red:#FF4444;
+      --bg-primary:#0A0A1A; --bg-secondary:#141428; --bg-tertiary:#1E1E38; --bg-elevated:#252545;
+      --border-primary:#2A2A4A; --text-primary:#FFFFFF; --text-secondary:#B8B8D0; --text-muted:#8888A8;
+      --sidebar-width:280px; --sidebar-collapsed:80px; --topbar-height:70px;
+      --success-grad: linear-gradient(135deg,#00FF94,#00D970);
+      --primary-grad: linear-gradient(135deg,#00F5FF,#0066FF);
+      --premium-grad: linear-gradient(135deg,#FFD700,#FFA500);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Rajdhani',sans-serif;background:var(--bg-primary);color:var(--text-primary);min-height:100vh}
+    .dashboard{display:flex;min-height:100vh}
+    /* Sidebar */
+    .sidebar{width:var(--sidebar-width);background:var(--bg-secondary);border-right:1px solid var(--border-primary);display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:1000}
+    .sidebar-logo{padding:20px;border-bottom:1px solid var(--border-primary);display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(0,245,255,.08),rgba(176,38,255,.08))}
+    .logo-icon{width:40px;height:40px;background:var(--primary-grad);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;box-shadow:0 0 20px rgba(0,245,255,.4)}
+    .logo-text{font-size:18px;font-weight:700;background:var(--primary-grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+    .sidebar-nav{flex:1;overflow-y:auto;padding:12px 8px}
+    .nav-section{margin-bottom:24px}
+    .nav-section-title{padding:8px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+    .nav-item{display:flex;align-items:center;gap:12px;padding:12px 12px;margin-bottom:6px;border-radius:10px;color:var(--text-secondary);text-decoration:none;font-size:15px;font-weight:500;transition:all .3s}
+    .nav-item:hover{background:var(--bg-tertiary);color:var(--text-primary);transform:translateX(4px)}
+    .nav-item.active{background:linear-gradient(135deg,rgba(0,245,255,.15),rgba(0,102,255,.15));color:var(--primary-cyan);border-left:3px solid var(--primary-cyan)}
+    .nav-item.sub-item{padding-left:36px}
+    .nav-icon{font-size:20px;width:24px;text-align:center}
+    .nav-badge{margin-left:auto;background:var(--primary-cyan);color:var(--bg-primary);font-size:11px;font-weight:700;padding:2px 8px;border-radius:10px}
+    .nav-dropdown .nav-dropdown-toggle{display:flex;align-items:center;justify-content:space-between}
+    .nav-dropdown-menu{display:none;padding-left:12px}
+    .nav-dropdown.open .nav-dropdown-menu{display:block}
+    .dropdown-arrow{margin-left:auto;font-size:12px;color:var(--text-muted)}
+    /* Main */
+    .main-content{flex:1;margin-left:var(--sidebar-width);display:flex;flex-direction:column;min-height:100vh}
+    .topbar{height:var(--topbar-height);background:var(--bg-secondary);border-bottom:1px solid var(--border-primary);padding:0 32px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+    .page-title{font-size:24px;font-weight:700}
+    .breadcrumbs{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--text-muted)}
+    .topbar-right{display:flex;align-items:center;gap:12px}
+    .chip{background:var(--bg-tertiary);border:1px solid var(--border-primary);border-radius:999px;padding:6px 10px;font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:8px}
+    .chip.gold{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.35);color:#FFD700}
+    .chip.success{background:rgba(0,255,148,.12);border-color:rgba(0,255,148,.35);color:#00FF94}
+    .chip.primary{background:rgba(0,245,255,.12);border-color:rgba(0,245,255,.35);color:#00F5FF}
+    .btn{padding:8px 12px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer;font-weight:600}
+    .btn.primary{background:var(--primary-grad);color:#081018;border:none}
+    .btn.ghost{background:var(--bg-tertiary);color:var(--text-secondary)}
+    .btn[disabled]{opacity:.5;cursor:not-allowed}
+    .content-area{flex:1;padding:24px 32px;overflow-y:auto}
+    /* Tabs */
+    .tabs{display:flex;gap:8px;margin-bottom:16px}
+    .tab{padding:8px 12px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary);cursor:pointer}
+    .tab.active{border-color:var(--primary-cyan);color:var(--primary-cyan);background:rgba(0,245,255,.08)}
+    /* Cards */
+    .card-grid{display:grid;grid-template-columns:1fr;gap:16px}
+    @media(min-width:768px){.card-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(min-width:1200px){.card-grid{grid-template-columns:repeat(3,1fr)}}
+    .signal-card{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:12px}
+    .signal-header{display:flex;justify-content:space-between;align-items:center}
+    .signal-title{font-size:16px;font-weight:700}
+    .badges{display:flex;gap:6px;flex-wrap:wrap}
+    .badge{font-size:11px;font-weight:700;padding:4px 8px;border-radius:10px;border:1px solid var(--border-primary);background:var(--bg-tertiary);color:var(--text-secondary)}
+    .badge.premium{background:rgba(255,215,0,.12);border-color:rgba(255,215,0,.35);color:#FFD700}
+    .badge.selected{background:rgba(0,255,148,.12);border-color:rgba(0,255,148,.35);color:#00FF94}
+    .signal-meta{display:flex;gap:12px;color:var(--text-muted);font-size:13px}
+    .signal-actions{display:flex;gap:8px}
+    .tooltip{font-size:11px;color:var(--text-muted)}
+
+    /* Panels, listas y modales */
+    .panel{background:var(--bg-secondary);border:1px solid var(--border-primary);border-radius:14px;padding:16px;margin-bottom:16px}
+    .panel-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .panel-title{font-weight:700;font-size:16px}
+    .panel-sub{font-size:12px;color:var(--text-muted)}
+    .usage{display:flex;align-items:center}
+    .list{display:flex;flex-direction:column;gap:8px}
+    .list-item{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border:1px solid var(--border-primary);border-radius:10px;background:var(--bg-tertiary);color:var(--text-secondary)}
+    .mono{font-family:'JetBrains Mono',monospace}
+    .modal{display:none;position:fixed;inset:0;background:rgba(10,10,26,.7);z-index:2000;align-items:center;justify-content:center}
+    .modal.show{display:flex}
+    .modal-card{background:var(--bg-elevated);border:1px solid var(--border-primary);border-radius:14px;width:680px;max-width:95vw;padding:16px}
+    .modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .modal-title{font-weight:700;font-size:18px}
+    .panel .chip select{background:transparent;color:inherit;border:none}
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      <nav class="sidebar-nav">
+        <!-- Inteligencia -->
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a class="nav-item" href="/dashboard">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label">Dashboard</span>
+          </a>
+          <a class="nav-item" href="/agents">
+            <span class="nav-icon">🧠</span>
+            <span class="nav-label">Agents Hub</span>
+          </a>
+          <a class="nav-item active" href="/signals">
+            <span class="nav-icon">📡</span>
+            <span class="nav-label">Señales</span>
+          </a>
+          <a class="nav-item" href="/trader-master">
+            <span class="nav-icon">🎯</span>
+            <span class="nav-label">Trader Master</span>
+          </a>
+          <a class="nav-item" href="/portfolio">
+            <span class="nav-icon">📈</span>
+            <span class="nav-label">Smart Portfolio</span>
+          </a>
+        </div>
+
+        <!-- Capital & Control -->
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a class="nav-item" href="/bankroll"><span class="nav-icon">💼</span><span class="nav-label">Bankroll</span></a>
+          <a class="nav-item" href="/watchlist"><span class="nav-icon">👀</span><span class="nav-label">Watchlist</span></a>
+          <a class="nav-item" href="/risk"><span class="nav-icon">⚠️</span><span class="nav-label">Alertas de Riesgo</span></a>
+        </div>
+
+        <!-- Tienda / Premium Hub -->
+        <div class="nav-section">
+          <div class="nav-section-title">Tienda</div>
+          <a class="nav-item" href="/premiumhub/plans"><span class="nav-icon">💎</span><span class="nav-label">Planes Premium</span></a>
+          <a class="nav-item" href="/premiumhub/credits"><span class="nav-icon">🪙</span><span class="nav-label">Créditos</span></a>
+          <a class="nav-item" href="/premiumhub/promotions"><span class="nav-icon">🎁</span><span class="nav-label">Promociones</span></a>
+        </div>
+
+        <!-- Comunidad -->
+        <div class="nav-section">
+          <div class="nav-section-title">Comunidad</div>
+          <a class="nav-item" href="/community/leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">Clasificación</span></a>
+          <a class="nav-item" href="/community/discussions"><span class="nav-icon">💬</span><span class="nav-label">Debates</span></a>
+          <a class="nav-item" href="/community/following"><span class="nav-icon">👤</span><span class="nav-label">Siguiendo</span></a>
+          <a class="nav-item" href="/support"><span class="nav-icon">🆘</span><span class="nav-label">Soporte</span></a>
+        </div>
+
+        <!-- IA & Mejora -->
+        <div class="nav-section">
+          <div class="nav-section-title">IA & Mejora</div>
+          <a class="nav-item" href="/coach"><span class="nav-icon">🧑‍🏫</span><span class="nav-label">Tu Entrenador de Trading</span></a>
+          <a class="nav-item" href="/stats"><span class="nav-icon">📈</span><span class="nav-label">Mis Estadísticas</span></a>
+        </div>
+
+        <!-- Referidos (dropdown) -->
+        <div class="nav-section nav-dropdown" id="referralsDropdown">
+          <div class="nav-item nav-dropdown-toggle">
+            <span><span class="nav-icon">👥</span> <span class="nav-label">Referidos</span></span>
+            <span class="dropdown-arrow">▾</span>
+          </div>
+          <div class="nav-dropdown-menu">
+            <a class="nav-item" href="/referrals"><span class="nav-icon">📄</span><span class="nav-label">Resumen</span></a>
+            <a class="nav-item" href="/referrals#directs"><span class="nav-icon">➡️</span><span class="nav-label">Directos</span></a>
+            <a class="nav-item" href="/referrals#team-binary"><span class="nav-icon">🧩</span><span class="nav-label">Equipo Binario</span></a>
+            <a class="nav-item" href="/referrals#payments"><span class="nav-icon">💳</span><span class="nav-label">Pagos</span></a>
+          </div>
+        </div>
+
+        <!-- Otros -->
+        <div class="nav-section">
+          <div class="nav-section-title">Otros</div>
+          <a class="nav-item" href="/settings"><span class="nav-icon">⚙️</span><span class="nav-label">Configuración</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main -->
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <h1 class="page-title">Señales</h1>
+          <div class="breadcrumbs"><span>Inicio</span>›<span>Señales</span></div>
+        </div>
+        <div class="topbar-right">
+          <div class="chip gold" id="quotaPRE">PRE API: <strong>2/8</strong></div>
+          <div class="chip primary" id="quotaLIVE">LIVE API: <strong>1/8</strong></div>
+          <div class="chip success" id="quotaTotal">Total: <strong>9/30</strong></div>
+          <div class="chip" id="combinedChip">Combinada: <strong>0</strong> <button class="btn" id="viewCombinedBtn">Ver combinada</button></div>
+        </div>
+      </header>
+
+      <section class="content-area">
+        <!-- Filtros de señales + contador -->
+        <div class="panel" id="filtersPanel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Filtros de señales</div>
+              <div class="panel-sub">Deporte, mercado, fuente, estado, confianza y rango de cuotas</div>
+            </div>
+            <div class="chip" id="resultsCount">Mostrando 0 de 0</div>
+          </div>
+          <div class="usage" style="gap:8px;flex-wrap:wrap">
+            <label class="chip">Deporte
+              <select id="filterSport" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todos</option>
+                <option value="soccer">Fútbol</option>
+                <option value="basket">Basket</option>
+              </select>
+            </label>
+            <label class="chip">Mercado
+              <select id="filterMarket" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todos</option>
+                <option value="PRE">PRE</option>
+                <option value="LIVE">LIVE</option>
+              </select>
+            </label>
+            <label class="chip">Fuente
+              <select id="filterSource" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todas</option>
+                <option value="ai">IA</option>
+                <option value="tipster">Tipster</option>
+              </select>
+            </label>
+            <label class="chip">Estado
+              <select id="filterState" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todos</option>
+                <option value="available">Disponible</option>
+                <option value="blocked">Bloqueada</option>
+                <option value="expired">Expirada</option>
+              </select>
+            </label>
+            <label class="chip">Confianza
+              <select id="filterConfidence" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todas</option>
+                <option value="high">Alta</option>
+                <option value="medium">Media</option>
+                <option value="low">Baja</option>
+              </select>
+            </label>
+            <label class="chip">Cuotas
+              <select id="filterOdds" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="all">Todas</option>
+                <option value="lt2">Menor a 2.0</option>
+                <option value="2to3">2.0 - 3.0</option>
+                <option value="gt3">Mayor a 3.0</option>
+              </select>
+            </label>
+            <label class="chip">Orden
+              <select id="orderSelect" style="margin-left:8px" onchange="onFiltersChange()">
+                <option value="newest">Nuevas</option>
+                <option value="confidence">Confianza</option>
+                <option value="odds">Cuotas</option>
+                <option value="value">Valor</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <!-- Ranking -->
+        <div class="panel" id="rankingPanel">
+          <div class="panel-header">
+            <div>
+              <div class="panel-title">Ranking semanal de fuentes</div>
+              <div class="panel-sub">Top por ROI y consistencia</div>
+            </div>
+          </div>
+          <div class="list" id="rankingList"></div>
+        </div>
+        <!-- Grid de señales -->
+        <div class="card-grid" id="signalsGrid"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Tabs PRE/LIVE -->
+  <section class="content-area">
+    <div class="tabs">
+      <button id="tabPRE" class="tab">PRE</button>
+      <button id="tabLIVE" class="tab">LIVE</button>
+    </div>
+    <!-- Filtros de señales + contador -->
+    <div class="panel" id="filtersPanel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Filtros de señales</div>
+          <div class="panel-sub">Deporte, mercado, fuente, estado, confianza y rango de cuotas</div>
+        </div>
+        <div class="chip" id="resultsCount">Mostrando 0 de 0</div>
+      </div>
+      <div class="usage" style="gap:8px;flex-wrap:wrap">
+        <label class="chip">Deporte
+          <select id="filterSport" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todos</option>
+            <option value="soccer">Fútbol</option>
+            <option value="basket">Basket</option>
+          </select>
+        </label>
+        <label class="chip">Mercado
+          <select id="filterMarket" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todos</option>
+            <option value="PRE">PRE</option>
+            <option value="LIVE">LIVE</option>
+          </select>
+        </label>
+        <label class="chip">Fuente
+          <select id="filterSource" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todas</option>
+            <option value="ai">IA</option>
+            <option value="tipster">Tipster</option>
+          </select>
+        </label>
+        <label class="chip">Estado
+          <select id="filterState" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todos</option>
+            <option value="available">Disponible</option>
+            <option value="blocked">Bloqueada</option>
+            <option value="expired">Expirada</option>
+          </select>
+        </label>
+        <label class="chip">Confianza
+          <select id="filterConfidence" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todas</option>
+            <option value="high">Alta</option>
+            <option value="medium">Media</option>
+            <option value="low">Baja</option>
+          </select>
+        </label>
+        <label class="chip">Cuotas
+          <select id="filterOdds" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="all">Todas</option>
+            <option value="lt2">Menor a 2.0</option>
+            <option value="2to3">2.0 - 3.0</option>
+            <option value="gt3">Mayor a 3.0</option>
+          </select>
+        </label>
+        <label class="chip">Orden
+          <select id="orderSelect" style="margin-left:8px" onchange="onFiltersChange()">
+            <option value="newest">Nuevas</option>
+            <option value="confidence">Confianza</option>
+            <option value="odds">Cuotas</option>
+            <option value="value">Valor</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <!-- Ranking -->
+    <div class="panel" id="rankingPanel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">Ranking semanal de fuentes</div>
+          <div class="panel-sub">Top por ROI y consistencia</div>
+        </div>
+      </div>
+      <div class="list" id="rankingList"></div>
+    </div>
+    <!-- Grid de señales -->
+    <div class="card-grid" id="signalsGrid"></div>
+  </section>
+
+  <!-- Modal combinada -->
+  <div id="combinedModal" style="display:none; position:fixed; inset:0; background:rgba(10,10,26,.7); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:var(--bg-elevated); border:1px solid var(--border-primary); border-radius:14px; width:680px; max-width:95vw; padding:16px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <div style="font-weight:700; font-size:18px;">Combinada seleccionada</div>
+        <button class="btn" onclick="closeCombined()">Cerrar</button>
+      </div>
+      <div id="combinedList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div style="margin-top:12px; display:flex; gap:8px;">
+        <button class="btn primary" onclick="buildCombined()">Construir combinada</button>
+        <button class="btn" onclick="clearCombined()">Limpiar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalle de señal -->
+  <div id="signalDetailModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Detalle de señal</div>
+        <button class="btn" onclick="closeSignalDetail()">Cerrar</button>
+      </div>
+      <div id="signalDetailBody" class="list"></div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn" id="detailFavoriteBtn">Favorita</button>
+        <button class="btn" id="detailCombinedBtn">Agregar a combinada</button>
+        <button class="btn primary" id="detailExecuteBtn">Ejecutar vía agente</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal: Ejecutar vía agente -->
+  <div id="executeModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Ejecutar vía agente</div>
+        <button class="btn" onclick="closeExecuteModal()">Cerrar</button>
+      </div>
+      <div class="list">
+        <div class="list-item"><span>Señal</span><span id="execSignalLabel" class="mono"></span></div>
+        <div class="list-item">
+          <span>Elegir agente</span>
+          <select id="agentSelect"></select>
+        </div>
+        <div class="list-item">
+          <span>Stake</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <select id="stakeType"><option value="flat">Flat</option><option value="percent">%</option></select>
+            <input id="stakeValue" type="number" min="0" step="0.01" style="width:120px" />
+          </div>
+        </div>
+        <div class="list-item" id="toplossRow" style="display:none">
+          <span>Toploss (Premium)</span>
+          <input id="toplossValue" type="number" min="0" max="100" step="1" style="width:120px" />
+        </div>
+        <div class="list-item">
+          <span>Cooldown (min)</span>
+          <input id="cooldownValue" type="number" min="0" step="1" style="width:120px" />
+        </div>
+        <div class="list-item" id="liveQuotaRow" style="display:none">
+          <span>LIVE</span>
+          <span class="chip primary">Consume cupo LIVE (Premium)</span>
+        </div>
+        <div class="list-item" id="billingRow">
+          <span>Billing mode</span>
+          <span id="billingModeLabel" class="mono"></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn primary" id="executeSubmitBtn">Confirmar ejecución</button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal: Resumen combinada -->
+  <div id="combinedSummaryModal" class="modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">Resumen combinada</div>
+        <button class="btn" onclick="closeCombinedSummary()">Cerrar</button>
+      </div>
+      <div id="combinedSummaryBody" class="list"></div>
+      <div style="margin-top:12px" class="tooltip">Próximo: construir ticket</div>
+    </div>
+  </div>
+
+  <script>
+    // Utilidades de modal
+    function showModal(id){ const m = document.getElementById(id); if(m){ m.classList.add('show'); } }
+    function hideModal(id){ const m = document.getElementById(id); if(m){ m.classList.remove('show'); } }
+
+    // Estado de UI
+    const state = {
+      tab: 'PRE',
+      plan: 'Pro', // 'Basic' | 'Pro' | 'Premium'
+      combined: [],
+      favorites: [],
+      agents: [
+        { id:'AG-01', name:'Cloudbet Agent', billing_mode:'per_execution' },
+        { id:'AG-02', name:'Value Hunter', billing_mode:'subscription' },
+        { id:'AG-03', name:'Arbitrage Bot', billing_mode:'credits' }
+      ],
+      signals: [
+        { id:'PRE-001', type:'PRE', sport:'soccer', market:'PRE', title:'Unders Value — Liga MX', odds_min:1.70, odds_current:1.85, tip:'Under 2.5', source_type:'ai', source_id:'AI Signals', premium:false, published_at:'2026-02-06T13:20:00Z', expires_at:'2026-02-07T01:00:00Z', state:'available' },
+        { id:'LIVE-101', type:'LIVE', sport:'soccer', market:'LIVE', title:'Over Momentum — Serie A', odds_min:1.80, odds_current:2.10, tip:'Over 2.5', source_type:'ai', source_id:'AI Live', premium:true, published_at:'2026-02-06T15:42:00Z', expires_at:'2026-02-06T16:30:00Z', state:'available' },
+        { id:'PRE-002', type:'PRE', sport:'basket', market:'PRE', title:'Both Teams Score — EPL', odds_min:1.85, odds_current:1.95, tip:'BTTS Sí', source_type:'tipster', source_id:'Tipster Pro', premium:false, published_at:'2026-02-05T20:10:00Z', expires_at:'2026-02-07T12:00:00Z', state:'blocked', reason_code:'LIMIT_EXCEEDED' }
+      ]
+    };
+
+    // Dropdown generic
+    function toggleDropdown(id){
+      const el = document.getElementById(id);
+      if(!el) return;
+      el.classList.toggle('open');
+    }
+
+    // Leer tab desde URL (?tab=PRE|LIVE o #PRE|#LIVE)
+    function readTabFromURL(){
+      const params = new URLSearchParams(window.location.search);
+      const qTab = params.get('tab');
+      const h = (window.location.hash || '').replace('#','');
+      const candidate = (qTab || h || '').toUpperCase();
+      if(candidate === 'PRE' || candidate === 'LIVE') {
+        state.tab = candidate;
+      }
+    }
+
+    function setActiveTabUI(){
+      document.getElementById('tabPRE').classList.toggle('active', state.tab === 'PRE');
+      document.getElementById('tabLIVE').classList.toggle('active', state.tab === 'LIVE');
+      // Sidebar active marking
+      document.getElementById('navSignalsPRE').classList.toggle('active', state.tab === 'PRE');
+      document.getElementById('navSignalsLIVE').classList.toggle('active', state.tab === 'LIVE');
+    }
+
+    function updateURLForTab(){
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', state.tab);
+      history.replaceState(null, '', url.toString());
+    }
+
+    // Permisos por plan para ejecutar vía agente
+    function canExecute(type){
+      const plan = state.plan;
+      if(plan === 'Basic') return {allowed:false, reason:'Disponible en Pro/Premium'};
+      if(plan === 'Pro') return type === 'PRE' ? {allowed:true} : {allowed:false, reason:'LIVE solo Premium'};
+      if(plan === 'Premium') return {allowed:true};
+      return {allowed:false, reason:'Plan no válido'};
+    }
+
+    // Filtros
+    function applyFilters(items){
+      const sport = document.getElementById('filterSport').value;
+      const market = document.getElementById('filterMarket').value;
+      const source = document.getElementById('filterSource').value;
+      const st = document.getElementById('filterState').value;
+      const conf = document.getElementById('filterConfidence').value; // demo: no field, mock mapping by type
+      const odds = document.getElementById('filterOdds').value;
+      const order = document.getElementById('orderSelect').value;
+      let list = items.filter(s => s.type === state.tab);
+      if(sport !== 'all') list = list.filter(s => s.sport === sport);
+      if(market !== 'all') list = list.filter(s => s.market === market);
+      if(source !== 'all') list = list.filter(s => s.source_type === source);
+      if(st !== 'all') list = list.filter(s => s.state === st);
+      if(conf !== 'all') list = list.filter(s => (conf==='high'? s.odds_current<=1.9 : conf==='medium'? s.odds_current>1.9 && s.odds_current<=2.2 : s.odds_current>2.2));
+      if(odds === 'lt2') list = list.filter(s => s.odds_current < 2.0);
+      if(odds === '2to3') list = list.filter(s => s.odds_current >= 2.0 && s.odds_current <= 3.0);
+      if(odds === 'gt3') list = list.filter(s => s.odds_current > 3.0);
+      // Orden
+      if(order === 'newest') list.sort((a,b)=> new Date(b.published_at)-new Date(a.published_at));
+      if(order === 'confidence') list.sort((a,b)=> (a.odds_current)-(b.odds_current)); // menor cuota ~ mayor confianza
+      if(order === 'odds') list.sort((a,b)=> (b.odds_current)-(a.odds_current));
+      if(order === 'value') list.sort((a,b)=> (b.odds_current-b.odds_min)-(a.odds_current-a.odds_min));
+      document.getElementById('resultsCount').textContent = `Mostrando ${list.length} de ${items.filter(s=>s.type===state.tab).length}`;
+      return list;
+    }
+
+    function onFiltersChange(){ renderSignals(); renderRanking(); }
+
+    function renderRanking(){
+      const listEl = document.getElementById('rankingList');
+      listEl.innerHTML = '';
+      const pool = state.signals.filter(s=>s.type===state.tab);
+      const groups = {};
+      for(const s of pool){
+        const k = s.source_id; groups[k] = groups[k]||{count:0, roi:0};
+        groups[k].count += 1; groups[k].roi += (s.odds_current - s.odds_min);
+      }
+      const rows = Object.entries(groups).map(([name,stats])=>({name, roi: (stats.roi/stats.count).toFixed(2), count: stats.count}))
+        .sort((a,b)=> b.roi - a.roi);
+      for(const r of rows){
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `<span>${r.name}</span><span class="mono">ROI ~ ${r.roi} · señales ${r.count}</span>`;
+        listEl.appendChild(item);
+      }
+    }
+
+    function renderSignals(){
+      const grid = document.getElementById('signalsGrid');
+      grid.innerHTML = '';
+      const filtered = applyFilters(state.signals);
+      for(const s of filtered){
+        const selected = state.combined.includes(s.id);
+        const exec = canExecute(s.type);
+        const card = document.createElement('div');
+        card.className = 'signal-card';
+        card.innerHTML = `
+          <div class="signal-header">
+            <div class="signal-title">${s.title}</div>
+            <div class="badges">
+              <span class="badge">${s.type}</span>
+              <span class="badge">${s.source_id}</span>
+              ${s.premium ? '<span class="badge premium">Premium</span>' : ''}
+              ${selected ? '<span class="badge selected">En combinada</span>' : ''}
+            </div>
+          </div>
+          <div class="signal-meta">
+            <span>Cuota: <strong>${s.odds_current}</strong></span>
+            <span>Min: <strong>${s.odds_min}</strong></span>
+            <span>Pick: <strong>${s.tip}</strong></span>
+          </div>
+          <div class="signal-actions">
+            <button class="btn" onclick="openSignalDetail('${s.id}')">Ver detalle</button>
+            <button class="btn ghost" onclick="toggleCombined('${s.id}')">${selected ? 'Quitar de combinada' : 'Agregar a combinada'}</button>
+            <button class="btn primary" ${exec.allowed? '' : 'disabled'} title="${exec.allowed? '' : (exec.reason||'Restricción por plan')}" onclick="${exec.allowed? `openExecuteModal('${s.id}')` : ''}">Ejecutar vía agente</button>
+          </div>
+          ${exec.allowed? '' : `<div class="tooltip">${exec.reason}</div>`}
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    function toggleCombined(id){
+      const idx = state.combined.indexOf(id);
+      if(idx >= 0) state.combined.splice(idx,1); else state.combined.push(id);
+      updateCombinedChip();
+      renderSignals();
+    }
+
+    function updateCombinedChip(){
+      const chip = document.getElementById('combinedChip');
+      chip.querySelector('strong').textContent = String(state.combined.length);
+    }
+
+    function openCombined(){
+      const list = document.getElementById('combinedList');
+      list.innerHTML = '';
+      for(const id of state.combined){
+        const s = state.signals.find(x => x.id === id);
+        if(!s) continue;
+        const row = document.createElement('div');
+        row.className = 'chip';
+        row.innerHTML = `${s.type} · ${s.title} · cuota ${s.odds_current}`;
+        list.appendChild(row);
+      }
+      document.getElementById('combinedModal').style.display = 'flex';
+    }
+    function closeCombined(){ document.getElementById('combinedModal').style.display = 'none'; }
+    function clearCombined(){ state.combined = []; updateCombinedChip(); renderSignals(); closeCombined(); }
+
+    function buildCombined(){
+      const body = document.getElementById('combinedSummaryBody');
+      body.innerHTML = '';
+      if(state.combined.length===0){ body.innerHTML = '<div class="list-item">No hay señales en la combinada.</div>'; }
+      let combinedOdds = 1.0;
+      for(const id of state.combined){ const s = state.signals.find(x=>x.id===id); if(!s) continue; combinedOdds *= Number(s.odds_current||1); const item = document.createElement('div'); item.className='list-item'; item.innerHTML = `<span>${s.title}</span><span class="mono">${s.odds_current.toFixed? s.odds_current.toFixed(2) : s.odds_current}</span>`; body.appendChild(item); }
+      const total = document.createElement('div'); total.className='list-item'; total.innerHTML = `<span>Total cuotas</span><span class="mono">${combinedOdds.toFixed(2)}</span>`; body.appendChild(total);
+      showModal('combinedSummaryModal');
+    }
+    function closeCombinedSummary(){ hideModal('combinedSummaryModal'); }
+
+    // Detalle de señal
+    let currentDetailId = null;
+    function openSignalDetail(id){
+      currentDetailId = id;
+      const s = state.signals.find(x=>x.id===id); if(!s) return;
+      const body = document.getElementById('signalDetailBody');
+      body.innerHTML = '';
+      const rows = [
+        ['ID', s.id],
+        ['Tipo', s.type],
+        ['Source', `${s.source_type} · ${s.source_id}`],
+        ['Publicado', `${new Date(s.published_at).toISOString()} (UTC)`],
+        ['Expira', `${new Date(s.expires_at).toISOString()} (UTC)`],
+        ['Odds min', s.odds_min],
+        ['Odds actual', s.odds_current],
+        ['Estado', s.state + (s.reason_code? ` · ${s.reason_code}`: '')]
+      ];
+      for(const [k,v] of rows){ const item=document.createElement('div'); item.className='list-item'; item.innerHTML = `<span>${k}</span><span class="mono">${v}</span>`; body.appendChild(item); }
+      const favBtn = document.getElementById('detailFavoriteBtn');
+      const inFav = state.favorites.includes(s.id);
+      favBtn.textContent = inFav? 'Quitar favorita' : 'Favorita';
+      favBtn.onclick = () => { const i = state.favorites.indexOf(s.id); if(i>=0) state.favorites.splice(i,1); else state.favorites.push(s.id); openSignalDetail(s.id); };
+      const combBtn = document.getElementById('detailCombinedBtn');
+      const inComb = state.combined.includes(s.id);
+      combBtn.textContent = inComb? 'Quitar de combinada' : 'Agregar a combinada';
+      combBtn.onclick = () => { toggleCombined(s.id); openSignalDetail(s.id); };
+      const execBtn = document.getElementById('detailExecuteBtn');
+      const exec = canExecute(s.type);
+      execBtn.disabled = !exec.allowed; execBtn.title = exec.allowed? '' : (exec.reason||'Restricción por plan');
+      execBtn.onclick = exec.allowed? (()=> openExecuteModal(s.id)) : null;
+      showModal('signalDetailModal');
+    }
+    function closeSignalDetail(){ hideModal('signalDetailModal'); }
+
+    // Ejecutar vía agente
+    let currentExecId = null;
+    function openExecuteModal(id){
+      currentExecId = id;
+      const s = state.signals.find(x=>x.id===id); if(!s) return;
+      document.getElementById('execSignalLabel').textContent = `${s.id} (${s.type}) ${s.title}`;
+      const agentSelect = document.getElementById('agentSelect');
+      agentSelect.innerHTML = '';
+      for(const a of state.agents){ const opt = document.createElement('option'); opt.value = a.id; opt.textContent = `${a.name}`; opt.dataset.billing = a.billing_mode; agentSelect.appendChild(opt); }
+      const updateBilling = ()=>{ const sel = agentSelect.selectedOptions[0]; document.getElementById('billingModeLabel').textContent = sel? sel.dataset.billing : ''; };
+      agentSelect.onchange = updateBilling; updateBilling();
+      document.getElementById('stakeType').value = 'flat';
+      document.getElementById('stakeValue').value = '';
+      document.getElementById('cooldownValue').value = 0;
+      // Toploss visible solo Premium
+      document.getElementById('toplossRow').style.display = (state.plan==='Premium')? 'flex' : 'none';
+      document.getElementById('toplossValue').value = (state.plan==='Premium')? 10 : '';
+      // LIVE cupo aviso
+      document.getElementById('liveQuotaRow').style.display = (s.type==='LIVE' && state.plan==='Premium')? 'flex' : 'none';
+      showModal('executeModal');
+    }
+    function closeExecuteModal(){ hideModal('executeModal'); }
+
+    // Submit ejecución (demo)
+    document.addEventListener('DOMContentLoaded', ()=>{
+      const btn = document.getElementById('executeSubmitBtn');
+      btn.onclick = ()=>{
+        if(!currentExecId) return;
+        const s = state.signals.find(x=>x.id===currentExecId);
+        const agentId = document.getElementById('agentSelect').value;
+        const stakeType = document.getElementById('stakeType').value;
+        const stakeValue = Number(document.getElementById('stakeValue').value||0);
+        const toploss = state.plan==='Premium'? Number(document.getElementById('toplossValue').value||0) : null;
+        const cooldown = Number(document.getElementById('cooldownValue').value||0);
+        console.log('EXECUTE', {signal: s.id, agentId, stakeType, stakeValue, toploss, cooldown});
+        closeExecuteModal();
+        alert('Ejecución enviada al agente '+agentId+' para la señal '+s.id);
+      };
+    });
+
+    function init(){
+      // Marcar padre Señales activo si path contiene /signals
+      const isSignals = window.location.pathname.includes('/signals');
+      const dropdown = document.getElementById('signalsDropdown');
+      if(isSignals) dropdown.querySelector('.nav-dropdown-toggle').classList.add('active');
+
+      // Eventos tabs
+      document.getElementById('tabPRE').addEventListener('click', () => { state.tab='PRE'; setActiveTabUI(); updateURLForTab(); renderSignals(); renderRanking(); });
+      document.getElementById('tabLIVE').addEventListener('click', () => { state.tab='LIVE'; setActiveTabUI(); updateURLForTab(); renderSignals(); renderRanking(); });
+
+      // Chip combinada CTA
+      document.getElementById('viewCombinedBtn').addEventListener('click', openCombined);
+
+      readTabFromURL();
+      setActiveTabUI();
+      updateURLForTab();
+      updateCombinedChip();
+      renderSignals();
+      renderRanking();
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referidos - Panel de Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="../styles/admin.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <h4><i class="fas fa-chart-line"></i> Admin Panel</h4>
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+            <li><a href="/admin/users"><i class="fas fa-users"></i> Usuarios</a></li>
+            <li><a href="/admin/tipsters"><i class="fas fa-user-tie"></i> Tipsters</a></li>
+            <li><a href="/admin/signals"><i class="fas fa-signal"></i> Señales</a></li>
+            <li><a href="/admin/bets"><i class="fas fa-coins"></i> Apuestas</a></li>
+            <li><a href="/admin/subscriptions"><i class="fas fa-credit-card"></i> Suscripciones</a></li>
+            <li><a href="/admin/credits"><i class="fas fa-coins"></i> Créditos</a></li>
+            <li class="active"><a href="/admin/referrals"><i class="fas fa-share-alt"></i> Referidos</a></li>
+            <li><a href="/admin/community"><i class="fas fa-comments"></i> Comunidad</a></li>
+            <li><a href="/admin/support"><i class="fas fa-headset"></i> Soporte</a></li>
+            <li><a href="/admin/alerts"><i class="fas fa-bell"></i> Alertas</a></li>
+            <li><a href="/admin/compliance"><i class="fas fa-shield-alt"></i> Compliance</a></li>
+            <li><a href="/admin/finance"><i class="fas fa-dollar-sign"></i> Finanzas</a></li>
+            <li><a href="/admin/audit"><i class="fas fa-search"></i> Auditoría</a></li>
+            <li><a href="/admin/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+            <li><a href="/admin/trading-coach"><i class="fas fa-robot"></i> Trading Coach</a></li>
+            <li><a href="/admin/risk-guard"><i class="fas fa-shield-alt"></i> Risk Guard</a></li>
+            <li><a href="/admin/agents-hub"><i class="fas fa-network-wired"></i> Agents Hub</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2><i class="fas fa-share-alt"></i> Sistema de Referidos</h2>
+                <div class="user-info">
+                    <span class="me-3">Admin User</span>
+                    <i class="fas fa-user-circle"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="container-fluid">
+            <!-- Quick Stats -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-2x text-primary mb-2"></i>
+                            <h5>Referidos Totales</h5>
+                            <h3 class="text-primary">12,847</h3>
+                            <small class="text-success">+1,234 este mes</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-network-wired fa-2x text-info mb-2"></i>
+                            <h5>Red Binaria</h5>
+                            <h3 class="text-info">8,392</h3>
+                            <small class="text-success">Activo: 6,127</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-dollar-sign fa-2x text-warning mb-2"></i>
+                            <h5>Comisiones Pendientes</h5>
+                            <h3 class="text-warning">$47,892</h3>
+                            <small class="text-info">+5.2% vs mes pasado</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card kpi-card">
+                        <div class="card-body text-center">
+                            <i class="fas fa-chart-line fa-2x text-success mb-2"></i>
+                            <h5>Revenue por Referidos</h5>
+                            <h3 class="text-success">$284,567</h3>
+                            <small class="text-success">+23.4% este trimestre</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <ul class="nav nav-tabs card-header-tabs" id="referralsTabs">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#dashboard">
+                                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#tree">
+                                        <i class="fas fa-sitemap"></i> Árbol Binario
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#commissions">
+                                        <i class="fas fa-money-bill-wave"></i> Comisiones
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#analytics">
+                                        <i class="fas fa-chart-bar"></i> Analytics
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#fraud">
+                                        <i class="fas fa-shield-alt"></i> Fraude
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="dashboard">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <h6>Distribución por Nivel</h6>
+                                            <div class="card bg-light mb-3">
+                                                <div class="card-body">
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span><i class="fas fa-star text-warning"></i> Rango 1 - Novato</span>
+                                                        <strong class="text-primary">8,247</strong>
+                                                    </div>
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar bg-primary" style="width: 64%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span><i class="fas fa-medal text-info"></i> Rango 2 - Bronce</span>
+                                                        <strong class="text-info">2,847</strong>
+                                                    </div>
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar bg-info" style="width: 22%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span><i class="fas fa-trophy text-warning"></i> Rango 3 - Plata</span>
+                                                        <strong class="text-warning">1,234</strong>
+                                                    </div>
+                                                    <div class="progress mb-3">
+                                                        <div class="progress-bar bg-warning" style="width: 10%"></div>
+                                                    </div>
+                                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                                        <span><i class="fas fa-crown text-success"></i> Rango 4 - Oro</span>
+                                                        <strong class="text-success">456</strong>
+                                                    </div>
+                                                    <div class="progress">
+                                                        <div class="progress-bar bg-success" style="width: 4%"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <h6>Top Referidores del Mes</h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-sm">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Usuario</th>
+                                                            <th>Referidos</th>
+                                                            <th>Comisión</th>
+                                                            <th>Rango</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>Carlos_Rodriguez</td>
+                                                            <td>247</td>
+                                                            <td><span class="text-success">$8,247</span></td>
+                                                            <td><span class="badge bg-success">Oro</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Maria_Gonzalez</td>
+                                                            <td>189</td>
+                                                            <td><span class="text-success">$6,892</span></td>
+                                                            <td><span class="badge bg-warning">Plata</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Juan_Perez</td>
+                                                            <td>156</td>
+                                                            <td><span class="text-success">$5,234</span></td>
+                                                            <td><span class="badge bg-info">Bronce</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Ana_Martinez</td>
+                                                            <td>134</td>
+                                                            <td><span class="text-success">$4,567</span></td>
+                                                            <td><span class="badge bg-info">Bronce</span></td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="tree">
+                                    <h6>Visualización del Árbol Binario</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <input type="text" class="form-control" placeholder="Buscar usuario en el árbol...">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <select class="form-select">
+                                                <option>Todos los niveles</option>
+                                                <option>Nivel 1-3</option>
+                                                <option>Nivel 4-6</option>
+                                                <option>Nivel 7+</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <button class="btn btn-primary w-100">Buscar</button>
+                                        </div>
+                                    </div>
+                                    <div class="card">
+                                        <div class="card-body">
+                                            <div class="tree-visualization">
+                                                <div class="tree-level-0 text-center mb-4">
+                                                    <div class="tree-node">
+                                                        <div class="node-avatar">
+                                                            <i class="fas fa-user fa-2x"></i>
+                                                        </div>
+                                                        <div class="node-info">
+                                                            <strong>Admin</strong>
+                                                            <small>Oro - 1,247 referidos</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tree-level-1 d-flex justify-content-center mb-3">
+                                                    <div class="tree-branch me-5">
+                                                        <div class="tree-node">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user fa-lg"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <strong>Carlos_R</strong>
+                                                                <small>Plata - 456 ref</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tree-branch">
+                                                        <div class="tree-node">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user fa-lg"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <strong>Maria_G</strong>
+                                                                <small>Plata - 389 ref</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="tree-level-2 d-flex justify-content-center">
+                                                    <div class="tree-branch me-3">
+                                                        <div class="tree-node small">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <small>Juan_P</small>
+                                                                <small>Bronce</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tree-branch me-3">
+                                                        <div class="tree-node small">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <small>Ana_M</small>
+                                                                <small>Bronce</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tree-branch me-3">
+                                                        <div class="tree-node small">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <small>Luis_R</small>
+                                                                <small>Bronce</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tree-branch">
+                                                        <div class="tree-node small">
+                                                            <div class="node-avatar">
+                                                                <i class="fas fa-user"></i>
+                                                            </div>
+                                                            <div class="node-info">
+                                                                <small>Sofia_L</small>
+                                                                <small>Bronce</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-outline-primary me-2">
+                                            <i class="fas fa-expand"></i> Expandir Todo
+                                        </button>
+                                        <button class="btn btn-outline-secondary me-2">
+                                            <i class="fas fa-compress"></i> Contraer Todo
+                                        </button>
+                                        <button class="btn btn-success">
+                                            <i class="fas fa-download"></i> Exportar Árbol
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="commissions">
+                                    <h6>Gestión de Comisiones</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label>Rango de Fechas</label>
+                                            <select class="form-select">
+                                                <option>Este mes</option>
+                                                <option>Mes pasado</option>
+                                                <option>Últimos 3 meses</option>
+                                                <option>Este año</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Estado</label>
+                                            <select class="form-select">
+                                                <option>Todos</option>
+                                                <option>Pendientes</option>
+                                                <option>Aprobados</option>
+                                                <option>Pagados</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Rango</label>
+                                            <select class="form-select">
+                                                <option>Todos</option>
+                                                <option>Novato</option>
+                                                <option>Bronce</option>
+                                                <option>Plata</option>
+                                                <option>Oro</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>&nbsp;</label>
+                                            <button class="btn btn-primary w-100">Filtrar</button>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th>Usuario</th>
+                                                    <th>Rango</th>
+                                                    <th>Directos</th>
+                                                    <th>Binario</th>
+                                                    <th>Comisión Total</th>
+                                                    <th>Estado</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Carlos_Rodriguez</td>
+                                                    <td><span class="badge bg-success">Oro</span></td>
+                                                    <td>156</td>
+                                                    <td>247</td>
+                                                    <td><span class="text-success">$8,247</span></td>
+                                                    <td><span class="badge bg-warning">Pendiente</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success">Aprobar</button>
+                                                        <button class="btn btn-sm btn-outline-primary">Detalles</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Maria_Gonzalez</td>
+                                                    <td><span class="badge bg-warning">Plata</span></td>
+                                                    <td>134</td>
+                                                    <td>189</td>
+                                                    <td><span class="text-success">$6,892</span></td>
+                                                    <td><span class="badge bg-success">Aprobado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-primary">Pagar</button>
+                                                        <button class="btn btn-sm btn-outline-primary">Detalles</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Juan_Perez</td>
+                                                    <td><span class="badge bg-info">Bronce</span></td>
+                                                    <td>89</td>
+                                                    <td>134</td>
+                                                    <td><span class="text-success">$4,567</span></td>
+                                                    <td><span class="badge bg-warning">Pendiente</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-success">Aprobar</button>
+                                                        <button class="btn btn-sm btn-outline-primary">Detalles</button>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Ana_Martinez</td>
+                                                    <td><span class="badge bg-info">Bronce</span></td>
+                                                    <td>76</td>
+                                                    <td>112</td>
+                                                    <td><span class="text-success">$3,234</span></td>
+                                                    <td><span class="badge bg-success">Pagado</span></td>
+                                                    <td>
+                                                        <button class="btn btn-sm btn-outline-secondary" disabled>Pagado</button>
+                                                        <button class="btn btn-sm btn-outline-primary">Detalles</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-success me-2">
+                                            <i class="fas fa-check"></i> Aprobar Todos Pendientes
+                                        </button>
+                                        <button class="btn btn-primary me-2">
+                                            <i class="fas fa-money-bill-wave"></i> Procesar Pagos
+                                        </button>
+                                        <button class="btn btn-outline-secondary">
+                                            <i class="fas fa-download"></i> Exportar Reporte
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="analytics">
+                                    <h6>Análisis y Reportes</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <label>Tipo de Reporte</label>
+                                            <select class="form-select">
+                                                <option>Resumen General</option>
+                                                <option>Conversión</option>
+                                                <option>Retención</option>
+                                                <option>Crecimiento</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>Período</label>
+                                            <select class="form-select">
+                                                <option>Este mes</option>
+                                                <option>Mes pasado</option>
+                                                <option>Últimos 3 meses</option>
+                                                <option>Este año</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label>&nbsp;</label>
+                                            <button class="btn btn-primary w-100">Generar Reporte</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Métricas de Conversión</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-sm">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Métrica</th>
+                                                                    <th>Este Mes</th>
+                                                                    <th>Mes Pasado</th>
+                                                                    <th>Cambio</th>
+                                                                    <th>Benchmark</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>Tasa de Conversión</td>
+                                                                    <td>12.4%</td>
+                                                                    <td>11.8%</td>
+                                                                    <td class="text-success">+0.6%</td>
+                                                                    <td>10%</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>CPA Promedio</td>
+                                                                    <td>$45</td>
+                                                                    <td>$42</td>
+                                                                    <td class="text-success">+$3</td>
+                                                                    <td>$50</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>LTV de Referidos</td>
+                                                                    <td>$284</td>
+                                                                    <td>$267</td>
+                                                                    <td class="text-success">+$17</td>
+                                                                    <td>$250</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Retención a 6 meses</td>
+                                                                    <td>67%</td>
+                                                                    <td>64%</td>
+                                                                    <td class="text-success">+3%</td>
+                                                                    <td>60%</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Distribución por Fuentes</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-link text-primary"></i> Links Directos</span>
+                                                            <strong class="text-primary">45%</strong>
+                                                        </div>
+                                                        <div class="progress mb-3">
+                                                            <div class="progress-bar bg-primary" style="width: 45%"></div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-share text-info"></i> Redes Sociales</span>
+                                                            <strong class="text-info">28%</strong>
+                                                        </div>
+                                                        <div class="progress mb-3">
+                                                            <div class="progress-bar bg-info" style="width: 28%"></div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-envelope text-warning"></i> Email</span>
+                                                            <strong class="text-warning">15%</strong>
+                                                        </div>
+                                                        <div class="progress mb-3">
+                                                            <div class="progress-bar bg-warning" style="width: 15%"></div>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-center">
+                                                            <span><i class="fas fa-search text-success"></i> Búsqueda</span>
+                                                            <strong class="text-success">12%</strong>
+                                                        </div>
+                                                        <div class="progress">
+                                                            <div class="progress-bar bg-success" style="width: 12%"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="fraud">
+                                    <h6>Detección y Prevención de Fraude</h6>
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <label>Estado</label>
+                                            <select class="form-select">
+                                                <option>Todos</option>
+                                                <option>Sospechosos</option>
+                                                <option>En Investigación</option>
+                                                <option>Bloqueados</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Tipo de Fraude</label>
+                                            <select class="form-select">
+                                                <option>Todos</option>
+                                                <option>Self-referral</option>
+                                                <option>Fake accounts</option>
+                                                <option>Multiple accounts</option>
+                                                <option>Bot activity</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>Riesgo</label>
+                                            <select class="form-select">
+                                                <option>Todos</option>
+                                                <option>Bajo</option>
+                                                <option>Medio</option>
+                                                <option>Alto</option>
+                                                <option>Crítico</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label>&nbsp;</label>
+                                            <button class="btn btn-primary w-100">Filtrar</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="alert alert-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                                <strong>Alertas Activas:</strong> 23 casos sospechosos detectados este mes
+                                            </div>
+                                            <div class="table-responsive">
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Usuario</th>
+                                                            <th>Tipo</th>
+                                                            <th>Riesgo</th>
+                                                            <th>Referidos</th>
+                                                            <th>Comisión</th>
+                                                            <th>Estado</th>
+                                                            <th>Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td>User_12345</td>
+                                                            <td>Self-referral</td>
+                                                            <td><span class="badge bg-danger">Alto</span></td>
+                                                            <td>45</td>
+                                                            <td><span class="text-danger">$1,234</span></td>
+                                                            <td><span class="badge bg-warning">En Investigación</span></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-danger">Bloquear</button>
+                                                                <button class="btn btn-sm btn-outline-primary">Investigar</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Fake_Account_01</td>
+                                                            <td>Multiple accounts</td>
+                                                            <td><span class="badge bg-danger">Crítico</span></td>
+                                                            <td>67</td>
+                                                            <td><span class="text-danger">$2,456</span></td>
+                                                            <td><span class="badge bg-danger">Bloqueado</span></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-outline-secondary" disabled>Bloqueado</button>
+                                                                <button class="btn btn-sm btn-outline-primary">Detalles</button>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Bot_User_XYZ</td>
+                                                            <td>Bot activity</td>
+                                                            <td><span class="badge bg-warning">Medio</span></td>
+                                                            <td>23</td>
+                                                            <td><span class="text-warning">$567</span></td>
+                                                            <td><span class="badge bg-warning">En Investigación</span></td>
+                                                            <td>
+                                                                <button class="btn btn-sm btn-danger">Bloquear</button>
+                                                                <button class="btn btn-sm btn-outline-primary">Investigar</button>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-3">
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Configuración de Detección</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="mb-3">
+                                                        <label>Umbral de IP Compartida</label>
+                                                        <input type="number" class="form-control" value="3">
+                                                        <small class="text-muted">Máximo de cuentas por IP</small>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Tiempo Mínimo entre Registros (min)</label>
+                                                        <input type="number" class="form-control" value="5">
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label>Umbral de Actividad Sospechosa</label>
+                                                        <select class="form-select">
+                                                            <option>Bajo</option>
+                                                            <option selected>Medio</option>
+                                                            <option>Alto</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h6>Acciones Automáticas</h6>
+                                                </div>
+                                                <div class="card-body">
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <label class="form-check-label">Suspender cuenta en riesgo crítico</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <label class="form-check-label">Congelar comisiones sospechosas</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox">
+                                                        <label class="form-check-label">Notificar al usuario</label>
+                                                    </div>
+                                                    <div class="form-check mb-3">
+                                                        <input class="form-check-input" type="checkbox" checked>
+                                                        <label class="form-check-label">Generar ticket de soporte</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>

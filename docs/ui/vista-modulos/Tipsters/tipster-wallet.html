@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet | Tipster Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --tipster-primary: #a855f7;
+      --tipster-secondary: #7c3aed;
+      --tipster-accent: #c084fc;
+      --tipster-gradient: linear-gradient(135deg, #a855f7 0%, #7c3aed 100%);
+      --tipster-glow: 0 0 20px rgba(168, 85, 247, 0.4);
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --secondary-gold: #FFD700;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(124, 58, 237, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--tipster-gradient);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(124, 58, 237, 0.15));
+      color: var(--tipster-primary);
+      border-left: 3px solid var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 24px 32px;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 4px;
+    }
+
+    .page-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .info-chips {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .chip-icon {
+      font-size: 14px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* OVERVIEW CARDS */
+    .overview-grid {
+       display: grid;
+       grid-template-columns: repeat(6, 1fr);
+       gap: 16px;
+       margin-bottom: 16px;
+     }
+
+    .stat-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 20px rgba(168, 85, 247, 0.2);
+    }
+
+    .stat-icon {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--tipster-primary);
+    }
+
+    .stat-value.green {
+      color: var(--primary-green);
+    }
+
+    .stat-value.orange {
+      color: var(--secondary-orange);
+    }
+
+    .stat-meta {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* TABS */
+    .tabs-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .tabs-container {
+      display: flex;
+      gap: 8px;
+      background: var(--bg-tertiary);
+      padding: 6px;
+      border-radius: 10px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: 'Rajdhani', sans-serif;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+    }
+
+    .tab-btn.active {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: var(--tipster-glow);
+    }
+
+    .tab-btn:hover:not(.active) {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    /* FILTERS */
+    .filters-bar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .search-input,
+    .filter-select {
+      padding: 10px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .search-input:focus,
+    .filter-select:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+    }
+
+    .btn-export {
+      padding: 10px 20px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Rajdhani', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-export:hover {
+      background: var(--bg-elevated);
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    /* TABLE */
+    .table-container {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .ledger-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .ledger-table thead {
+      background: var(--bg-tertiary);
+    }
+
+    .ledger-table th {
+      padding: 14px 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .ledger-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .ledger-table tbody tr:hover {
+      background: var(--bg-tertiary);
+      cursor: pointer;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge.pending {
+      background: rgba(255, 140, 0, 0.15);
+      color: var(--secondary-orange);
+    }
+
+    .badge.hold {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .badge.available {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.locked {
+      background: rgba(136, 136, 168, 0.15);
+      color: var(--text-muted);
+    }
+
+    .badge.paid {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .badge.requested {
+      background: rgba(168, 85, 247, 0.15);
+      color: var(--tipster-primary);
+    }
+
+    .badge.approved {
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+    }
+
+    .badge.processing {
+      background: rgba(0, 245, 255, 0.15);
+      color: var(--primary-cyan);
+    }
+
+    .badge.rejected {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .badge.reversed {
+      background: rgba(255, 68, 68, 0.15);
+      color: var(--secondary-red);
+    }
+
+    .badge.adjusted {
+      background: rgba(255, 215, 0, 0.15);
+      color: var(--secondary-gold);
+    }
+
+    .amount-positive {
+      color: var(--primary-green);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .amount-negative {
+      color: var(--secondary-red);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .amount-neutral {
+      color: var(--text-secondary);
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* SECTION HEADER */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--tipster-gradient);
+      color: white;
+      box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(168, 85, 247, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--tipster-primary);
+      color: var(--tipster-primary);
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    /* ALERT */
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-warning {
+      background: rgba(255, 140, 0, 0.1);
+      border: 1px solid rgba(255, 140, 0, 0.3);
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--tipster-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text-muted);
+    }
+
+    .modal-close:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: none;
+      border-color: var(--tipster-primary);
+      box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1);
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+    }
+
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-group label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .fee-preview {
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .fee-label {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .fee-value {
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--secondary-orange);
+    }
+
+    .wallet-card {
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .wallet-info {
+      flex: 1;
+    }
+
+    .wallet-alias {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .wallet-address {
+      font-size: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-muted);
+    }
+
+    .wallet-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .overview-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 16px;
+      }
+
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      .ledger-table {
+        min-width: 1000px;
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Tipster Pro</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/tipster/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/tipster/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Mis Señales</span>
+          </a>
+          <a href="/tipster/signals/new" class="nav-item">
+            <span class="nav-icon">➕</span>
+            <span>Crear Señal</span>
+          </a>
+          <a href="/tipster/settlements" class="nav-item">
+            <span class="nav-icon">✅</span>
+            <span>Liquidaciones</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Negocio</div>
+          <a href="/tipster/subscribers" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>Suscriptores</span>
+          </a>
+          <a href="/tipster/wallet" class="nav-item active">
+            <span class="nav-icon">💰</span>
+            <span>Billetera</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Configuración</div>
+          <a href="/tipster/profile" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>Perfil</span>
+          </a>
+          <a href="/tipster/support" class="nav-item">
+            <span class="nav-icon">💬</span>
+            <span>Soporte</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Rol</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">↩️</span>
+            <span>← Volver a Usuario</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <h1 class="page-title">💰 Wallet</h1>
+        <p class="page-subtitle">Ingresos, ledger y retiros</p>
+        
+        <div class="info-chips">
+          <div class="chip">
+            <span class="chip-icon">🔒</span>
+            <span>Ledger inmutable</span>
+          </div>
+          <div class="chip">
+            <span class="chip-icon">⏳</span>
+            <span>Earnings: pending → hold → available</span>
+          </div>
+          <div class="chip">
+            <span class="chip-icon">💵</span>
+            <span>No muestra fiat / solo moneda interna</span>
+          </div>
+          <div class="chip">
+            <span class="chip-icon">🏦</span>
+            <span>Withdrawals: requested → approved → processing → paid → rejected</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <!-- Overview Cards -->
+        <div class="overview-grid">
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-label">Available Balance</div>
+            <div class="stat-value green" id="available-balance">1,240.50</div>
+            <div class="stat-meta">USDT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-label">Pending Earnings</div>
+            <div class="stat-value orange">385.20</div>
+            <div class="stat-meta">USDT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔒</div>
+            <div class="stat-label">Locked / Processing</div>
+            <div class="stat-value">150.00</div>
+            <div class="stat-meta">USDT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-label">Total Lifetime Earnings</div>
+            <div class="stat-value">8,942.75</div>
+            <div class="stat-meta">USDT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-label">Último Pago</div>
+            <div class="stat-value" style="font-size: 18px;">2026-02-05</div>
+            <div class="stat-meta">150.00 USDT</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">🔄</div>
+            <div class="stat-label">Conversión de Créditos</div>
+            <div class="stat-value">0.20</div>
+            <div class="stat-meta">USDT por crédito</div>
+          </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-section">
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="ledger">Ledger</button>
+            <button class="tab-btn" data-tab="withdrawals">Withdrawals</button>
+            <button class="tab-btn" data-tab="wallets">Payout Methods</button>
+          </div>
+        </div>
+
+        <!-- TAB: Ledger -->
+        <div id="tab-ledger">
+          <!-- Filters -->
+          <div class="filters-bar">
+            <input type="text" class="search-input" placeholder="Buscar por reference o signal_id...">
+            <select class="filter-select">
+              <option value="all">Todos los tipos</option>
+              <option value="sale">Sale</option>
+              <option value="subscription">Subscription</option>
+              <option value="vip">VIP</option>
+              <option value="withdrawal">Withdrawal</option>
+              <option value="adjustment">Adjustment</option>
+            </select>
+            <select class="filter-select">
+              <option value="all">Todos los estados</option>
+              <option value="pending">Pending</option>
+              <option value="hold">Hold</option>
+              <option value="available">Available</option>
+              <option value="reversed">Reversed</option>
+              <option value="adjusted">Adjusted</option>
+              <option value="locked">Locked</option>
+              <option value="requested">Requested</option>
+              <option value="approved">Approved</option>
+              <option value="processing">Processing</option>
+              <option value="paid">Paid</option>
+              <option value="rejected">Rejected</option>
+            </select>
+            <select class="filter-select">
+              <option value="all">Todas las fechas</option>
+              <option value="7d">Últimos 7 días</option>
+              <option value="30d">Últimos 30 días</option>
+              <option value="90d">Últimos 90 días</option>
+            </select>
+            <button class="btn-export" onclick="exportCSV()">
+              <span>📥</span>
+              <span>Exportar CSV</span>
+            </button>
+          </div>
+
+          <div class="alert alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <div class="alert-content">
+              <div class="alert-title">Nota de Privacidad</div>
+              <div class="alert-text">El CSV exportado no incluye links sensibles ni información personal de usuarios.</div>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-container">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Reference</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Balance After</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr onclick="viewLedgerDetail('tx_001')">
+                  <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-10 14:30</td>
+                  <td>Sale</td>
+                  <td style="font-size: 13px; color: var(--text-muted);">sig_001</td>
+                  <td class="amount-positive">+4.00 USDT</td>
+                  <td><span class="badge hold">Hold</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">1,240.50 USDT</td>
+                </tr>
+                <tr onclick="viewLedgerDetail('tx_002')">
+                  <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-09 09:15</td>
+                  <td>Subscription</td>
+                  <td style="font-size: 13px; color: var(--text-muted);">sub_042</td>
+                  <td class="amount-positive">+1.00 USDT</td>
+                  <td><span class="badge available">Available</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">1,236.50 USDT</td>
+                </tr>
+                <tr onclick="viewLedgerDetail('tx_003')">
+                  <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-08 16:20</td>
+                  <td>Sale</td>
+                  <td style="font-size: 13px; color: var(--text-muted);">sig_002</td>
+                  <td class="amount-positive">+8.00 USDT</td>
+                  <td><span class="badge available">Available</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">1,235.50 USDT</td>
+                </tr>
+                <tr onclick="viewLedgerDetail('tx_004')">
+                  <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-05 11:00</td>
+                  <td>Withdrawal</td>
+                  <td style="font-size: 13px; color: var(--text-muted);">wd_001</td>
+                  <td class="amount-negative">-150.00 USDT</td>
+                  <td><span class="badge paid">Paid</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">1,227.50 USDT</td>
+                </tr>
+                <tr onclick="viewLedgerDetail('tx_005')">
+                   <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-05 10:58</td>
+                   <td>Withdrawal Fee</td>
+                   <td style="font-size: 13px; color: var(--text-muted);">Network fee</td>
+                   <td class="amount-negative">-1.00 USDT</td>
+                   <td><span class="badge paid">Paid</span></td>
+                   <td style="font-family: 'JetBrains Mono', monospace;">1,226.50 USDT</td>
+                 </tr>
+                <tr onclick="viewLedgerDetail('tx_006')">
+                  <td style="font-size: 13px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace;">2026-02-03 08:45</td>
+                  <td>VIP</td>
+                  <td style="font-size: 13px; color: var(--text-muted);">vip_008</td>
+                  <td class="amount-positive">+50.00 USDT</td>
+                  <td><span class="badge available">Available</span></td>
+                  <td style="font-family: 'JetBrains Mono', monospace;">1,378.50 USDT</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB: Withdrawals -->
+        <div id="tab-withdrawals" style="display: none;">
+          <div class="section-header">
+            <h2 class="section-title">Solicitar Retiro</h2>
+            <button class="btn btn-primary" onclick="openModal('withdrawal-modal')">
+              <span>💸</span>
+              <span>Nuevo Retiro</span>
+            </button>
+          </div>
+
+          <div class="alert alert-warning">
+            <span class="alert-icon">⚠️</span>
+            <div class="alert-content">
+              <div class="alert-title">Restricciones de Retiro</div>
+              <div class="alert-text">
+                • Retiros bloqueados si hay disputas/fraude/suspensión<br>
+                • Cambio de wallet bloquea retiros 24h<br>
+                • Solo puede retirar desde Available Balance
+              </div>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table class="ledger-table">
+              <thead>
+                <tr>
+                  <th>Request Date</th>
+                  <th>Amount</th>
+                  <th>Network</th>
+                  <th>Wallet</th>
+                  <th>Status</th>
+                  <th>TX Hash</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-size: 13px; color: var(--text-muted);">2026-02-05 10:30</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">150.00 USDT</td>
+                  <td>TRC20</td>
+                  <td>
+                    <div style="font-size: 13px; font-weight: 600;">My Main Wallet</div>
+                    <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">TXn7...k9mP</div>
+                  </td>
+                  <td><span class="badge paid">Paid</span></td>
+                  <td>
+                    <a href="#" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">abc123...def456</a>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="viewWithdrawal('wd_001')">Ver</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="font-size: 13px; color: var(--text-muted);">2026-01-25 14:15</td>
+                  <td style="font-family: 'JetBrains Mono', monospace; font-weight: 700;">200.00 USDT</td>
+                  <td>BEP20</td>
+                  <td>
+                    <div style="font-size: 13px; font-weight: 600;">Secondary Wallet</div>
+                    <div style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--text-muted);">0x7A...3bC2</div>
+                  </td>
+                  <td><span class="badge paid">Paid</span></td>
+                  <td>
+                    <a href="#" style="font-size: 11px; font-family: 'JetBrains Mono', monospace; color: var(--primary-cyan);">xyz789...uvw012</a>
+                  </td>
+                  <td>
+                    <button class="btn btn-sm btn-outline" onclick="viewWithdrawal('wd_002')">Ver</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB: Payout Methods -->
+        <div id="tab-wallets" style="display: none;">
+          <div class="section-header">
+            <h2 class="section-title">Wallets Guardadas</h2>
+            <button class="btn btn-primary" onclick="openModal('add-wallet-modal')">
+              <span>➕</span>
+              <span>Agregar Wallet de Pago</span>
+            </button>
+          </div>
+
+          <div class="alert alert-info">
+            <span class="alert-icon">ℹ️</span>
+            <div class="alert-content">
+              <div class="alert-title">Seguridad de Wallets</div>
+              <div class="alert-text">
+                Cambiar wallet requiere confirmación (email/2FA) y bloquea retiros 24h. Historial de wallets registrado.
+              </div>
+            </div>
+          </div>
+
+          <div class="wallet-card">
+            <div class="wallet-info">
+              <div class="wallet-alias">My Main Wallet <span class="badge available">Active</span></div>
+              <div style="display: flex; gap: 8px; margin-top: 4px; font-size: 12px;">
+                <span style="color: var(--text-muted);">TRC20</span>
+                <span style="color: var(--text-muted);">•</span>
+                <span class="wallet-address">TXn7...k9mP</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Creada: 2026-01-10</div>
+            </div>
+            <div class="wallet-actions">
+              <button class="btn btn-sm btn-outline">Set Default</button>
+              <button class="btn btn-sm btn-outline" style="color: var(--secondary-red);">Remove</button>
+            </div>
+          </div>
+
+          <div class="wallet-card">
+            <div class="wallet-info">
+              <div class="wallet-alias">Secondary Wallet <span class="badge pending">Pending Verification</span></div>
+              <div style="display: flex; gap: 8px; margin-top: 4px; font-size: 12px;">
+                <span style="color: var(--text-muted);">BEP20</span>
+                <span style="color: var(--text-muted);">•</span>
+                <span class="wallet-address">0x7A...3bC2</span>
+              </div>
+              <div style="font-size: 11px; color: var(--text-muted); margin-top: 4px;">Creada: 2026-02-09</div>
+            </div>
+            <div class="wallet-actions">
+              <button class="btn btn-sm btn-outline">Verify</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Modal: Request Withdrawal -->
+  <div class="modal-overlay" id="withdrawal-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">💸 Solicitar Retiro</h2>
+        <button class="modal-close" onclick="closeModal('withdrawal-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Monto (USDT)</label>
+          <input type="number" class="form-input" id="withdrawal-amount" placeholder="0.00" step="0.01" min="50">
+          <p class="form-hint">Disponible: <span id="available-display" style="font-weight: 700; color: var(--primary-green);">1,240.50 USDT</span></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Network</label>
+          <select class="form-select" id="withdrawal-network">
+            <option value="">Seleccionar red</option>
+            <option value="trc20">TRC20 (Tron)</option>
+            <option value="bep20">BEP20 (BSC)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Wallet</label>
+          <select class="form-select" id="withdrawal-wallet">
+            <option value="">Seleccionar wallet</option>
+            <option value="wallet_1">My Main Wallet (TXn7...k9mP)</option>
+            <option value="wallet_2">Secondary Wallet (0x7A...3bC2)</option>
+          </select>
+          <p class="form-hint">Si no tienes wallet guardada, <a href="#" onclick="openModal('add-wallet-modal'); closeModal('withdrawal-modal');" style="color: var(--tipster-primary);">agregar una aquí</a></p>
+        </div>
+
+        <div class="form-group">
+          <div class="fee-preview">
+            <span class="fee-label">Network Fee:</span>
+            <span class="fee-value">1.00 USDT</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="confirm-withdrawal">
+            <label for="confirm-withdrawal">Entiendo que pending earnings no son retirables</label>
+          </div>
+        </div>
+
+        <div class="alert alert-warning" id="no-wallet-warning" style="display: none;">
+          <span class="alert-icon">⚠️</span>
+          <div class="alert-content">
+            <div class="alert-text">Debes agregar una wallet antes de solicitar retiro.</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%;" onclick="submitWithdrawal()">
+          <span>💸</span>
+          <span>Confirmar Retiro</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Wallet -->
+  <div class="modal-overlay" id="add-wallet-modal">
+    <div class="modal">
+      <div class="modal-header">
+         <h2 class="modal-title">➕ Agregar Wallet de Pago</h2>
+         <button class="modal-close" onclick="closeModal('add-wallet-modal')">×</button>
+       </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Alias</label>
+          <input type="text" class="form-input" placeholder="ej: My Main Wallet">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Network</label>
+          <select class="form-select">
+            <option value="">Seleccionar red</option>
+            <option value="trc20">TRC20 (Tron)</option>
+            <option value="bep20">BEP20 (BSC)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Wallet Address</label>
+          <input type="text" class="form-input" placeholder="TXn7...">
+          <p class="form-hint">Introduce la dirección completa de tu wallet</p>
+        </div>
+
+        <div class="form-group">
+          <div class="checkbox-group">
+            <input type="checkbox" id="confirm-ownership">
+            <label for="confirm-ownership">Confirmo que esta wallet es mía</label>
+          </div>
+        </div>
+
+        <div class="alert alert-info">
+          <span class="alert-icon">ℹ️</span>
+          <div class="alert-content">
+            <div class="alert-text">Cambiar wallet requiere confirmación (email/2FA) y bloquea retiros 24h</div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%;" onclick="addWallet()">
+          <span>✅</span>
+          <span>Guardar Wallet</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ledger Detail -->
+  <div class="modal-overlay" id="ledger-detail-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title">🔍 Detalle de Transacción</h2>
+        <button class="modal-close" onclick="closeModal('ledger-detail-modal')">×</button>
+      </div>
+      <div class="modal-body">
+        <div style="padding: 12px; background: var(--bg-tertiary); border-radius: 10px; margin-bottom: 16px;">
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-primary);">
+            <span style="color: var(--text-muted);">Type:</span>
+            <span style="font-weight: 600;">Sale</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-primary);">
+            <span style="color: var(--text-muted);">Reference:</span>
+            <span style="font-family: 'JetBrains Mono', monospace;">sig_001</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-primary);">
+            <span style="color: var(--text-muted);">Amount:</span>
+            <span style="font-weight: 700; color: var(--primary-green);">+4.00 USDT</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-primary);">
+            <span style="color: var(--text-muted);">Credits:</span>
+            <span>20 credits</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border-primary);">
+             <span style="color: var(--text-muted);">Tasa de Conversión:</span>
+             <span>1 crédito = 0.20 USDT</span>
+           </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0;">
+            <span style="color: var(--text-muted);">Platform Fee:</span>
+            <span>20% (informativo)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Mock available balance
+    const AVAILABLE_BALANCE = 1240.50;
+
+    // Tab switching
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const tab = btn.dataset.tab;
+        
+        // Hide all tabs
+        document.getElementById('tab-ledger').style.display = 'none';
+        document.getElementById('tab-withdrawals').style.display = 'none';
+        document.getElementById('tab-wallets').style.display = 'none';
+        
+        // Show selected tab
+        document.getElementById(`tab-${tab}`).style.display = 'block';
+        
+        console.log('Tab changed to:', tab);
+      });
+    });
+
+    // Modal functions
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.add('active');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('active');
+    }
+
+    // Close on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.classList.remove('active');
+        }
+      });
+    });
+
+    // Export CSV (mock)
+    function exportCSV() {
+      console.log('Exporting CSV...');
+      alert('CSV exportado (sin links sensibles)');
+    }
+
+    // View ledger detail
+    function viewLedgerDetail(txId) {
+      console.log('View ledger detail:', txId);
+      openModal('ledger-detail-modal');
+    }
+
+    // Submit withdrawal
+    function submitWithdrawal() {
+      const amount = parseFloat(document.getElementById('withdrawal-amount').value);
+      const network = document.getElementById('withdrawal-network').value;
+      const wallet = document.getElementById('withdrawal-wallet').value;
+      const confirmed = document.getElementById('confirm-withdrawal').checked;
+
+      // Ocultar el warning al inicio para que no quede pegado
+      const warning = document.getElementById('no-wallet-warning');
+      if (warning) warning.style.display = 'none';
+
+      // Mock validations
+      if (!amount || amount <= 0) {
+        alert('Ingresa un monto válido');
+        return;
+      }
+
+      if (amount < 50) {
+        alert('Monto mínimo: 50 USDT');
+        return;
+      }
+
+      if (amount > AVAILABLE_BALANCE) {
+        alert('Monto excede el balance disponible');
+        return;
+      }
+
+      if (!network) {
+        alert('Selecciona una red');
+        return;
+      }
+
+      if (!wallet) {
+        document.getElementById('no-wallet-warning').style.display = 'flex';
+        return;
+      }
+
+      if (!confirmed) {
+        alert('Debes confirmar que entiendes las condiciones');
+        return;
+      }
+
+      console.log('Withdrawal submitted:', { amount, network, wallet });
+      alert('Retiro solicitado. Recibirás confirmación por email.');
+      closeModal('withdrawal-modal');
+    }
+
+    // Add wallet
+    function addWallet() {
+      const confirmed = document.getElementById('confirm-ownership').checked;
+      
+      if (!confirmed) {
+        alert('Debes confirmar que la wallet es tuya');
+        return;
+      }
+
+      console.log('Wallet added');
+      alert('Wallet agregada. Recibirás confirmación por email (2FA).');
+      closeModal('add-wallet-modal');
+    }
+
+    // View withdrawal
+    function viewWithdrawal(wdId) {
+      console.log('View withdrawal:', wdId);
+      alert(`Ver detalle de retiro ${wdId}`);
+    }
+
+    // Mobile menu toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && window.innerWidth <= 768) {
+        const btn = document.createElement('button');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; margin-bottom: 12px;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.insertBefore(btn, topbar.firstChild);
+      }
+    });
+
+    console.log('Wallet loaded');
+  </script>
+</body>
+</html>

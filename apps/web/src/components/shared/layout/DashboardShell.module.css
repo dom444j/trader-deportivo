@@ -1,0 +1,140 @@
+/* Dashboard App Shell - scoped to dashboard only */
+.appShell {
+  position: relative;
+  display: flex;
+  min-height: 100vh;
+  overflow: hidden;
+
+  /* Dashboard-scoped design tokens (do NOT leak to public/auth) */
+  --primary-cyan: #00F5FF;
+  --primary-green: #00FF94;
+  --primary-blue: #0066FF;
+  --secondary-gold: #FFD700;
+  --secondary-purple: #B026FF;
+  --secondary-red: #FF4444;
+
+  --bg-primary: #0A0A1A;
+  --bg-secondary: #141428;
+  --bg-tertiary: #1E1E38;
+  --bg-elevated: #252545;
+  --border-color: #2A2A4A;
+
+  --text-primary: #FFFFFF;
+  --text-secondary: #B8B8D0;
+  --text-muted: #8888A8;
+
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 80px;
+  --topbar-height: 70px;
+
+  --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+  --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+  --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --gradient-ai: linear-gradient(135deg, #B026FF 0%, #7000CC 100%);
+
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+/* Ambient grid + glow, scoped to dashboard */
+.appShell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--border-color) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+  background-size: 50px 50px;
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.appShell::after {
+  content: "";
+  position: fixed;
+  top: -30%;
+  right: -30%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(0, 245, 255, 0.05) 0%, transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* When sidebar is collapsed, override the width variable so dependents (e.g., Topbar) react automatically */
+.appShell[data-sidebar-collapsed="true"] {
+  --sidebar-width: var(--sidebar-collapsed-width);
+}
+
+.appMain {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--sidebar-width);
+  transition: margin-left 0.3s ease;
+}
+
+.appContent {
+  flex: 1;
+  padding: 32px;
+  padding-top: calc(var(--topbar-height) + 15px);
+  overflow-y: auto;
+  background: var(--bg-secondary);
+  min-height: calc(100vh - var(--topbar-height));
+}
+
+/* Mobile overlay when sidebar is open */
+.sidebarOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 26, 0.6);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+}
+
+/* Role-specific accents */
+.admin {
+  --accent-color: #dc2626;
+  --accent-hover: #b91c1c;
+}
+
+.tipster {
+  --accent-color: #7c3aed;
+  --accent-hover: #6d28d9;
+}
+
+.user {
+  --accent-color: #2563eb;
+  --accent-hover: #1d4ed8;
+}
+
+/* Mobile behavior: default sidebar width is 0 unless open */
+@media (max-width: 768px) {
+  .appShell {
+    --sidebar-width: 0px;
+  }
+  .appShell[data-sidebar-open="true"] {
+    --sidebar-width: 280px;
+  }
+  .appMain {
+    margin-left: 0;
+  }
+  /* En móvil mantenemos el padding original, sin el extra de 15px */
+  .appContent {
+    padding-top: var(--topbar-height);
+  }
+}
+
+/* Dark mode preferences (kept consistent with dashboard palette) */
+@media (prefers-color-scheme: dark) {
+  .appShell {
+    background: var(--bg-primary);
+  }
+  .appContent {
+    background: var(--bg-secondary);
+  }
+}

@@ -1,0 +1,7 @@
+@import "./tokens.css";
+@import "./base.css";
+@import "./utilities.css";
+
+/* NOTA: por ahora (Pages Router) NO importamos marketing/auth/app aquí,
+   para evitar que estilos de landing/auth contaminen dashboard y viceversa.
+   Estos se importan directamente en las páginas correspondientes. */

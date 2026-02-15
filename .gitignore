@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -137,3 +138,55 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
+=======
+# Node & Next.js
+node_modules/
+.npm/
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+coverage/
+*.log
+*.tsbuildinfo
+
+# Caches
+.turbo/
+.nyc_output
+.cache
+.parcel-cache
+.eslintcache
+.stylelintcache
+
+# Environments (never commit secrets)
+.env
+.env.*
+!.env.example
+!**/.env.example
+apps/**/.env
+apps/**/.env.*
+apps/**/.env.local
+packages/**/.env.local
+
+# App outputs & artifacts
+apps/**/.next/
+apps/**/out/
+
+# Uploads & temp
+uploads/
+tmp/
+
+# OS / Editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript
+*.d.ts.map
+
+# Local credentials docs (keep private)
+CREDENCIALES*.md
+>>>>>>> 418fbbf (chore: inicializa repo y añade proyecto (apps/web, packages/shared))

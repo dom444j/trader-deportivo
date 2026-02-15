@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración | Trading Deportivo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary-cyan: #00F5FF;
+      --primary-green: #00FF94;
+      --primary-blue: #0066FF;
+      --secondary-gold: #FFD700;
+      --secondary-purple: #B026FF;
+      --secondary-red: #FF4444;
+      --secondary-orange: #FF8C00;
+      --bg-primary: #0A0A1A;
+      --bg-secondary: #141428;
+      --bg-tertiary: #1E1E38;
+      --bg-elevated: #252545;
+      --border-primary: #2A2A4A;
+      --border-secondary: #3A3A5A;
+      --text-primary: #FFFFFF;
+      --text-secondary: #B8B8D0;
+      --text-muted: #8888A8;
+      --sidebar-width: 280px;
+      --topbar-height: 70px;
+      --gradient-primary: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
+      --gradient-success: linear-gradient(135deg, #00FF94 0%, #00D970 100%);
+      --gradient-premium: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+      --gradient-danger: linear-gradient(135deg, #FF4444 0%, #CC0000 100%);
+      --glow-cyan: 0 0 20px rgba(0, 245, 255, 0.4);
+      --glow-green: 0 0 20px rgba(0, 255, 148, 0.4);
+      --glow-gold: 0 0 20px rgba(255, 215, 0, 0.4);
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(var(--border-primary) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border-primary) 1px, transparent 1px);
+      background-size: 50px 50px;
+      opacity: 0.15;
+      z-index: 0;
+      pointer-events: none;
+      animation: gridFloat 20s ease-in-out infinite;
+    }
+
+    @keyframes gridFloat {
+      0%, 100% { transform: translateY(0); opacity: 0.1; }
+      50% { transform: translateY(-10px); opacity: 0.2; }
+    }
+
+    .dashboard {
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ========== SIDEBAR ========== */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border-primary);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 100;
+      overflow-y: auto;
+    }
+
+    .sidebar-logo {
+      padding: 20px;
+      border-bottom: 1px solid var(--border-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.08), rgba(0, 102, 255, 0.08));
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--gradient-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 700;
+      box-shadow: var(--glow-cyan);
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 12px 8px;
+    }
+
+    .nav-section {
+      margin-bottom: 20px;
+    }
+
+    .nav-section-title {
+      padding: 6px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .nav-icon {
+      font-size: 20px;
+      width: 24px;
+      text-align: center;
+    }
+
+    /* ========== MAIN CONTENT ========== */
+    .main-content {
+      flex: 1;
+      margin-left: var(--sidebar-width);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      height: var(--topbar-height);
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-primary);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      backdrop-filter: blur(12px);
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .content-area {
+      flex: 1;
+      padding: 24px 32px;
+      overflow-y: auto;
+    }
+
+    /* ========== SETTINGS LAYOUT ========== */
+    .settings-container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Settings Sidebar (Tabs) */
+    .settings-sidebar {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 16px;
+      height: fit-content;
+      position: sticky;
+      top: 94px;
+    }
+
+    .settings-tab {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      margin-bottom: 6px;
+      border-radius: 10px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border-left: 3px solid transparent;
+    }
+
+    .settings-tab:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .settings-tab.active {
+      background: linear-gradient(135deg, rgba(0, 245, 255, 0.15), rgba(0, 102, 255, 0.15));
+      color: var(--primary-cyan);
+      border-left-color: var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .tab-icon {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+
+    /* Settings Content */
+    .settings-content {
+      min-height: 600px;
+    }
+
+    .settings-panel {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .settings-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .panel-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-primary);
+      border-radius: 14px;
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-primary);
+    }
+
+    .section-icon {
+      font-size: 24px;
+    }
+
+    .section-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .section-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 10px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: 'Rajdhani', sans-serif;
+      transition: all 0.3s ease;
+    }
+
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 0 3px rgba(0, 245, 255, 0.1);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-input:read-only {
+      background: var(--bg-elevated);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    /* Toggle Switch */
+    .toggle-group {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-label {
+      flex: 1;
+    }
+
+    .toggle-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .toggle-description {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+      background: var(--border-primary);
+      border-radius: 13px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: var(--primary-cyan);
+    }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active::after {
+      transform: translateX(24px);
+    }
+
+    /* Buttons */
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--gradient-primary);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 102, 255, 0.5);
+    }
+
+    .btn-success {
+      background: var(--gradient-success);
+      color: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0, 255, 148, 0.3);
+    }
+
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 255, 148, 0.5);
+    }
+
+    .btn-danger {
+      background: var(--gradient-danger);
+      color: white;
+      box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
+    }
+
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 68, 68, 0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid var(--border-primary);
+      color: var(--text-secondary);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--primary-cyan);
+      color: var(--primary-cyan);
+    }
+
+    /* Avatar Upload */
+    .avatar-section {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px;
+      background: var(--bg-tertiary);
+      border-radius: 10px;
+    }
+
+    .avatar-preview {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--bg-primary);
+      box-shadow: var(--glow-cyan);
+    }
+
+    .avatar-actions {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Password Strength */
+    .password-strength {
+      margin-top: 8px;
+      height: 4px;
+      background: var(--bg-tertiary);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .password-strength-bar {
+      height: 100%;
+      width: 0%;
+      transition: all 0.3s ease;
+    }
+
+    .password-strength-bar.weak {
+      width: 33%;
+      background: var(--secondary-red);
+    }
+
+    .password-strength-bar.medium {
+      width: 66%;
+      background: var(--secondary-orange);
+    }
+
+    .password-strength-bar.strong {
+      width: 100%;
+      background: var(--primary-green);
+    }
+
+    /* Sessions Table */
+    .sessions-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .sessions-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .sessions-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .sessions-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .sessions-table tr:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .device-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: rgba(0, 245, 255, 0.1);
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--primary-cyan);
+    }
+
+    .current-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(0, 255, 148, 0.15);
+      color: var(--primary-green);
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    /* Checkbox Groups */
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .checkbox-item:hover {
+      background: var(--bg-elevated);
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .checkbox-item label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    /* Radio Groups */
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .radio-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 2px solid var(--border-primary);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .radio-item:hover {
+      border-color: var(--primary-cyan);
+    }
+
+    .radio-item input[type="radio"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+
+    .radio-content {
+      flex: 1;
+    }
+
+    .radio-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 4px;
+    }
+
+    .radio-description {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Alert Boxes */
+    .alert {
+      padding: 16px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .alert-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .alert-content {
+      flex: 1;
+    }
+
+    .alert-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .alert-text {
+      font-size: 13px;
+    }
+
+    .alert-info {
+      background: rgba(0, 245, 255, 0.1);
+      border: 1px solid rgba(0, 245, 255, 0.3);
+    }
+
+    .alert-info .alert-icon,
+    .alert-info .alert-title {
+      color: var(--primary-cyan);
+    }
+
+    .alert-info .alert-text {
+      color: var(--text-secondary);
+    }
+
+    .alert-warning {
+      background: rgba(255, 215, 0, 0.1);
+      border: 1px solid rgba(255, 215, 0, 0.3);
+    }
+
+    .alert-warning .alert-icon,
+    .alert-warning .alert-title {
+      color: var(--secondary-gold);
+    }
+
+    .alert-warning .alert-text {
+      color: var(--text-secondary);
+    }
+
+    .alert-danger {
+      background: rgba(255, 68, 68, 0.1);
+      border: 1px solid rgba(255, 68, 68, 0.3);
+    }
+
+    .alert-danger .alert-icon,
+    .alert-danger .alert-title {
+      color: var(--secondary-red);
+    }
+
+    .alert-danger .alert-text {
+      color: var(--text-secondary);
+    }
+
+    /* Notification Preferences Table */
+    .notif-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+    }
+
+    .notif-table th {
+      padding: 12px;
+      text-align: left;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border-primary);
+      background: var(--bg-tertiary);
+    }
+
+    .notif-table th:first-child {
+      text-align: left;
+      width: 40%;
+    }
+
+    .notif-table th:not(:first-child) {
+      text-align: center;
+      width: 20%;
+    }
+
+    .notif-table td {
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--border-primary);
+      font-size: 14px;
+    }
+
+    .notif-table td:first-child {
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .notif-table td:not(:first-child) {
+      text-align: center;
+    }
+
+    .notif-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .notif-category {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 8px 12px;
+      background: var(--bg-elevated);
+      font-weight: 600;
+    }
+
+    /* Mini Toggle for Table */
+    .mini-toggle {
+      width: 40px;
+      height: 22px;
+      background: var(--border-primary);
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+      display: inline-block;
+    }
+
+    .mini-toggle.active {
+      background: var(--primary-cyan);
+    }
+
+    .mini-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .mini-toggle.active::after {
+      transform: translateX(18px);
+    }
+
+    /* Connections Cards */
+    .connections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .connection-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border-primary);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .connection-card:hover {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+    }
+
+    .connection-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .connection-logo {
+      width: 48px;
+      height: 48px;
+      background: var(--bg-secondary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .connection-info {
+      flex: 1;
+    }
+
+    .connection-name {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .connection-status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status-dot.connected {
+      background: var(--primary-green);
+      box-shadow: 0 0 10px rgba(0, 255, 148, 0.5);
+    }
+
+    .status-dot.disconnected {
+      background: var(--text-muted);
+    }
+
+    .connection-details {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .connection-detail {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .connection-detail-label {
+      color: var(--text-muted);
+    }
+
+    .connection-detail-value {
+      color: var(--text-secondary);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .settings-container {
+        grid-template-columns: 1fr;
+      }
+
+      .settings-sidebar {
+        position: static;
+        display: flex;
+        overflow-x: auto;
+        gap: 8px;
+        padding: 12px;
+      }
+
+      .settings-tab {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .sidebar.sidebar-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+      }
+
+      .content-area {
+        padding: 16px;
+      }
+
+      .topbar {
+        padding: 0 16px;
+      }
+
+      .checkbox-group {
+        grid-template-columns: 1fr;
+      }
+
+      .connections-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .notif-table {
+        font-size: 12px;
+      }
+
+      .notif-table th,
+      .notif-table td {
+        padding: 8px;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-primary);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border-primary);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--border-secondary);
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="logo-icon">TD</div>
+        <div class="logo-text">Trader Deportivo</div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Principal</div>
+          <a href="/dashboard" class="nav-item">
+            <span class="nav-icon">📊</span>
+            <span>Dashboard</span>
+          </a>
+          <a href="/referidos" class="nav-item">
+            <span class="nav-icon">🔗</span>
+            <span>Referidos</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Inteligencia</div>
+          <a href="/agents" class="nav-item">
+            <span class="nav-icon">🧠</span>
+            <span>Agents Hub</span>
+          </a>
+          <a href="/signals" class="nav-item">
+            <span class="nav-icon">📡</span>
+            <span>Señales</span>
+          </a>
+          <a href="/coach" class="nav-item">
+            <span class="nav-icon">🎓</span>
+            <span>Trading Coach</span>
+          </a>
+        </div>
+        
+        <div class="nav-section">
+          <div class="nav-section-title">Capital & Control</div>
+          <a href="/bankroll" class="nav-item">
+            <span class="nav-icon">💰</span>
+            <span>Bankroll</span>
+          </a>
+          <a href="/watchlist" class="nav-item">
+            <span class="nav-icon">👁️</span>
+            <span>Watchlist</span>
+          </a>
+          <a href="/risk" class="nav-item">
+            <span class="nav-icon">🚨</span>
+            <span>Risk Guard</span>
+          </a>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Usuario</div>
+          <a href="/settings" class="nav-item active">
+            <span class="nav-icon">⚙️</span>
+            <span>Configuración</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Topbar -->
+      <header class="topbar">
+        <div>
+          <h1 class="page-title">⚙️ Configuración</h1>
+          <div class="breadcrumbs">
+            <span>Inicio</span>
+            <span>›</span>
+            <span>Configuración</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <section class="content-area">
+        <div class="settings-container">
+          <!-- Settings Sidebar (Tabs) -->
+          <aside class="settings-sidebar">
+            <div class="settings-tab active" data-tab="perfil">
+              <span class="tab-icon">👤</span>
+              <span>Perfil</span>
+            </div>
+            <div class="settings-tab" data-tab="seguridad">
+              <span class="tab-icon">🔒</span>
+              <span>Seguridad</span>
+            </div>
+            <div class="settings-tab" data-tab="trading">
+              <span class="tab-icon">📈</span>
+              <span>Trading</span>
+            </div>
+            <div class="settings-tab" data-tab="plan-operacion">
+              <span class="tab-icon">📊</span>
+              <span>Plan de Operación</span>
+            </div>
+            <div class="settings-tab" data-tab="notificaciones">
+              <span class="tab-icon">🔔</span>
+              <span>Notificaciones</span>
+            </div>
+            <div class="settings-tab" data-tab="privacidad">
+              <span class="tab-icon">🔐</span>
+              <span>Privacidad</span>
+            </div>
+            <div class="settings-tab" data-tab="conexiones">
+              <span class="tab-icon">🔌</span>
+              <span>Conexiones</span>
+            </div>
+          </aside>
+
+          <!-- Settings Content -->
+          <div class="settings-content">
+            <!-- Panel: Perfil -->
+            <div id="panel-perfil" class="settings-panel active">
+              <!-- Información Básica -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">👤</span>
+                  <div>
+                    <h2 class="section-title">Información Básica</h2>
+                    <p class="section-subtitle">Datos personales y preferencias de cuenta</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nombre Visible</label>
+                  <input type="text" class="form-input" value="Carlos Mendoza" placeholder="Tu nombre completo">
+                  <p class="form-hint">Máximo 50 caracteres. Solo letras, números y espacios.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Alias Público (Comunidad/Leaderboard)</label>
+                  <input type="text" class="form-input" value="carlostrader" placeholder="alias_unico">
+                  <p class="form-hint">Mínimo 3, máximo 20 caracteres. Solo letras minúsculas, números y guiones. Este alias es lo que verán otros usuarios.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Email</label>
+                  <input type="email" class="form-input" value="carlos@ejemplo.com" readonly>
+                  <p class="form-hint">✅ Email verificado. Para cambiar tu email, contáctanos.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Zona Horaria</label>
+                  <select class="form-select">
+                    <option>America/Bogota (GMT-5)</option>
+                    <option>America/Mexico_City (GMT-6)</option>
+                    <option>America/New_York (GMT-5)</option>
+                    <option>Europe/Madrid (GMT+1)</option>
+                    <option>America/Argentina/Buenos_Aires (GMT-3)</option>
+                  </select>
+                  <p class="form-hint">⚠️ Importante para señales y cutoff del pool semanal.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">País</label>
+                  <select class="form-select">
+                    <option>Colombia</option>
+                    <option>México</option>
+                    <option>España</option>
+                    <option>Argentina</option>
+                    <option>Chile</option>
+                    <option>Perú</option>
+                  </select>
+                  <p class="form-hint">Usado para personalizar horarios de eventos deportivos.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Idioma</label>
+                  <select class="form-select">
+                    <option>Español</option>
+                  </select>
+                  <p class="form-hint">Más idiomas próximamente.</p>
+                </div>
+
+                <button class="btn btn-primary">
+                  <span>💾</span>
+                  <span>Guardar Cambios</span>
+                </button>
+              </div>
+
+              <!-- Avatar -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🖼️</span>
+                  <div>
+                    <h2 class="section-title">Avatar</h2>
+                    <p class="section-subtitle">Personaliza tu imagen de perfil</p>
+                  </div>
+                </div>
+
+                <div class="avatar-section">
+                  <div class="avatar-preview">CM</div>
+                  <div class="avatar-actions">
+                    <button class="btn btn-primary">
+                      <span>📤</span>
+                      <span>Subir Imagen</span>
+                    </button>
+                    <button class="btn btn-outline">
+                      <span>🎨</span>
+                      <span>Elegir Avatar Predeterminado</span>
+                    </button>
+                    <p class="form-hint">Máx 2MB. Formatos: JPG, PNG, WebP</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel: Seguridad -->
+            <div id="panel-seguridad" class="settings-panel">
+              <!-- Cambiar Contraseña -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🔑</span>
+                  <div>
+                    <h2 class="section-title">Cambiar Contraseña</h2>
+                    <p class="section-subtitle">Actualiza tu contraseña regularmente</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Contraseña Actual</label>
+                  <input type="password" class="form-input" placeholder="••••••••">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Contraseña Nueva</label>
+                  <input type="password" class="form-input" placeholder="••••••••" id="new-password">
+                  <div class="password-strength">
+                    <div class="password-strength-bar weak" id="strength-bar"></div>
+                  </div>
+                  <p class="form-hint">Mínimo 8 caracteres. Usa letras, números y símbolos.</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Confirmar Contraseña</label>
+                  <input type="password" class="form-input" placeholder="••••••••">
+                </div>
+
+                <button class="btn btn-primary">
+                  <span>🔑</span>
+                  <span>Actualizar Contraseña</span>
+                </button>
+              </div>
+
+              <!-- 2FA -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">📱</span>
+                  <div>
+                    <h2 class="section-title">Autenticación de Dos Factores (2FA)</h2>
+                    <p class="section-subtitle">Agrega una capa extra de seguridad</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-info">
+                  <span class="alert-icon">ℹ️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Próximamente Disponible</div>
+                    <div class="alert-text">La autenticación de dos factores estará disponible pronto. Te notificaremos cuando esté lista.</div>
+                  </div>
+                </div>
+
+                <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed;">
+                  <span>🔐</span>
+                  <span>Activar 2FA (Próximamente)</span>
+                </button>
+              </div>
+
+              <!-- Sesiones Activas -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🖥️</span>
+                  <div>
+                    <h2 class="section-title">Sesiones Activas</h2>
+                    <p class="section-subtitle">Dispositivos con acceso a tu cuenta</p>
+                  </div>
+                </div>
+
+                <table class="sessions-table">
+                  <thead>
+                    <tr>
+                      <th>Dispositivo</th>
+                      <th>Ubicación</th>
+                      <th>Última Actividad</th>
+                      <th>Acción</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>
+                        <div class="device-badge">
+                          <span>💻</span>
+                          <span>Chrome 120 • Windows</span>
+                        </div>
+                        <div style="margin-top: 4px;">
+                          <span class="current-badge">Sesión Actual</span>
+                        </div>
+                      </td>
+                      <td>Bogotá, Colombia</td>
+                      <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">2026-02-09 14:32</td>
+                      <td>-</td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <div class="device-badge">
+                          <span>📱</span>
+                          <span>Safari • iPhone</span>
+                        </div>
+                      </td>
+                      <td>Bogotá, Colombia</td>
+                      <td style="font-family: 'JetBrains Mono', monospace; font-size: 13px;">2026-02-08 19:15</td>
+                      <td>
+                        <button class="btn btn-outline" style="padding: 6px 12px; font-size: 12px;">Cerrar</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div style="margin-top: 16px;">
+                  <button class="btn btn-danger">
+                    <span>⚠️</span>
+                    <span>Cerrar Todas las Demás Sesiones</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Código de Recuperación -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🆘</span>
+                  <div>
+                    <h2 class="section-title">Código de Recuperación</h2>
+                    <p class="section-subtitle">Acceso de emergencia a tu cuenta</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-warning">
+                  <span class="alert-icon">⚠️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Importante</div>
+                    <div class="alert-text">Guarda este código en un lugar seguro. Te permitirá recuperar el acceso si olvidas tu contraseña.</div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary">
+                  <span>🔑</span>
+                  <span>Generar Código de Recuperación</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel: Preferencias de Trading -->
+            <div id="panel-trading" class="settings-panel">
+              <!-- Tipo de Apuestas -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🎯</span>
+                  <div>
+                    <h2 class="section-title">Preferencias de Trading</h2>
+                    <p class="section-subtitle">Personaliza tu experiencia de trading</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Tipo de Apuestas Preferidas</label>
+                  <div class="checkbox-group">
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="prematch" checked>
+                      <label for="prematch">Prematch</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="live" checked>
+                      <label for="live">Live</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Deportes Favoritos</label>
+                  <div class="checkbox-group">
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="futbol" checked>
+                      <label for="futbol">⚽ Fútbol</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="baloncesto" checked>
+                      <label for="baloncesto">🏀 Baloncesto</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="tenis">
+                      <label for="tenis">🎾 Tenis</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="beisbol">
+                      <label for="beisbol">⚾ Béisbol</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="hockey">
+                      <label for="hockey">🏒 Hockey</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="esports">
+                      <label for="esports">🎮 eSports</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Horario Preferido de Actividad</label>
+                  <div class="checkbox-group">
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="manana">
+                      <label for="manana">🌅 Mañana (06:00-12:00)</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="tarde" checked>
+                      <label for="tarde">☀️ Tarde (12:00-18:00)</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="noche" checked>
+                      <label for="noche">🌙 Noche (18:00-24:00)</label>
+                    </div>
+                    <div class="checkbox-item">
+                      <input type="checkbox" id="madrugada">
+                      <label for="madrugada">🌃 Madrugada (00:00-06:00)</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Nivel de Riesgo</label>
+                  <div class="radio-group">
+                    <div class="radio-item">
+                      <input type="radio" name="risk" id="conservador">
+                      <div class="radio-content">
+                        <div class="radio-title">⚪ Conservador</div>
+                        <div class="radio-description">Stakes bajos, picks seguros con menor retorno</div>
+                      </div>
+                    </div>
+                    <div class="radio-item">
+                      <input type="radio" name="risk" id="balanceado" checked>
+                      <div class="radio-content">
+                        <div class="radio-title">🔵 Balanceado</div>
+                        <div class="radio-description">Mix de seguridad y valor, recomendado para la mayoría</div>
+                      </div>
+                    </div>
+                    <div class="radio-item">
+                      <input type="radio" name="risk" id="agresivo">
+                      <div class="radio-content">
+                        <div class="radio-title">🔴 Agresivo</div>
+                        <div class="radio-description">Stakes altos, máximo valor con mayor riesgo</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="btn btn-primary">
+                  <span>💾</span>
+                  <span>Guardar Preferencias</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel: Plan de Operación -->
+            <div id="panel-plan-operacion" class="settings-panel">
+              <!-- Stake Policy -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">📊</span>
+                  <div>
+                    <h2 class="section-title">Plan de Operación (Bankroll)</h2>
+                    <p class="section-subtitle">Configura tu estrategia de gestión de riesgo</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-info">
+                  <span class="alert-icon">ℹ️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Conecta con Risk Guard</div>
+                    <div class="alert-text">Esta configuración alimenta Risk Guard, Coach y Notificaciones para proteger tu bankroll.</div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Método de Cálculo de Stakes</label>
+                  <div class="radio-group">
+                    <div class="radio-item">
+                      <input type="radio" name="stake-method" id="flat" checked>
+                      <div class="radio-content">
+                        <div class="radio-title">Flat (Cantidad Fija)</div>
+                        <div class="radio-description">Ej: $10 por pick, sin importar el bankroll</div>
+                      </div>
+                    </div>
+                    <div class="radio-item">
+                      <input type="radio" name="stake-method" id="percent">
+                      <div class="radio-content">
+                        <div class="radio-title">% Bankroll (Porcentaje Dinámico)</div>
+                        <div class="radio-description">Ej: 1% del bankroll actual, se ajusta automáticamente</div>
+                      </div>
+                    </div>
+                    <div class="radio-item">
+                      <input type="radio" name="stake-method" id="kelly">
+                      <div class="radio-content">
+                        <div class="radio-title">Kelly Criterion (Fórmula Avanzada)</div>
+                        <div class="radio-description">Optimiza stakes basándose en ventaja y bankroll</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Límites de Riesgo -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🚨</span>
+                  <div>
+                    <h2 class="section-title">Límites de Riesgo</h2>
+                    <p class="section-subtitle">Controles de protección automáticos</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Máx Stake por Apuesta</label>
+                  <input type="number" class="form-input" value="50" placeholder="50">
+                  <p class="form-hint">No puede exceder 5% del bankroll total</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Máx Pérdidas Diarias</label>
+                  <input type="number" class="form-input" value="100" placeholder="100">
+                  <p class="form-hint">⚠️ Risk Guard recomienda pausar / activar modo protección</p>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Máx Drawdown (%)</label>
+                  <input type="number" class="form-input" value="20" placeholder="20">
+                  <p class="form-hint">Recomendado: 20-30% del bankroll. Risk Guard recomienda pausar / activar modo protección.</p>
+                </div>
+              </div>
+
+              <!-- Mercados Permitidos -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🎯</span>
+                  <div>
+                    <h2 class="section-title">Mercados Permitidos</h2>
+                    <p class="section-subtitle">Control de exposición por tipo de mercado</p>
+                  </div>
+                </div>
+
+                <div class="checkbox-group">
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="prematch-market" checked>
+                    <label for="prematch-market">Prematch</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="live-market" checked>
+                    <label for="live-market">Live</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="handicaps" checked>
+                    <label for="handicaps">Handicaps</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="totales" checked>
+                    <label for="totales">Totales (O/U)</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="moneyline" checked>
+                    <label for="moneyline">Moneyline (1X2)</label>
+                  </div>
+                  <div class="checkbox-item">
+                    <input type="checkbox" id="props">
+                    <label for="props">Props</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Advertencias del Coach -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🎓</span>
+                  <div>
+                    <h2 class="section-title">Advertencias del Coach</h2>
+                    <p class="section-subtitle">Sistema de alertas disciplinarias</p>
+                  </div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Alertas de Stake Excesivo</div>
+                    <div class="toggle-description">Advertir cuando el stake supere el máximo configurado</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Alertas de Mercado No Permitido</div>
+                    <div class="toggle-description">Notificar cuando intentes apostar en mercados desactivados</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Alertas de Frecuencia Excesiva</div>
+                    <div class="toggle-description">Advertir cuando estés apostando demasiado frecuentemente</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Recomendaciones Diarias del Coach</div>
+                    <div class="toggle-description">Recibir consejos personalizados basados en tu actividad</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <button class="btn btn-primary">
+                  <span>💾</span>
+                  <span>Guardar Configuración</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel: Notificaciones -->
+            <div id="panel-notificaciones" class="settings-panel">
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🔔</span>
+                  <div>
+                    <h2 class="section-title">Preferencias de Notificaciones</h2>
+                    <p class="section-subtitle">Controla cómo y cuándo te notificamos</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-info">
+                  <span class="alert-icon">ℹ️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Canales Disponibles</div>
+                    <div class="alert-text">In-App está siempre activo. Email es opcional excepto para notificaciones críticas de seguridad. Telegram y Push estarán disponibles pronto.</div>
+                  </div>
+                </div>
+
+                <table class="notif-table">
+                  <thead>
+                    <tr>
+                      <th>Evento</th>
+                      <th>In-App</th>
+                      <th>Email</th>
+                      <th>Telegram</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Trading -->
+                    <tr class="notif-category">
+                      <td colspan="4">TRADING</td>
+                    </tr>
+                    <tr>
+                      <td>Nuevas señales disponibles</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Cambios importantes en odds</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Oportunidades live</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Alertas del Coach</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+
+                    <!-- Disciplina & Riesgo -->
+                    <tr class="notif-category">
+                      <td colspan="4">DISCIPLINA & RIESGO</td>
+                    </tr>
+                    <tr>
+                      <td>Pérdidas diarias cerca del límite</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Drawdown cerca del límite</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Modo protección activado</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+
+                    <!-- Cuenta -->
+                    <tr class="notif-category">
+                      <td colspan="4">CUENTA</td>
+                    </tr>
+                    <tr>
+                      <td>Inicio de sesión nuevo</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Cambio de contraseña</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Expiración de plan</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+
+                    <!-- Finanzas -->
+                    <tr class="notif-category">
+                      <td colspan="4">FINANZAS (REFERIDOS)</td>
+                    </tr>
+                    <tr>
+                      <td>Comisión directa generada</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Pool semanal ejecutado</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Pago disponible</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+
+                    <!-- Sistema -->
+                    <tr class="notif-category">
+                      <td colspan="4">SISTEMA</td>
+                    </tr>
+                    <tr>
+                      <td>Mantenimiento programado</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle active" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                    <tr>
+                      <td>Nuevas funciones</td>
+                      <td><span style="color: var(--primary-green);">✓</span></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                      <td><div class="mini-toggle" onclick="toggleMini(this)"></div></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div style="margin-top: 24px;">
+                  <button class="btn btn-primary">
+                    <span>💾</span>
+                    <span>Guardar Preferencias</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Panel: Privacidad -->
+            <div id="panel-privacidad" class="settings-panel">
+              <!-- Exportar Datos -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">📥</span>
+                  <div>
+                    <h2 class="section-title">Exportar Mis Datos</h2>
+                    <p class="section-subtitle">Descarga tu información personal</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-info">
+                  <span class="alert-icon">ℹ️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Datos Personales</div>
+                    <div class="alert-text">Puedes solicitar una copia de todos tus datos. No incluye balances financieros sensibles.</div>
+                  </div>
+                </div>
+
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                  <button class="btn btn-primary">
+                    <span>📄</span>
+                    <span>Datos del Perfil (JSON)</span>
+                  </button>
+                  <button class="btn btn-outline">
+                    <span>📊</span>
+                    <span>Historial de Actividad (CSV)</span>
+                  </button>
+                  <button class="btn btn-outline">
+                    <span>⚙️</span>
+                    <span>Preferencias (JSON)</span>
+                  </button>
+                  <button class="btn btn-outline">
+                    <span>⬇️</span>
+                    <span>Descargar mis datos (JSON/CSV)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Visibilidad -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">👁️</span>
+                  <div>
+                    <h2 class="section-title">Visibilidad Pública</h2>
+                    <p class="section-subtitle">Controla qué información es visible</p>
+                  </div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Mostrar en Leaderboard</div>
+                    <div class="toggle-description">Tu alias y estadísticas aparecerán en el ranking público</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Mostrar Mis Picks Públicamente</div>
+                    <div class="toggle-description">Otros usuarios podrán ver tu historial de picks</div>
+                  </div>
+                  <div class="toggle-switch" onclick="toggleSwitch(this)"></div>
+                </div>
+
+                <div class="toggle-group">
+                  <div class="toggle-label">
+                    <div class="toggle-title">Perfil Público</div>
+                    <div class="toggle-description">Tu perfil será visible para otros usuarios de la comunidad</div>
+                  </div>
+                  <div class="toggle-switch active" onclick="toggleSwitch(this)"></div>
+                </div>
+              </div>
+
+              <!-- Eliminar Cuenta -->
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">⚠️</span>
+                  <div>
+                    <h2 class="section-title">Eliminar Cuenta</h2>
+                    <p class="section-subtitle">Acción permanente e irreversible</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-danger">
+                  <span class="alert-icon">⚠️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Esta Acción Es Permanente</div>
+                    <div class="alert-text">Al eliminar tu cuenta se borrarán todos tus datos de forma permanente después de 72 horas. No podrás recuperar tu cuenta ni tu información.</div>
+                  </div>
+                </div>
+
+                <button class="btn btn-danger">
+                  <span>🗑️</span>
+                  <span>Eliminar Mi Cuenta</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Panel: Conexiones -->
+            <div id="panel-conexiones" class="settings-panel">
+              <div class="panel-section">
+                <div class="section-header">
+                  <span class="section-icon">🔌</span>
+                  <div>
+                    <h2 class="section-title">Conexiones y APIs</h2>
+                    <p class="section-subtitle">Integra tu cuenta con brokers y servicios externos</p>
+                    <p class="section-subtitle">Integraciones en desarrollo (solo UI por ahora)</p>
+                  </div>
+                </div>
+
+                <div class="alert alert-warning">
+                  <span class="alert-icon">ℹ️</span>
+                  <div class="alert-content">
+                    <div class="alert-title">Próximamente Disponible</div>
+                    <div class="alert-text">Las integraciones con brokers estarán disponibles pronto. Esta funcionalidad está en desarrollo.</div>
+                  </div>
+                </div>
+
+                <div class="connections-grid">
+                  <!-- Cloudbet -->
+                  <div class="connection-card">
+                    <div class="connection-header">
+                      <div class="connection-logo">☁️</div>
+                      <div class="connection-info">
+                        <div class="connection-name">Cloudbet API</div>
+                        <div class="connection-status">
+                          <span class="status-dot disconnected"></span>
+                          <span>Desconectado</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="connection-details">
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Estado:</span>
+                        <span class="connection-detail-value">No implementado</span>
+                      </div>
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Última Sync:</span>
+                        <span class="connection-detail-value">Nunca</span>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed; width: 100%;">
+                      <span>🔌</span>
+                      <span>Conectar (Próximamente)</span>
+                    </button>
+                  </div>
+
+                  <!-- Bet365 -->
+                  <div class="connection-card">
+                    <div class="connection-header">
+                      <div class="connection-logo">🎰</div>
+                      <div class="connection-info">
+                        <div class="connection-name">Bet365 API</div>
+                        <div class="connection-status">
+                          <span class="status-dot disconnected"></span>
+                          <span>Desconectado</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="connection-details">
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Estado:</span>
+                        <span class="connection-detail-value">No implementado</span>
+                      </div>
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Última Sync:</span>
+                        <span class="connection-detail-value">Nunca</span>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed; width: 100%;">
+                      <span>🔌</span>
+                      <span>Conectar (Próximamente)</span>
+                    </button>
+                  </div>
+
+                  <!-- Pinnacle -->
+                  <div class="connection-card">
+                    <div class="connection-header">
+                      <div class="connection-logo">📌</div>
+                      <div class="connection-info">
+                        <div class="connection-name">Pinnacle API</div>
+                        <div class="connection-status">
+                          <span class="status-dot disconnected"></span>
+                          <span>Desconectado</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="connection-details">
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Estado:</span>
+                        <span class="connection-detail-value">No implementado</span>
+                      </div>
+                      <div class="connection-detail">
+                        <span class="connection-detail-label">Última Sync:</span>
+                        <span class="connection-detail-value">Nunca</span>
+                      </div>
+                    </div>
+                    <button class="btn btn-outline" disabled style="opacity: 0.5; cursor: not-allowed; width: 100%;">
+                      <span>🔌</span>
+                      <span>Conectar (Próximamente)</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // Tab Switching
+    function switchTab(tabName) {
+      // Remove active from all tabs
+      document.querySelectorAll('.settings-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      // Remove active from all panels
+      document.querySelectorAll('.settings-panel').forEach(panel => {
+        panel.classList.remove('active');
+      });
+      
+      // Add active to clicked tab
+      document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+      
+      // Add active to corresponding panel
+      document.getElementById(`panel-${tabName}`).classList.add('active');
+    }
+
+    // Event listeners for tabs
+    document.querySelectorAll('.settings-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        switchTab(tabName);
+      });
+    });
+
+    // Toggle Switch
+    function toggleSwitch(element) {
+      element.classList.toggle('active');
+    }
+
+    // Mini Toggle (for table)
+    function toggleMini(element) {
+      element.classList.toggle('active');
+    }
+
+    // Password Strength
+    document.getElementById('new-password')?.addEventListener('input', (e) => {
+      const password = e.target.value;
+      const strengthBar = document.getElementById('strength-bar');
+      
+      if (password.length === 0) {
+        strengthBar.className = 'password-strength-bar';
+      } else if (password.length < 8) {
+        strengthBar.className = 'password-strength-bar weak';
+      } else if (password.length < 12) {
+        strengthBar.className = 'password-strength-bar medium';
+      } else {
+        strengthBar.className = 'password-strength-bar strong';
+      }
+    });
+
+    // Mobile Menu Toggle
+    function toggleSidebar() {
+      document.querySelector('.sidebar').classList.toggle('sidebar-open');
+    }
+
+    // Show/hide mobile menu button based on viewport width
+    function updateMobileMenuBtnVisibility() {
+      const btn = document.querySelector('.mobile-menu-btn');
+      if (!btn) return;
+      btn.style.display = (window.innerWidth <= 768) ? 'inline-flex' : 'none';
+    }
+
+    // Mobile menu button (created dynamically)
+    document.addEventListener('DOMContentLoaded', () => {
+      const topbar = document.querySelector('.topbar');
+      if (topbar && !document.querySelector('.mobile-menu-btn')) {
+        const btn = document.createElement('button');
+        btn.className = 'mobile-menu-btn';
+        btn.setAttribute('aria-label', 'Abrir menú');
+        btn.textContent = '☰';
+        btn.style.cssText = 'background: var(--bg-primary); border: 1px solid var(--border-primary); color: var(--text-secondary); border-radius: 8px; padding: 8px 12px; cursor: pointer; display: none;';
+        btn.addEventListener('click', toggleSidebar);
+        topbar.appendChild(btn);
+      }
+      updateMobileMenuBtnVisibility();
+      window.addEventListener('resize', updateMobileMenuBtnVisibility);
+    });
+
+    console.log('Settings page loaded');
+  </script>
+</body>
+</html>
