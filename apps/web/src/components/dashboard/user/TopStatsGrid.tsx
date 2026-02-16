@@ -3,7 +3,6 @@ import React from 'react';
 import styles from '@/app/(dashboard)/user/UserDashboard.module.css';
 import type { UserKpis } from '@/types/user-dashboard';
 import type { AlertItem } from '@/types/user-dashboard-extra';
-import { MetricCard } from '@/components/ui-kit/MetricCard';
 
 interface Props {
   kpis: UserKpis;
@@ -112,58 +111,81 @@ const TopStatsGrid: React.FC<Props> = ({ kpis }) => {
     <section>
       <div className={styles.statsGrid}>
         {/* Plan actual */}
-        <MetricCard title="Plan actual" icon="💎" className={styles.areaPlan}>
-          <div className={styles.statCardValue}>{kpis.planName}</div>
-          {planStatusLabel === 'Expirado' && (
-            <div className={styles.statMeta}>Suscripción expirada</div>
-          )}
-          <div className={styles.statMeta}>
-            Activación: <span className={styles.metaPositive}>{kpis.planActivationRemainingDays} días restantes</span> de {kpis.planActivationTotalDays}
+        <div className={`${styles.statCard} ${styles.areaPlan}`}>
+          <div className={styles.statHeader}>
+            <div style={{ flex: 1 }}>
+              <div className={styles.statLabel}>Plan actual</div>
+            </div>
+            <div className={styles.statIcon}>💎</div>
           </div>
-          <div className={styles.statMeta}>
-            Estado: <span className={planStatusLabel === 'Activo' ? styles.metaPositive : (planStatusLabel === 'Por vencer' ? styles.metaWarning : styles.metaDanger)}>{planStatusLabel}</span> · Próximo pago: <span className={kpis.nextPaymentDue ? styles.metaPositive : styles.metaDanger}>{kpis.nextPaymentDue ? 'Sí' : 'No'}</span>
+          <div className={styles.statContent}>
+            <div className={styles.statCardValue}>{kpis.planName}</div>
+            {planStatusLabel === 'Expirado' && (
+              <div className={styles.statMeta}>Suscripción expirada</div>
+            )}
+            <div className={styles.statMeta}>
+              Activación: <span className={styles.metaPositive}>{kpis.planActivationRemainingDays} días restantes</span> de {kpis.planActivationTotalDays}
+            </div>
+            <div className={styles.statMeta}>
+              Estado: <span className={planStatusLabel === 'Activo' ? styles.metaPositive : (planStatusLabel === 'Por vencer' ? styles.metaWarning : styles.metaDanger)}>{planStatusLabel}</span> · Próximo pago: <span className={kpis.nextPaymentDue ? styles.metaPositive : styles.metaDanger}>{kpis.nextPaymentDue ? 'Sí' : 'No'}</span>
+            </div>
+            <button className={`${styles.goldBtn} ${styles.goldBtnLarge}`}>Renovar</button>
           </div>
-          <button className={`${styles.goldBtn} ${styles.goldBtnLarge}`}>Renovar</button>
-        </MetricCard>
-
+        </div>
 
         {/* Rango */}
-        <MetricCard title="Rango" icon="🏅" className={styles.areaRango}>
-          {/* Línea principal: R4 -> R3 */}
-          <div className={styles.rankRow}>
-            <div className={styles.rankCol}>
-              <div className={`${styles.rankBig} ${styles.rankBase}`}>{kpis.rankBase ?? 'R4'}</div>
-              <div className={styles.rankSub}>BASE</div>
+        <div className={`${styles.statCard} ${styles.areaRango}`}>
+          <div className={styles.statHeader}>
+            <div style={{ flex: 1 }}>
+              <div className={styles.statLabel}>Rango</div>
             </div>
-            <div className={styles.rankArrow}>→</div>
-            <div className={styles.rankCol}>
-              <div className={`${styles.rankBig} ${styles.rankPay}`}>{kpis.rankPayable ?? 'R3'}</div>
-              <div className={styles.rankSub}>PAGABLE</div>
+            <div className={styles.statIcon}>🏅</div>
+          </div>
+          <div className={styles.statContent}>
+            {/* Línea principal: R4 -> R3 */}
+            <div className={styles.rankRow}>
+              <div className={styles.rankCol}>
+                <div className={`${styles.rankBig} ${styles.rankBase}`}>{kpis.rankBase ?? 'R4'}</div>
+                <div className={styles.rankSub}>BASE</div>
+              </div>
+              <div className={styles.rankArrow}>→</div>
+              <div className={styles.rankCol}>
+                <div className={`${styles.rankBig} ${styles.rankPay}`}>{kpis.rankPayable ?? 'R3'}</div>
+                <div className={styles.rankSub}>PAGABLE</div>
+              </div>
+            </div>
+
+            {/* Plan requerido: Pro */}
+            <div className={styles.rankInfo} style={{ marginTop: 10 }}>
+              Plan requerido: <strong style={{ color: 'var(--secondary-gold)' }}>Pro</strong> para cobrar R4+
+            </div>
+
+            {/* Sugerencia */}
+            <div className={styles.suggestCard}>
+              <span style={{ fontSize: 14 }}>💡</span>
+              <span className={styles.suggestText}>
+                <strong>Sugerencia:</strong> Actualiza a <strong>Pro</strong> para desbloquear R4–R7
+              </span>
+            </div>
+
+            {/* Próximo requisito + CTA */}
+            <div className={styles.statMeta} style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, alignItems: 'center' }}>
+              <div><strong>Próximo:</strong> R4 requiere €25,000 en equipo</div>
+              <button className={styles.goldBtn}>Sube a Pro</button>
             </div>
           </div>
-
-          {/* Plan requerido: Pro */}
-          <div className={styles.rankInfo} style={{ marginTop: 10 }}>
-            Plan requerido: <strong style={{ color: 'var(--secondary-gold)' }}>Pro</strong> para cobrar R4+
-          </div>
-
-          {/* Sugerencia */}
-          <div className={styles.suggestCard}>
-            <span style={{ fontSize: 14 }}>💡</span>
-            <span className={styles.suggestText}>
-              <strong>Sugerencia:</strong> Actualiza a <strong>Pro</strong> para desbloquear R4–R7
-            </span>
-          </div>
-
-          {/* Próximo requisito + CTA */}
-          <div className={styles.statMeta} style={{ display: 'flex', justifyContent: 'space-between', marginTop: 10, alignItems: 'center' }}>
-            <div><strong>Próximo:</strong> R4 requiere €25,000 en equipo</div>
-            <button className={styles.goldBtn}>Sube a Pro</button>
-          </div>
-        </MetricCard>
+        </div>
 
         {/* Equipo Binario (A/B) - CORREGIDO */}
-        <MetricCard title="Equipo Binario" icon="🏦" className={styles.areaEquipo}>
+        <div className={`${styles.statCard} ${styles.areaEquipo}`}>
+          <div className={styles.statHeader}>
+            <div style={{ flex: 1 }}>
+              <div className={styles.statLabel}>Equipo Binario</div>
+            </div>
+            <div className={styles.statIcon}>🏦</div>
+          </div>
+
+          <div className={styles.statContent}>
             {/* Línea 1: Banks A y B */}
             <div className={styles.bankRow}>
               <div className={styles.bankItem}>
@@ -217,7 +239,8 @@ const TopStatsGrid: React.FC<Props> = ({ kpis }) => {
             <div className={styles.progressBar}>
               <div className={styles.progressFill} style={{ width: `${progressPct.toFixed(1)}%` }} />
             </div>
-        </MetricCard>
+          </div>
+        </div>
 
         {/* Pool semanal estimado */}
         <div className={`${styles.statCard} ${styles.areaPool}`}>
