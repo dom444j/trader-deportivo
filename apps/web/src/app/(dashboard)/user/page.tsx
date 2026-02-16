@@ -8,6 +8,7 @@ import BankPlanContributions from '@/components/dashboard/user/BankPlanContribut
 import PerformanceOverview from '@/components/dashboard/user/PerformanceOverview';
 import RecommendedSignalsNow from '@/components/dashboard/user/RecommendedSignalsNow';
 import RecentSignals from '@/components/dashboard/user/RecentSignals';
+import { SectionCard } from '@/components/ui-kit/SectionCard';
 
 export const metadata: Metadata = {
   title: 'Dashboard Usuario · Trader Deportivo',
@@ -106,105 +107,89 @@ export default async function UserDashboard() {
         {/* Sección de contenido principal */}
         <section className={styles.afterSignalsSection}>
           <div className={styles.twoColumnWrap}>
-            <div className={styles.column}>
+<div className={styles.twoColumnWrap}>
               {/* Mis Tipsters Favoritos */}
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <h2>Mis Tipsters Favoritos</h2>
-                  <a href="/tipsters" className={styles.cardLink}>Explorar</a>
-                </div>
-                <div className={styles.cardBody}>
-                  <div className={styles.tipsterList}>
-                    <div className={styles.tipsterItem}>
-                      <div className={styles.tipsterAvatar}>👤</div>
-                      <div className={styles.tipsterInfo}>
-                        <h4>Carlos Trading</h4>
-                        <p>ROI: +35.2% | 156 señales</p>
-                      </div>
-                      <button className={`${styles.followBtn} ${styles.following}`}>Siguiendo</button>
+              <SectionCard title="Mis Tipsters Favoritos" link={{ href: "/tipsters", text: "Explorar" }}>
+                <div className={styles.tipsterList}>
+                  <div className={styles.tipsterItem}>
+                    <div className={styles.tipsterAvatar}>👤</div>
+                    <div className={styles.tipsterInfo}>
+                      <h4>Carlos Trading</h4>
+                      <p>ROI: +35.2% | 156 señales</p>
                     </div>
-                    <div className={styles.tipsterItem}>
-                      <div className={styles.tipsterAvatar}>👤</div>
-                      <div className={styles.tipsterInfo}>
-                        <h4>Ana Deportes</h4>
-                        <p>ROI: +28.7% | 89 señales</p>
-                      </div>
-                      <button className={`${styles.followBtn} ${styles.following}`}>Siguiendo</button>
+                    <button className={`${styles.followBtn} ${styles.following}`}>Siguiendo</button>
+                  </div>
+                  <div className={styles.tipsterItem}>
+                    <div className={styles.tipsterAvatar}>👤</div>
+                    <div className={styles.tipsterInfo}>
+                      <h4>Ana Deportes</h4>
+                      <p>ROI: +28.7% | 89 señales</p>
                     </div>
+                    <button className={`${styles.followBtn} ${styles.following}`}>Siguiendo</button>
                   </div>
                 </div>
-              </div>
+              </SectionCard>
             </div>
 
             <div className={styles.column}>
               {/* Próximos Eventos */}
-              <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                  <h2>Próximos Eventos</h2>
+              <SectionCard title="Próximos Eventos">
+                <div className={styles.eventList}>
+                  {events.map((evt) => (
+                    <div key={evt.id} className={styles.eventItem}>
+                      <div className={styles.eventTime}>{evt.timeLabel}</div>
+                      <div className={styles.eventMatch}>{evt.match}</div>
+                      <div className={styles.eventSport}>{evt.icon} {evt.sport}</div>
+                    </div>
+                  ))}
                 </div>
-                <div className={styles.cardBody}>
-                  <div className={styles.eventList}>
-                    {events.map((evt) => (
-                      <div key={evt.id} className={styles.eventItem}>
-                        <div className={styles.eventTime}>{evt.timeLabel}</div>
-                        <div className={styles.eventMatch}>{evt.match}</div>
-                        <div className={styles.eventSport}>{evt.icon} {evt.sport}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              </SectionCard>
             </div>
           </div>
 
           {/* Progreso del Usuario */}
-          <div className={styles.card}>
-            <div className={styles.cardHeader}>
-              <h2>Progreso del Usuario</h2>
+          <SectionCard title="Progreso del Usuario">
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}>Entradas diarias</span>
+              <span className={styles.summaryValue}>3/5</span>
             </div>
-            <div className={styles.cardBody}>
-              <div className={styles.summaryItem}>
-                <span className={styles.summaryLabel}>Entradas diarias</span>
-                <span className={styles.summaryValue}>3/5</span>
-              </div>
-              <div className={styles.progressBar} aria-label="Progreso diario">
-                <div className={styles.progressFill} style={{ width: '60%' }} />
-              </div>
-
-              <div className={styles.summaryItem} style={{ marginTop: 12 }}>
-                <span className={styles.summaryLabel}>Entradas semanales</span>
-                <span className={styles.summaryValue}>12/20</span>
-              </div>
-              <div className={styles.progressBar} aria-label="Progreso semanal">
-                <div className={styles.progressFill} style={{ width: '60%' }} />
-              </div>
-
-              <div className={styles.summaryItem} style={{ marginTop: 12 }}>
-                <span className={styles.summaryLabel}>Disciplina</span>
-                <span className={`${styles.summaryValue} ${styles.chip}`}>{kpis.discipline}</span>
-              </div>
-              <div className={styles.progressBar} aria-label="Disciplina">
-                <div className={styles.progressFill} style={{ width: `${kpis.discipline}%` }} />
-              </div>
-
-              <div className={styles.summaryItem} style={{ marginTop: 12 }}>
-                <span className={styles.summaryLabel}>Configurar bankroll</span>
-                <span className={`${styles.summaryValue} ${styles.chip}`}>Pendiente</span>
-              </div>
-              <div className={styles.summaryItem}>
-                <span className={styles.summaryLabel}>Seguir 1 agente</span>
-                <span className={`${styles.summaryValue} ${styles.chip}`}>En curso</span>
-              </div>
-              <div className={styles.summaryItem}>
-                <span className={styles.summaryLabel}>Primera operación</span>
-                <span className={`${styles.summaryValue} ${styles.chipPositive}`}>Hecho</span>
-              </div>
-              <div className={styles.summaryItem}>
-                <span className={styles.summaryLabel}>Primera semana completa</span>
-                <span className={`${styles.summaryValue} ${styles.chip}`}>Pendiente</span>
-              </div>
+            <div className={styles.progressBar} aria-label="Progreso diario">
+              <div className={styles.progressFill} style={{ width: '60%' }} />
             </div>
-          </div>
+
+            <div className={styles.summaryItem} style={{ marginTop: 12 }}>
+              <span className={styles.summaryLabel}>Entradas semanales</span>
+              <span className={styles.summaryValue}>12/20</span>
+            </div>
+            <div className={styles.progressBar} aria-label="Progreso semanal">
+              <div className={styles.progressFill} style={{ width: '60%' }} />
+            </div>
+
+            <div className={styles.summaryItem} style={{ marginTop: 12 }}>
+              <span className={styles.summaryLabel}>Disciplina</span>
+              <span className={`${styles.summaryValue} ${styles.chip}`}>{kpis.discipline}</span>
+            </div>
+            <div className={styles.progressBar} aria-label="Disciplina">
+              <div className={styles.progressFill} style={{ width: `${kpis.discipline}%` }} />
+            </div>
+
+            <div className={styles.summaryItem} style={{ marginTop: 12 }}>
+              <span className={styles.summaryLabel}>Configurar bankroll</span>
+              <span className={`${styles.summaryValue} ${styles.chip}`}>Pendiente</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}>Seguir 1 agente</span>
+              <span className={`${styles.summaryValue} ${styles.chip}`}>En curso</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}>Primera operación</span>
+              <span className={`${styles.summaryValue} ${styles.chipPositive}`}>Hecho</span>
+            </div>
+            <div className={styles.summaryItem}>
+              <span className={styles.summaryLabel}>Primera semana completa</span>
+              <span className={`${styles.summaryValue} ${styles.chip}`}>Pendiente</span>
+            </div>
+          </SectionCard>
         </section>
       </main>
     </div>

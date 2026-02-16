@@ -1,0 +1,53 @@
+/* Contenedor principal de las tarjetas de sección */
+.card {
+  background: var(--color-surface-elevated, #1a1a2e);
+  border-radius: var(--border-radius-lg, 8px);
+  border: 1px solid var(--color-border-subtle, #2a2a4a);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Encabezado de la tarjeta */
+.cardHeader {
+  align-items: center;
+  background: var(--color-surface-elevated-hover, #1f1f33);
+  border-bottom: 1px solid var(--color-border-subtle, #2a2a4a);
+  display: flex;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+}
+
+.cardHeader h2 {
+  color: var(--color-text-primary, #ffffff);
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Enlace en el encabezado */
+.cardLink {
+  color: var(--color-accent-primary, #00aaff);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.cardLink:hover {
+  color: var(--color-accent-primary-hover, #33bbff);
+}
+
+/* Cuerpo de la tarjeta */
+.cardBody {
+  flex-grow: 1;
+  padding: 1.5rem;
+}
