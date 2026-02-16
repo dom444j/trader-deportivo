@@ -30,9 +30,9 @@ Generado automáticamente a partir del estado actual del proyecto.
 │   │       └── page.tsx
 │   ├── (marketing)\
 │   │   ├── landing\
+│   │   │   └── page.tsx
 │   │   ├── layout.tsx
 │   │   └── page.tsx
-│   ├── admin\
 │   ├── api\
 │   │   ├── auth\
 │   │   │   ├── check-session\
