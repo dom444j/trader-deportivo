@@ -9,6 +9,8 @@ interface Props {
 }
 
 const TopStatsGrid: React.FC<Props> = ({ kpis }) => {
+  // Evitar crash por handler sin estado (opción B mínima)
+  const [showHistory, setShowHistory] = React.useState(false);
   // Helpers de formato
   const formatMoney = (val: number) => 
     new Intl.NumberFormat('es-ES', {

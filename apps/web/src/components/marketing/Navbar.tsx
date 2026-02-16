@@ -5,19 +5,22 @@ import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const pathname = usePathname();
-  const isLoginPage = pathname === '/login';
+  const isLogin = pathname === '/login';
+  const isAdminLogin = pathname === '/admin/login';
+  const isSignup = pathname === '/signup';
+  const isAuthPage = isLogin || isAdminLogin || isSignup;
   
   const handleScrollTo = (id: string) => (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    if (isLoginPage) {
-      // On login page, navigate to home first then scroll
+    if (isAuthPage) {
+      // En páginas de autenticación, navegar al home con el ancla
       window.location.href = '/#' + id;
     } else {
       const el = document.getElementById(id);
       if (el) {
         el.scrollIntoView({ behavior: 'smooth', block: 'start' });
       } else {
-        // Fallback: if section doesn't exist on this page, go to home with anchor
+        // Fallback: si la sección no existe, ir al home con ancla
         window.location.href = '/#' + id;
       }
     }
@@ -43,10 +46,12 @@ export default function Navbar() {
           <a className="nav-link" href="#referrals" onClick={handleScrollTo('referrals')}>Referidos</a>
         </nav>
         <div className="nav-cta">
-          {!isLoginPage && (
+          {!isLogin && !isAdminLogin && (
             <a className="btn btn-outline" href="/login" onClick={handlePush('/login')}>Entrar</a>
           )}
-          <a className="btn btn-primary" href="/signup" onClick={handlePush('/signup')}>Sign Up</a>
+          {!isSignup && (
+            <a className="btn btn-primary" href="/signup" onClick={handlePush('/signup')}>Sign Up</a>
+          )}
         </div>
       </div>
     </header>

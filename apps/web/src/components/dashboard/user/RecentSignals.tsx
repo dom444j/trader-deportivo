@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import base from "../../../app/(dashboard)/user/UserDashboard.module.css";
-import styles from "./RecentSignals.module.css";
+import styles from "@/app/(dashboard)/user/UserDashboard.module.css";
+import rsStyles from "./RecentSignals.module.css";
 
 export type RecentSignal = {
   id: string;
@@ -16,13 +16,13 @@ export type RecentSignal = {
 
 export default function RecentSignals({ signals }: { signals: RecentSignal[] }) {
   return (
-    <section className={`${base.card} ${styles.section}`}>
-      <div className={base.cardHeader}>
+    <section className={`${styles.card} ${rsStyles.section}`}>
+      <div className={styles.cardHeader}>
         <h2>Señales Recientes</h2>
-        <a href="/signals" className={base.cardLink}>Ver todas →</a>
+        <a href="/signals" className={styles.cardLink}>Ver todas →</a>
       </div>
-      <div className={base.cardBody}>
-        <div className={styles.thead}>
+      <div className={styles.cardBody}>
+        <div className={rsStyles.thead}>
           <div>Agente</div>
           <div>Mercado</div>
           <div>Cuota</div>
@@ -32,14 +32,14 @@ export default function RecentSignals({ signals }: { signals: RecentSignal[] }) 
           <div>Resultado</div>
         </div>
         {signals.map((s) => (
-          <div className={styles.row} key={s.id}>
-            <div className={styles.agent}>{s.agent}</div>
-            <div className={styles.market}>{s.market}</div>
-            <div className={styles.odds}>{s.odds.toFixed(2)}</div>
-            <div className={styles.ev}>{s.ev}</div>
-            <div className={styles.stake}>{s.stake}</div>
-            <div className={styles.status}>{s.status}</div>
-            <div className={styles.result}>{s.result ?? "–"}</div>
+          <div className={rsStyles.row} key={s.id}>
+            <div className={rsStyles.agent}>{s.agent}</div>
+            <div className={rsStyles.market}>{s.market}</div>
+            <div className={rsStyles.odds}>{s.odds.toFixed(2)}</div>
+            <div className={rsStyles.ev}>{s.ev}</div>
+            <div className={rsStyles.stake}>{s.stake}</div>
+            <div className={rsStyles.status}>{s.status}</div>
+            <div className={rsStyles.result}>{s.result ?? "–"}</div>
           </div>
         ))}
       </div>

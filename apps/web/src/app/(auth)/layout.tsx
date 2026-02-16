@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import '../../styles/marketing.css';
 import '../../styles/auth.css';
 
 export const metadata: Metadata = {

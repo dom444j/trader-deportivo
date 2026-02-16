@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
-import base from "../../../app/(dashboard)/user/UserDashboard.module.css";
+import styles from "@/app/(dashboard)/user/UserDashboard.module.css";
 import { getProgressSummary } from "@/lib/user-dashboard-data";
 
 // Pequeño gráfico SVG sin dependencias
@@ -78,33 +78,33 @@ export default function PerformanceOverview() {
   }, []);
 
   return (
-    <section className={`${base.card} ${base.performanceCard}`}>
-      <div className={base.cardHeader}>
+    <section className={`${styles.card} ${styles.performanceCard}`}>
+      <div className={styles.cardHeader}>
         <h2>Rendimiento</h2>
-        <div className={base.rangeTabs}>
-          <button className={base.rangeBtn}>7D</button>
-          <button className={`${base.rangeBtn} ${base.rangeActive}`}>30D</button>
-          <button className={base.rangeBtn}>90D</button>
+        <div className={styles.rangeTabs}>
+          <button className={styles.rangeBtn}>7D</button>
+          <button className={`${styles.rangeBtn} ${styles.rangeActive}`}>30D</button>
+          <button className={styles.rangeBtn}>90D</button>
         </div>
       </div>
 
-      <div className={base.cardBody}>
-        <div className={base.performanceChart}>
+      <div className={styles.cardBody}>
+        <div className={styles.performanceChart}>
           {values.length > 0 ? <MiniLineChart values={values} /> : "[Gráfico]"}
         </div>
 
-        <div className={base.performanceSummary}>
-          <div className={base.summaryItem}>
-            <span className={base.summaryLabel}>ROI</span>
-            <span className={`${base.summaryValue} ${base.positive}`}>+12.4%</span>
+        <div className={styles.performanceSummary}>
+          <div className={styles.summaryItem}>
+            <span className={styles.summaryLabel}>ROI</span>
+            <span className={`${styles.summaryValue} ${styles.positive}`}>+12.4%</span>
           </div>
-          <div className={base.summaryItem}>
-            <span className={base.summaryLabel}>Win Rate</span>
-            <span className={base.summaryValue}>58.3%</span>
+          <div className={styles.summaryItem}>
+            <span className={styles.summaryLabel}>Win Rate</span>
+            <span className={styles.summaryValue}>58.3%</span>
           </div>
-          <div className={base.summaryItem}>
-            <span className={base.summaryLabel}>Señales</span>
-            <span className={base.summaryValue}>47</span>
+          <div className={styles.summaryItem}>
+            <span className={styles.summaryLabel}>Señales</span>
+            <span className={styles.summaryValue}>47</span>
           </div>
         </div>
       </div>
