@@ -1,3 +1,5 @@
+'use client';
+
 import * as React from 'react';
 
 interface WordmarkProps extends React.SVGProps<SVGSVGElement> {
