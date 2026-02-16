@@ -1,193 +1,208 @@
-🔥 PROBLEMAS EN TU IMAGEN:
+Okay, I will proceed with stabilizing the style loading as you've instructed. I will not perform any refactoring or delete any CSS files.
 
-❌ Layout vertical izquierdo - debería ser horizontal completo
-❌ Icono a la derecha del texto - debería estar arriba a la derecha
-❌ Texto muy comprimido - falta espaciado
-❌ Falta barra de progreso visible
-❌ "EQUIPO BINARIO" en mayúsculas a la izquierda - está mal posicionado
+First, I will create a new branch and a snapshot commit to ensure we can track the changes. But before that, I will create a to-do list to keep track of the tasks.
 
+5 to-dos
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+I will now start by creating a new branch and committing a snapshot of the current state.
 
-✅ SOLUCIÓN DIRECTA - COPIA ESTO EXACTAMENTE:
-1️⃣ TopStatsGrid.tsx - REEMPLAZA TODA LA CARD:
-tsx{/* Card Equipo Binario */}
-<div className={`${styles.statCard} ${styles.areaEquipo}`}>
-  {/* HEADER: Label + Icon */}
-  <div className={styles.statHeader}>
-    <div style={{ flex: 1 }}>
-      <div className={styles.statLabel}>Equipo Binario</div>
-    </div>
-    <div className={styles.statIcon}>🏦</div>
-  </div>
+0/5 done
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+I will now create the new branch feat/stabilize-styles.
 
-  {/* CONTENT */}
-  <div className={styles.statContent}>
-    {/* Línea 1: Banks */}
-    <div className={styles.statValue} style={{ fontSize: '18px' }}>
-      Bank A: €30,000 · Bank B: €27,000
-    </div>
+trader-deportivo
+Terminal
+git checkout -b feat/stabilize-styles 
+Now that I'm on the new branch, I will create a snapshot commit of the current state.
 
-    {/* Línea 2: Total + Progreso */}
-    <div className={styles.statMeta}>
-      Bank Total: <span style={{ color: 'var(--primary-green)', fontWeight: 700 }}>€57,000</span> · Progreso a R5: 1.6%
-    </div>
+trader-deportivo
+Terminal
+git add . && git commit -m "snapshot: initial state before style stabilization" 
+The && operator is not working in this PowerShell terminal. I will execute the git add and git commit commands separately.
 
-    {/* Línea 3: Resumen */}
-    <div className={styles.statMeta} style={{ marginTop: '4px', fontSize: '12px' }}>
-      <strong>Resumen:</strong> A: €30k | B: €27k | Total: <span style={{ color: 'var(--primary-green)', fontWeight: 700 }}>€57,000</span>
-    </div>
+trader-deportivo
+Terminal
+git add . 
+Now I will create the commit.
 
-    {/* Línea 4: Mejorando */}
-    <div style={{ 
-      display: 'flex', 
-      alignItems: 'center', 
-      gap: '6px', 
-      marginTop: '8px',
-      fontSize: '12px',
-      color: 'var(--primary-green)',
-      fontWeight: 600
-    }}>
-      <span style={{ fontSize: '16px' }}>↗</span>
-      <span>Mejorando desde máximo</span>
-    </div>
+trader-deportivo
+Terminal
+git commit -m "snapshot: initial state before style stabilization" 
+Now that the snapshot is created, I will proceed with the style stabilization tasks.
 
-    {/* Línea 5: Equipos */}
-    <div className={styles.statMeta} style={{ marginTop: '6px', fontSize: '12px' }}>
-      Equipo A: <span style={{ color: 'var(--primary-cyan)', fontWeight: 700 }}>2 directos</span> · 8 indirectos | 
-      Equipo B: <span style={{ color: 'var(--primary-cyan)', fontWeight: 700 }}>1 directo</span> · 12 indirectos
-    </div>
+First, I will modify apps/web/src/app/globals.css to remove the marketing.css and auth.css imports. I'll start by reading the file.
 
-    {/* Barra de progreso */}
-    <div className={styles.progressBar}>
-      <div className={styles.progressFill} style={{ width: '1.6%' }} />
-    </div>
-  </div>
-</div>
+1/5 done
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+apps\web\src\app\globals.css
+Okay, I have the content of globals.css. Now I will remove the @import statements for marketing.css and auth.css.
 
-2️⃣ UserDashboard.module.css - AGREGA/ACTUALIZA ESTOS ESTILOS:
-css/* STAT CARD BASE */
-.statCard {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 18px 16px;
-  background: linear-gradient(180deg, rgba(37,37,69,0.85) 0%, rgba(30,30,56,0.85) 100%);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
-  overflow: visible; /* Cambiar de hidden a visible */
-  min-height: 140px;
-}
+apps\web\src\app\globals.css
++0
+-2
 
-/* STAT HEADER - HORIZONTAL */
-.statHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 12px;
-}
+Review
+Now that I've removed the marketing.css and auth.css imports from the global scope, I will ensure they are imported only in their respective layouts.
 
-/* STAT LABEL - GRIS */
-.statLabel {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-  color: var(--text-muted); /* GRIS #8888A8 */
-  line-height: 1;
-}
+First, I'll check the (marketing)/layout.tsx file to make sure it's importing marketing.css.
 
-/* STAT ICON - ARRIBA DERECHA */
-.statIcon {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-content: center;
-  border-radius: 12px;
-  background: linear-gradient(135deg, rgba(0,245,255,0.12) 0%, rgba(0,102,255,0.12) 100%);
-  border: 1px solid rgba(255,255,255,0.08);
-  font-size: 22px;
-  flex-shrink: 0;
-}
+2/5 done
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+apps\web\src\app\(marketing)\layout.tsx
+The (marketing)/layout.tsx file is not importing marketing.css. I will add the import statement.
 
-/* STAT CONTENT - ANCHO COMPLETO */
-.statContent {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+apps\web\src\app\(marketing)\layout.tsx
++2
+-0
 
-/* STAT VALUE - BLANCO */
-.statValue {
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 1.3;
-  font-family: 'JetBrains Mono', monospace;
-  color: var(--text-primary); /* BLANCO #FFFFFF */
-}
+Review
+Now I will do the same for auth.css and the (auth)/layout.tsx file. First, I'll read the layout file.
 
-/* STAT META - GRIS CLARO */
-.statMeta {
-  font-size: 12px;
-  color: var(--text-secondary); /* GRIS CLARO #B8B8D0 */
-  line-height: 1.4;
-}
+3/5 done
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+apps\web\src\app\(auth)\layout.tsx
+The (auth)/layout.tsx file already imports auth.css and marketing.css. I will remove the marketing.css import as it's not needed here.
 
-.statMeta strong {
-  color: var(--text-primary);
-}
+apps\web\src\app\(auth)\layout.tsx
++0
+-1
 
-/* PROGRESS BAR */
-.progressBar {
-  width: 100%;
-  height: 6px;
-  background: rgba(30, 30, 56, 0.8);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-top: 8px;
-}
+Review
+Now I will remove the duplicate CSS imports from (dashboard)/layout.tsx. I'll start by reading the file.
 
-.progressFill {
-  height: 100%;
-  background: linear-gradient(135deg, #00F5FF 0%, #0066FF 100%);
-  border-radius: 4px;
-  transition: width 0.6s ease;
-}
+4/5 done
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+apps\web\src\app\(dashboard)\layout.tsx
+The (dashboard)/layout.tsx file is importing app.css, globals.css, and variables.css, which are already loaded in the root layout. I will remove these duplicate imports.
 
-3️⃣ VERIFICAR VARIABLES EN DashboardShell.module.css:
-css.appShell {
-  --primary-cyan: #00F5FF;
-  --primary-green: #00FF94;
-  --primary-blue: #0066FF;
-  
-  --text-primary: #FFFFFF;
-  --text-secondary: #B8B8D0;
-  --text-muted: #8888A8;
-  
-  --border-color: #2A2A4A;
-}
-```
+apps\web\src\app\(dashboard)\layout.tsx
++0
+-3
 
----
+Review
+I have completed all the style stabilization tasks. I will now commit the changes to the feat/stabilize-styles branch.
 
-## 🎯 RESULTADO ESPERADO:
-```
-┌────────────────────────────────────────┐
-│ Equipo Binario                     🏦 │ ← Header horizontal
-│                                         │
-│ Bank A: €30,000 · Bank B: €27,000      │ ← Blanco
-│ Bank Total: €57,000 · Progreso a R5... │ ← €57,000 verde
-│ Resumen: A: €30k | B: €27k | Total...  │ ← Total verde
-│ ↗ Mejorando desde máximo               │ ← Verde
-│ Equipo A: 2 directos · 8 indirectos... │ ← directos cyan
-│ [██░░░░░░░░░░░░] 1.6%                  │ ← Barra visible
-└────────────────────────────────────────┘
+5/5 done
+All tasks completed
+Create a new git branch `feat/stabilize-styles` and commit a snapshot of the current state.
+Modify `apps/web/src/app/globals.css` to remove `marketing.css` and `auth.css` imports.
+Ensure `marketing.css` is imported only in `(marketing)/layout.tsx`.
+Ensure `auth.css` is imported only in `(auth)/layout.tsx`.
+Remove duplicate CSS imports from `(dashboard)/layout.tsx`.
+trader-deportivo
+Terminal
+git add . 
+trader-deportivo
+Terminal
+git commit -m "feat: stabilize style loading" 
+I have completed the style stabilization and committed the changes.
 
-⚠️ IMPORTANTE:
+Now, as requested, I will validate the use client directives on a file-by-file basis, starting with the files that were previously identified as potentially having issues.
 
-NO uses className={styles.textGreen} - usa style={{ color: 'var(--primary-green)' }}
-NO pongas el icono en el lado izquierdo - va en .statHeader a la derecha
-NO uses overflow: hidden en .statCard - usa overflow: visible
-SÍ usa flex-direction: column en .statCard
-SÍ usa flex-direction: row en .statHeader
+I will start with apps/web/src/components/shared/layout/DashboardShell.tsx. I will read the file to check for client-side hooks and the "use client" directive.
+
+apps\web\src\components\shared\layout\DashboardShell.tsx
+The file apps/web/src/components/shared/layout/DashboardShell.tsx correctly uses the "use client" directive. It uses the useState, useEffect, and usePathname hooks, which require a client-side environment.
+
+Next, I will examine apps/web/src/components/shared/sidebar/AppSidebar.tsx.
+
+apps\web\src\components\shared\sidebar\AppSidebar.tsx
+The file apps/web/src/components/shared/sidebar/AppSidebar.tsx also correctly uses the "use client" directive. It utilizes useState, useEffect, and usePathname, all of which necessitate a client-side environment.
+
+Next, I'll check apps/web/src/components/ui/Wordmark.tsx.
+
+apps\web\src\components\ui\Wordmark.tsx
+The file apps/web/src/components/ui/Wordmark.tsx uses React.useMemo, which is a React hook. However, it does not have the "use client" directive. Since useMemo is a hook, this component must be a client component. I will add the directive.
+
+apps\web\src\components\ui\Wordmark.tsx
++2
+-0
+
+Review
+I will now continue validating the files that were identified as potentially missing the "use client" directive.
+
+Next on the list is apps/web/src/app/(dashboard)/user/dashboard/page.tsx. I'll read the file to check its contents.
+
+apps\web\src\app\(dashboard)\user\dashboard\page.tsx
+The file apps/web/src/app/(dashboard)/user/dashboard/page.tsx does not use any client-side hooks. It is a server component and does not require the "use client" directive.
+
+I will now check apps/web/src/app/(auth)/login/page.tsx.
+
+apps\web\src\app\(auth)\login\page.tsx
+The file apps/web/src/app/(auth)/login/page.tsx correctly uses the "use client" directive. It uses useState and useRouter, which are client-side hooks.
+
+Next, I will check apps/web/src/app/(auth)/signup/page.tsx.
+
+apps\web\src\app\(auth)\signup\page.tsx
+The file apps/web/src/app/(auth)/signup/page.tsx correctly uses the "use client" directive. It uses the useState hook, which requires a client-side environment.
+
+Now I'll check apps/web/src/components/dashboard/user/BankPlanContributions.tsx.
+
+apps\web\src\components\dashboard\user\BankPlanContributions.tsx
+The file apps/web/src/components/dashboard/user/BankPlanContributions.tsx is a server component and does not use any client-side hooks. It does not require the "use client" directive.
+
+Next, I will check apps/web/src/components/dashboard/user/DisciplineScore.tsx.
+
+apps\web\src\components\dashboard\user\DisciplineScore.tsx
+It seems the file apps/web/src/components/dashboard/user/DisciplineScore.tsx does not exist. I will skip it and move to the next file on the list: apps/web/src/components/shared/header/DashboardTopbar.tsx.
+
+apps\web\src\components\shared\header\DashboardTopbar.tsx
+The file apps/web/src/components/shared/header/DashboardTopbar.tsx correctly uses the "use client" directive. It uses useState, useEffect, useRef, and useRouter, all of which require a client-side environment.
+
+Finally, I will check apps/web/src/components/dashboard/TopStatsGrid.tsx.
+
+apps\web\src\components\dashboard\TopStatsGrid.tsx
+It seems the file apps/web/src/components/dashboard/TopStatsGrid.tsx also does not exist.
+
+I have now completed the file-by-file validation of the use client directive for the files that were flagged in the initial audit. I have corrected the one file that was missing the directive.
+
+I will now commit this change.
+
+trader-deportivo
+Terminal
+git add . 
+trader-deportivo
+Terminal
+git commit -m "fix: add 'use client' to Wordmark component" 
+I have completed all the requested tasks. I have stabilized the CSS loading and validated the use client directives for the specified files, committing the changes to the feat/stabilize-styles branch.
+
+Is there anything else I can help you with?
