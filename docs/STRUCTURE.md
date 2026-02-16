@@ -21,3 +21,8 @@ Estado: congelado
 
 ## Ubicación de App Router
 - Solo en: `apps/web/src/app`
+
+## Redirecciones canónicas (no UI)
+- /dashboard → /user
+- /user/dashboard → /user
+- /landing → /
