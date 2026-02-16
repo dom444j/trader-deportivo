@@ -12,7 +12,7 @@ export interface NavItem {
 
 export const userNav: NavItem[] = [
   // Sección: Inteligencia
-  { label: 'Dashboard', href: '/user/dashboard', icon: '📊', group: 'Inteligencia', badge: '+$234', badgeVariant: 'success' },
+  { label: 'Dashboard', href: '/user/dashboard', icon: '📊', group: 'Inteligencia', badge: '+€234', badgeVariant: 'success' },
   { label: 'Agents Hub', href: '/user/agents', icon: '🧠', group: 'Inteligencia', badge: '12' },
   {
     label: 'Señales', href: '/user/signals', icon: '🧾', group: 'Inteligencia', badge: '3', badgeVariant: 'danger', collapsible: true, defaultOpen: false,
@@ -59,7 +59,7 @@ export const userNav: NavItem[] = [
     label: 'Referidos', href: '/user/referrals', icon: '🔗', group: 'Referidos', collapsible: true, defaultOpen: false,
     children: [
       { label: 'Resumen', href: '/user/referrals', icon: '🔗' },
-      { label: 'Directos (10%)', href: '/user/referrals#directs', icon: '👤', badge: '$127', badgeVariant: 'success' },
+      { label: 'Directos (10%)', href: '/user/referrals#directs', icon: '👤', badge: '€127', badgeVariant: 'success' },
       { label: 'Equipo Binario (A/B)', href: '/user/referrals#team-binary', icon: '🏦' },
       { label: 'Pagos', href: '/user/referrals#payments', icon: '💰' },
     ]

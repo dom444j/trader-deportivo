@@ -13,7 +13,7 @@ export default function HowItWorks() {
           <div className="step-number">1</div>
           <div className="step-content">
             <h3>Elige tu licencia</h3>
-            <p>Básico $29,99 · Pro $129,99 (+$25 créditos) · Premium $799,99 (+$250 créditos). Cambia o cancela cuando quieras.</p>
+            <p>Básico €29,99 · Pro €129,99 (+€25 créditos) · Premium €799,99 (+€250 créditos). Cambia o cancela cuando quieras.</p>
           </div>
         </li>
         <li className="how-step">

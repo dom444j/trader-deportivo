@@ -24,6 +24,17 @@ const DEMO_USERS: Record<string, { password: string; user: User }> = {
       role: 'ADMIN'
     }
   },
+  // Alias producción para USER (según CREDENCIALES-PRODUCCION.md)
+  'usuario@traderdeportivo.co': {
+    password: 'UserTD!2024',
+    user: {
+      id: '2',
+      email: 'usuario@traderdeportivo.co',
+      name: 'Usuario',
+      role: 'USER'
+    }
+  },
+  // Usuario demo anterior (se mantiene para compatibilidad)
   'usuario.demo@traderdeportivo.co': {
     password: 'UserTD!2024',
     user: {
@@ -33,6 +44,17 @@ const DEMO_USERS: Record<string, { password: string; user: User }> = {
       role: 'USER'
     }
   },
+  // Alias producción para TIPSTER (según CREDENCIALES-PRODUCCION.md)
+  'tipster@traderdeportivo.co': {
+    password: 'TipsterTD!2024',
+    user: {
+      id: '5',
+      email: 'tipster@traderdeportivo.co',
+      name: 'Tipster',
+      role: 'TIPSTER'
+    }
+  },
+  // Usuarios tipster anteriores (se mantienen para compatibilidad)
   'tipster.pro@traderdeportivo.co': {
     password: 'TipsterTD!2024',
     user: {

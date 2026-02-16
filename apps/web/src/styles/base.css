@@ -1,7 +1,9 @@
 /* Base styles - HTML, body, typography, scrollbar */
 
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
 * { box-sizing: border-box; }
-html, body { padding: 0; margin: 0; background: var(--bg-primary); color: var(--text-primary); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+html, body { padding: 0; margin: 0; background: var(--bg-primary); color: var(--text-primary); font-family: 'Rajdhani', Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 img { display: block; }
 a { color: inherit; text-decoration: none; }
 button { font-family: inherit; }

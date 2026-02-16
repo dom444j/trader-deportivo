@@ -4,18 +4,18 @@ import SectionContainer from './SectionContainer';
 
 const plans = [
   { name: 'Básica', priceMonthly: 29.99, features: ['Señales IA calibradas', 'Panel básico', 'Copy-trade (observación)', 'Gestión Pro Bank', 'Referidos'] },
-  { name: 'Pro', priceMonthly: 129.99, popular: true, features: ['Señales IA + Tipsters verificados', 'Gestión de riesgo avanzada', 'Copy-trade (semi-auto)', 'Incluye $25 en créditos'] },
-  { name: 'Premium', priceMonthly: 799.99, features: ['Todo Pro', 'Latencia Edge <50ms', 'Copy-trade (auto)', 'Incluye $250 en créditos'] },
+  { name: 'Pro', priceMonthly: 129.99, popular: true, features: ['Señales IA + Tipsters verificados', 'Gestión de riesgo avanzada', 'Copy-trade (semi-auto)', 'Incluye €25 en créditos'] },
+  { name: 'Premium', priceMonthly: 799.99, features: ['Todo Pro', 'Latencia Edge <50ms', 'Copy-trade (auto)', 'Incluye €250 en créditos'] },
 ];
 
-const formatUSD = (v: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
+const formatEUR = (v: number) => new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
 const DISCOUNT_ANNUAL = 0.20;
 const formatESNumber = (v: number) => new Intl.NumberFormat('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v);
 const formatMoneyParts = (v: number) => {
   const es = formatESNumber(v); // p.ej. "799,99"
   const [intRaw, dec] = es.split(',');
   const int = intRaw; // ya incluye separadores de miles en estilo es-ES
-  return { symbol: '$', int, dec };
+  return { symbol: '€', int, dec };
 };
 
 export default function Pricing() {
@@ -26,7 +26,7 @@ export default function Pricing() {
     <SectionContainer>
       <div style={{ textAlign: 'center', marginBottom: 24 }}>
         <h2 style={{ fontSize: 32, margin: 0 }}>Precios</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>Desde {formatUSD(minValue)} <span style={{ color: 'var(--text-secondary)' }}>/mes</span>. Prueba gratis y cancela cuando quieras.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>Desde {formatEUR(minValue)} <span style={{ color: 'var(--text-secondary)' }}>/mes</span>. Prueba gratis y cancela cuando quieras.</p>
       </div>
 
       <div className="billing-toggle" role="tablist" aria-label="Periodo de facturación">
@@ -57,18 +57,18 @@ export default function Pricing() {
               const annualSavings = +(p.priceMonthly * 12 - annualTotal).toFixed(2);
               return (
                 <div className="price-meta">
-                  <span className="price-strike">${formatESNumber(p.priceMonthly)}</span>
-                  <span className="save-chip">Ahorro ${formatESNumber(annualSavings)} al año</span>
-                  <span className="price-sub">Facturado ${formatESNumber(annualTotal)} al año</span>
-                  {p.name === 'Pro' && <span className="credit-chip">+ $25 en créditos</span>}
-                  {p.name === 'Premium' && <span className="credit-chip">+ $250 en créditos</span>}
+                  <span className="price-strike">€{formatESNumber(p.priceMonthly)}</span>
+                  <span className="save-chip">Ahorro €{formatESNumber(annualSavings)} al año</span>
+                  <span className="price-sub">Facturado €{formatESNumber(annualTotal)} al año</span>
+                  {p.name === 'Pro' && <span className="credit-chip">+ €25 en créditos</span>}
+                  {p.name === 'Premium' && <span className="credit-chip">+ €250 en créditos</span>}
                 </div>
               );
             })()}
             {!annual && (
               <div className="price-meta">
-                {p.name === 'Pro' && <span className="credit-chip">+ $25 en créditos</span>}
-                {p.name === 'Premium' && <span className="credit-chip">+ $250 en créditos</span>}
+                {p.name === 'Pro' && <span className="credit-chip">+ €25 en créditos</span>}
+                {p.name === 'Premium' && <span className="credit-chip">+ €250 en créditos</span>}
               </div>
             )}
             <ul className="features">

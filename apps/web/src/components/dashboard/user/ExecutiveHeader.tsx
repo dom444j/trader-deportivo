@@ -1,46 +1,48 @@
-import React from 'react';
-import styles from '../../../app/(dashboard)/user/UserDashboard.module.css';
-import type { UserKpis } from '@/types/user-dashboard';
+"use client";
+import React from "react";
+import type { UserKpis } from "@/types/user-dashboard";
+import base from "../../../app/(dashboard)/user/UserDashboard.module.css";
 
-export default function ExecutiveHeader({ kpis: _kpis }: { kpis: UserKpis }) {
+export default function ExecutiveHeader({ kpis }: { kpis?: UserKpis }) {
   return (
-    <header className={styles.executiveHeader}>
-      <div className={styles.kpiRow}>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Bankroll</span>
-          <span className={styles.kpiValue}>€ 12,450</span>
-        </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>P&L (Mes)</span>
-          <span className={`${styles.kpiValue} ${styles.kpiPositive}`}>+€ 1,280</span>
-        </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>ROI (Mes)</span>
-          <span className={styles.kpiValue}>8.6%</span>
-        </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Drawdown</span>
-          <span className={styles.kpiValue}>-4.2%</span>
-        </div>
-        <div className={styles.kpiItem}>
-          <span className={styles.kpiLabel}>Disciplina</span>
-          <span className={styles.kpiValue}>92%</span>
-        </div>
+    <section className={`${base.card} ${base.executiveHeaderCard}`}>
+      <div className={base.cardHeader}>
+        <h2>Resumen Ejecutivo</h2>
+        <div className={base.modeBadge}>MODO: Pro</div>
       </div>
 
-      {/* Trading Overview (secundario, sin lógica) */}
-      <div className={styles.overviewRow}>
-        <div className={styles.overviewGroup}>
-          <span className={`${styles.chip} ${styles.chipPositive}`}>PnL Semanal: +€ 320</span>
-          <span className={styles.chip}>Exposición: 6 picks | 3 ligas</span>
-          <span className={styles.chip}>Riesgo Diario OK</span>
+      <div className={base.executiveHeader}>
+        <div className={base.kpiRow}>
+          <div className={base.kpiItem}>
+            <div className={base.kpiLabel}>Ganancias (30d)</div>
+            <div className={`${base.kpiValue} ${base.kpiPositive}`}>+ $1,250</div>
+          </div>
+          <div className={base.kpiItem}>
+            <div className={base.kpiLabel}>Win Rate</div>
+            <div className={base.kpiValue}>58.3%</div>
+          </div>
+          <div className={base.kpiItem}>
+            <div className={base.kpiLabel}>Yield</div>
+            <div className={base.kpiValue}>+ 12.4%</div>
+          </div>
+          <div className={base.kpiItem}>
+            <div className={base.kpiLabel}>Rachas</div>
+            <div className={`${base.kpiValue} ${base.kpiNegative}`}>- 3</div>
+          </div>
         </div>
 
-        <div className={styles.overviewActions}>
-          <span className={styles.modeBadge}>Modo: Profesional</span>
-          <button className={styles.cardLink} aria-label="Ver reportes">Ver reportes</button>
+        <div className={base.overviewRow}>
+          <div className={base.overviewGroup}>
+            <span className={`${base.chip} ${base.chipPositive}`}>+8 EV</span>
+            <span className={base.chip}>47 Señales</span>
+            <span className={base.chip}>5 Ligas</span>
+          </div>
+          <div className={base.overviewActions}>
+            <a className={base.cardLink} href="/reports">Ver reportes</a>
+            <a className={base.cardLink} href="/settings">Ajustes</a>
+          </div>
         </div>
       </div>
-    </header>
+    </section>
   );
 }

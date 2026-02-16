@@ -1,0 +1,64 @@
+/* Scoped styles for RecentSignals */
+.section {
+  margin-top: 12px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.thead {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 0.6fr 0.8fr 0.8fr 1fr;
+  padding: 14px 20px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr 0.8fr 0.6fr 0.8fr 0.8fr 1fr;
+  align-items: center;
+  padding: 18px 20px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  font-size: 0.8em; /* 20% más pequeño que el tamaño heredado */
+}
+
+.row:first-child { border-top: none; }
+
+.agent { font-weight: 700; }
+.market { color: var(--text-secondary); }
+.odds { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+
+.ev { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 800; color: var(--primary-green); }
+
+.stake { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 700; }
+.status { color: var(--text-secondary); }
+.result { font-family: 'JetBrains Mono', ui-monospace, monospace; font-weight: 800; color: var(--primary-green); }
+
+.actions {
+  margin-left: auto;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+@media (max-width: 900px) {
+  .thead, .row {
+    grid-template-columns: 1fr 0.8fr 0.6fr 0.6fr 0.6fr;
+  }
+  .status { display: none; }
+  .result { display: none; }
+}

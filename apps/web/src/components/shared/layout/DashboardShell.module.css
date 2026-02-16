@@ -1,3 +1,6 @@
+/* IMPORTAR FUENTES - AGREGAR AL INICIO */
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
 /* Dashboard App Shell - scoped to dashboard only */
 .appShell {
   position: relative;
@@ -34,7 +37,7 @@
 
   background: var(--bg-primary);
   color: var(--text-primary);
-  font-family: inherit;
+  font-family: 'Rajdhani', sans-serif; /* FUENTE PRINCIPAL */
 }
 
 /* Ambient grid + glow, scoped to dashboard */
@@ -49,6 +52,12 @@
   opacity: 0.08;
   pointer-events: none;
   z-index: 0;
+  animation: gridPulse 8s ease-in-out infinite;
+}
+
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.1; }
+  50% { opacity: 0.15; }
 }
 
 .appShell::after {
@@ -61,6 +70,12 @@
   background: radial-gradient(circle, rgba(0, 245, 255, 0.05) 0%, transparent 70%);
   z-index: 0;
   pointer-events: none;
+  animation: glowPulse 6s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.6; transform: scale(1.05); }
 }
 
 /* When sidebar is collapsed, override the width variable so dependents (e.g., Topbar) react automatically */
@@ -123,7 +138,6 @@
   .appMain {
     margin-left: 0;
   }
-  /* En móvil mantenemos el padding original, sin el extra de 15px */
   .appContent {
     padding-top: var(--topbar-height);
   }
