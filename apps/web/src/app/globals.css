@@ -13,6 +13,4 @@
 @import '../styles/utilities.css';
 
 /* Importar estilos personalizados */
-@import '../styles/marketing.css';
-@import '../styles/auth.css';
 @import '../styles/app.css';
